@@ -1,3 +1,4 @@
+/* Copyright 2014 Terry Soule, all rights reserved */
 
 /* Defines the indiv class.  Each individual has a fitness,
    size, number of terminals (terms), number of non-terminals,

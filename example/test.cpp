@@ -1,3 +1,5 @@
+/* Copyright 2014 Terry Soule, all rights reserved */
+
 #include <iostream>
 #include <cmath>
 #include <ctime>

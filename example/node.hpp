@@ -1,3 +1,5 @@
+/* Copyright 2014 Terry Soule, all rights reserved */
+
 /* Defines the node class used to build individual's trees.
    The initial typedef and define statements define the 
    'language' used by the tree.

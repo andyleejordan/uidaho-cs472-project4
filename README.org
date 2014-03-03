@@ -1,0 +1,69 @@
+#+TITLE:     Project #2a Genetic Program
+#+AUTHOR:    Andrew Schwartzmeyer
+#+EMAIL:     schw2620@vandals.uidaho.edu
+#+DATE:      2014-03-02 Sun
+#+DESCRIPTION:
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:   
+#+LINK_HOME: 
+#+XSLT:
+
+* Assignment
+[[http://www2.cs.uidaho.edu/~cs472_572/s14/GPProjectA.html][From Professor Terry Soule]]
+** Project #2a Genetic Program
+   DEADLINE: <2014-03-07 Fri>
+
+This is the first subproject of the GP project. The goal of this
+subproject is to create a population of GP tree structures for a
+symbolic regression problem.  If you want to use it, or refer to it, I
+have written a node and an individual class that uses pointers to
+build and evaluate random expression trees. Trees are build of nodes,
+which point to each other.
+
+node.h
+node.cpp
+individual.h
+individual.cpp
+test.cpp
+
+To compile the test main program use:
+
+=g++ test.cpp node.cpp individual.cpp=
+
+For this subproject you only need the following functionallity:
+
+- Generate full random expression individuals.
+- The expression trees should have, at least, the non-teminals: +,
+  -, *, /.
+- The expression trees should have, at least, the teminals: X (the
+  input variable) and constants.
+- The ability to copy individuals.
+- The ability to evaluate individuals.
+- The ability to erase individuals.
+- The ability to calculate the size (number of terminals and
+  non-terminals) of individuals.
+- The ability to create a population of individuals and to find the
+  best and average fitness of the population, and the average size of
+  the individuals in the population.
+- Individuals should represent expression trees, but may be coded as a
+  different type of data structure (e.g. a tree stored in an
+  array). For now you may choose your own fitness function, i.e. your
+  own set of x,y points that the GP should evolved an expression to
+  fit.
+- Project Write-up: Write a short paper describing the results of your
+  project that includes the following sections:
+- Algorithm descriptions - Description of the GP so far. Be careful to
+  include all of the details someone would need to replicate your
+  work.
+- Individual description - Description of the structure of your
+  individuals. Be careful to include all of the details someone would
+  need to replicate your work.
+- Results - Basically, does it seem to be working.
+- Conclusions - If its not working, why not. And what are then next
+  steps to complete the project.

@@ -1,4 +1,4 @@
-/* indivudal.hpp - CS 472 Project #2: Genetic Programming
+/* individual.hpp - CS 472 Project #2: Genetic Programming
  * Copyright 2014 Andrew Schwartzmeyer
  *
  * Header file for interface of an individual representing a
@@ -12,8 +12,8 @@
 #include <memory>
 #include "../problem/problem.hpp"
 
-namespace Individual {
-  using ProblemSpace::Problem;
+namespace individual {
+  using problem::Problem;
 
   enum Type { ADD, SUBTRACT, DIVIDE, MULTIPLY, CONSTANT, INPUT };
   const int internal_types = 4;
@@ -32,12 +32,12 @@ namespace Individual {
     int size();
   };
 
-  class Solution {
+  class Individual {
   private:
     const Problem problem;
     Node root;
   public:
-    Solution(const Problem &);
+    Individual(const Problem &);
     double evaluate();
     void print();
   };

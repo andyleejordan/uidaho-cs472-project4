@@ -14,9 +14,9 @@
 #include "../problem/problem.hpp"
 #include "../random/random_generator.hpp"
 
-using namespace Individual;
-using namespace RandomGenerator;
-using ProblemSpace::Problem;
+using namespace individual;
+using namespace random_generator;
+using problem::Problem;
 
 Node::Node(const Problem & problem, const int & depth) {
   if (depth < problem.max_depth) {
@@ -99,10 +99,10 @@ void Node::print(const int & depth) {
   std:: cout << ')';
 }
 
-Solution::Solution(const Problem & p): problem(p), root(Node(problem)) {
+Individual::Individual(const Problem & p): problem(p), root(Node(problem)) {
 }
 
-double Solution::evaluate() {
+double Individual::evaluate() {
   double fitness = 0;
   for (auto pair : problem.values) {
     double output = root.evaluate(std::get<0>(pair));
@@ -111,7 +111,7 @@ double Solution::evaluate() {
   return std::sqrt(fitness);
 }
 
-void Solution::print() {
+void Individual::print() {
   std::cout << "Tree of size " << root.size()
 	    << " has the following formula: " << std::endl;
   root.print();

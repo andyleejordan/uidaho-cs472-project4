@@ -10,7 +10,7 @@
 #include <vector>
 #include <tuple>
 
-namespace ProblemSpace {
+namespace problem {
   using std::vector;
   using std::tuple;
   typedef vector<const tuple<const double, const double>> pairs;
@@ -22,7 +22,7 @@ namespace ProblemSpace {
     const double constant_max;
     Problem(const pairs & v,
 	    const int & depth = 10,
-	    const double & min = 0,
+	    const double & min = -10,
 	    const double & max = 10):
       values(v), max_depth(depth), constant_min(min), constant_max(max) {}
   };

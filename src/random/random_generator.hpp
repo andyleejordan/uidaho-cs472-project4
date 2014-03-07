@@ -1,4 +1,4 @@
-/* Copyright 2014 Andrew Schwartzmeyer
+/* random_generator.hpp - Copyright 2014 Andrew Schwartzmeyer
  *
  * Header file for random generator setup
  */
@@ -8,7 +8,7 @@
 
 #include <random>
 
-namespace RandomGenerator {
+namespace random_generator {
   std::random_device rd;
   std::mt19937_64 engine(rd());
   typedef std::uniform_real_distribution<double> real_dist;

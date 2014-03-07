@@ -64,7 +64,7 @@ double Node::evaluate(const double & input) {
 }
 
 int Node::size() {
-  // Recursively count children
+  // Recursively count children via pre-order traversal
   int count = 1;
   for (auto child : children)
     count += child.size();
@@ -72,10 +72,31 @@ int Node::size() {
 }
 
 void Node::print(const int & depth) {
-  std::cout << "Node at depth: " << depth
-	    << " has type: " << type << '\n';
+  // Post-order traversal print of expression in RPN/posfix notation
+  std::cout << '(';
   for (auto child : children)
     child.print(depth + 1);
+    switch(type) {
+    case ADD:
+      std:: cout << " + ";
+      break;
+    case SUBTRACT:
+      std:: cout << " - ";
+      break;
+    case MULTIPLY:
+      std:: cout << " * ";
+      break;
+    case DIVIDE:
+      std:: cout << " / ";
+      break;
+    case CONSTANT:
+      std:: cout << constant;
+      break;
+    case INPUT:
+      std:: cout << "X";
+      break;
+    }
+  std:: cout << ')';
 }
 
 Solution::Solution(const Problem & p): problem(p), root(Node(problem)) {
@@ -91,7 +112,9 @@ double Solution::evaluate() {
 }
 
 void Solution::print() {
-  std::cout << "Tree of size: " << root.size()
-	    << " has the following nodes: " << std::endl;
+  std::cout << "Tree of size " << root.size()
+	    << " has the following formula: " << std::endl;
   root.print();
+  std::cout << std::endl
+	    << "Has a fitness of: " << evaluate() << std::endl;
 }

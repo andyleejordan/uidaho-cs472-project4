@@ -56,6 +56,9 @@ For this subproject you only need the following functionallity:
   array). For now you may choose your own fitness function, i.e. your
   own set of x,y points that the GP should evolved an expression to
   fit.
+
+For the report:
+
 - Project Write-up: Write a short paper describing the results of your
   project that includes the following sections:
 - Algorithm descriptions - Description of the GP so far. Be careful to

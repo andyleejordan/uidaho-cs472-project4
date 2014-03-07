@@ -15,7 +15,7 @@
 namespace Individual {
   using ProblemSpace::Problem;
 
-  enum Type { ADD, SUBTRACT, DIVIDE, MULTIPLY, INPUT, CONSTANT };
+  enum Type { ADD, SUBTRACT, DIVIDE, MULTIPLY, CONSTANT, INPUT };
   const int internal_types = 4;
   const int terminal_types = 2;
 

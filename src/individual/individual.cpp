@@ -53,11 +53,13 @@ double Node::evaluate(const double & input) {
   case MULTIPLY:
     return left * right;
   case DIVIDE:
-    return left / right; // Division by floating point 0 is okay
-  case INPUT:
-    return input;
+    if (right == 0)
+      return 1;
+    return left / right;
   case CONSTANT:
     return constant;
+  case INPUT:
+    return input;
   }
 }
 

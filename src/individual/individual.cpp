@@ -42,7 +42,7 @@ Node::Node(const Problem & problem, const int & depth) {
   }
 }
 
-double Node::evaluate(const double & input) {
+double Node::evaluate(const double & input) const {
   double left, right;
   if (type != INPUT and type != CONSTANT) {
     left = children[0].evaluate(input);
@@ -69,7 +69,7 @@ double Node::evaluate(const double & input) {
   }
 }
 
-Size Node::size() {
+Size Node::size() const {
   // Recursively count children via pre-order traversal
   // Keep track of internals, leafs, and total
   Size size;
@@ -83,7 +83,7 @@ Size Node::size() {
   return size;
 }
 
-void Node::print(const int & depth) {
+void Node::print(const int & depth) const {
   // Post-order traversal print of expression in RPN/posfix notation
   using std::cout;
   cout << '(';
@@ -120,7 +120,7 @@ Individual::Individual(const Problem & p): problem(p), root(Node(problem)) {
   fitness = evaluate();
 }
 
-double Individual::evaluate() {
+double Individual::evaluate() const {
   double fitness = 0;
   for (auto pair : problem.values) {
     double output = root.evaluate(std::get<0>(pair));
@@ -129,7 +129,7 @@ double Individual::evaluate() {
   return std::sqrt(fitness);
 }
 
-void Individual::print() {
+void Individual::print_formula() const {
   std::cout << "Expression tree of size " << size.total
 	    << " with " << size.internals << " internals"
 	    << " and " << size.leafs << " leafs"

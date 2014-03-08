@@ -33,9 +33,9 @@ namespace individual {
     std::vector<Node> children;
   public:
     Node(const Problem & problem, const int & depth = 0);
-    double evaluate(const double & input = 1);
-    void print(const int & depth = 0);
-    Size size();
+    double evaluate(const double & input = 1) const;
+    void print(const int & depth = 0) const;
+    Size size() const;
   };
 
   class Individual {
@@ -46,8 +46,8 @@ namespace individual {
     Node root;
   public:
     Individual(const Problem &);
-    double evaluate();
     void print();
+    double evaluate() const;
   };
 }
 

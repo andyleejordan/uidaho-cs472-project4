@@ -63,12 +63,18 @@ double Node::evaluate(const double & input) {
   }
 }
 
-int Node::size() {
+Size Node::size() {
   // Recursively count children via pre-order traversal
-  int count = 1;
-  for (auto child : children)
-    count += child.size();
-  return count;
+  // Keep track of internals, leafs, and total
+  Size size;
+  for (auto child : children) {
+    size.internals += child.size().internals;
+    size.leafs += child.size().leafs;
+  }
+  if (children.size() == 0) ++size.leafs;
+  else ++size.internals;
+  size.total = size.leafs + size.internals;
+  return size;
 }
 
 void Node::print(const int & depth) {
@@ -114,7 +120,9 @@ double Individual::evaluate() {
 }
 
 void Individual::print() {
-  std::cout << "Tree of size " << root.size()
+  std::cout << "Expression tree of size " << size.total
+	    << " with " << size.internals << " internals"
+	    << " and " << size.leafs << " leafs "
 	    << " has the following formula: " << std::endl;
   root.print();
   std::cout << std::endl

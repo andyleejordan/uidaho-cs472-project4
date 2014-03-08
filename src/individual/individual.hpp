@@ -19,6 +19,12 @@ namespace individual {
   const int internal_types = 4;
   const int terminal_types = 2;
 
+  struct Size {
+    int total = 0;
+    int internals = 0;
+    int leafs = 0;
+  };
+
   class Node {
   protected:
     static const short int arity = 2;
@@ -29,12 +35,14 @@ namespace individual {
     Node(const Problem & problem, const int & depth = 0);
     double evaluate(const double & input = 1);
     void print(const int & depth = 0);
-    int size();
+    Size size();
   };
 
   class Individual {
   private:
     const Problem problem;
+    Size size;
+    double fitness;
     Node root;
   public:
     Individual(const Problem &);

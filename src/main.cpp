@@ -3,6 +3,9 @@
  */
 
 #include <iostream>
+#include <algorithm>
+#include <numeric>
+#include <vector>
 
 #include "individual/individual.hpp"
 #include "problem/problem.hpp"
@@ -11,9 +14,20 @@ int main() {
   using individual::Individual;
   using namespace problem;
 
-  pairs values = { {1, 1}, {2, 4}, {3, 9}, {4, 16}, {5, 25}, {6, 36} };
-  Problem problem(values, 16);
-  Individual solution(problem);
-  solution.print();
+  const pairs values = { {1, 1}, {2, 4}, {3, 9}, {4, 16}, {5, 25}, {6, 36},
+			 {7, 49}, {8, 64}, {9, 81}, {10, 100}, {11, 121} };
+  const Problem problem(values, 3);
+  const int population_size = 256;
+  std::vector<Individual> population;
+  for (int i = 0; i < population_size; ++i)
+    population.emplace_back(Individual(problem));
+  Individual best = *std::min_element(population.begin(), population.end(), [](const Individual & a, const Individual & b)->bool {return a.get_fitness() < b.get_fitness();});
+  double sum = std::accumulate(population.begin(), population.end(), 0., [](const double & a, const Individual & b)->double {return a + b.get_fitness();});
+  best.print_formula();
+  best.print_calculation();
+  std::cout << "Average fitness: " << sum / population.size() << std::endl;
+  int total_size = 0;
+  for (const Individual member : population) total_size += member.get_total();
+  std::cout << "Average size: " << total_size / population.size() << std::endl;
   return 0;
 }

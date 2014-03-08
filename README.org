@@ -1,4 +1,4 @@
-#+TITLE:     Project #2a Genetic Program
+#+TITLE:     Project #2b Genetic Program
 #+AUTHOR:    Andrew Schwartzmeyer
 #+EMAIL:     schw2620@vandals.uidaho.edu
 #+DATE:      2014-03-02 Sun
@@ -88,20 +88,20 @@ For the report:
 This is the second subproject of the GP project. The goal of this subproject is to finish the pieces of the GP for a symbolic regression problem.
 For this subproject you will need to complete the GP including the following functionallity (in addition to the functions from the previous assignment):
 
-- Add a conditional to the function set of the expression trees.
-- Mutation
-- Crossover of two trees
-- Selection
-- Elitism if you are using a generational model
-- Test the GP to make sure that it is working.
+- [X] Add a conditional to the function set of the expression trees.
+- [ ] Mutation
+- [ ] Crossover of two trees
+- [ ] Selection
+- [ ] Elitism if you are using a generational model
+- [ ] Test the GP to make sure that it is working.
 
 Project Write-up: For this subproject you only need a description of
 the general algorithm:
 
-- generational or steady-state
-- how mutation works
-- the selction mechanism, etc.
-- a description of any problems so far
+- [ ] generational or steady-state
+- [ ] how mutation works
+- [ ] the selction mechanism, etc.
+- [ ] a description of any problems so far
 
 Note that the write-up may be fairly short.
 ** TODO Project #2 Genetic Program

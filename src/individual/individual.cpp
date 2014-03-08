@@ -23,6 +23,9 @@ Node::Node(const Problem & problem, const int & depth) {
     // assign random internal type
     int_dist dist(0, internal_types - 1); // closed interval
     type = Type(dist(engine));
+    int arity = 0;
+    if (type < binary_types) arity = 2; // for binary operators
+    else if (type == COND) arity = 4; // if-else conditional
     // recursively create subtrees
     for (int i = 0; i < arity; i++)
       children.emplace_back(Node(problem, depth + 1));
@@ -54,6 +57,11 @@ double Node::evaluate(const double & input) {
     return left * right;
   case DIVIDE:
     return right == 0 ? 1 : left / right; // protected
+  case COND: {
+    double if_true = children[2].evaluate(input);
+    double if_false = children[3].evaluate(input);
+    return left < right ? if_true : if_false;
+  }
   case CONSTANT:
     return constant;
   case INPUT:
@@ -93,6 +101,9 @@ void Node::print(const int & depth) {
     break;
   case DIVIDE:
     cout << " / ";
+    break;
+  case COND:
+    cout << " a < b ? c : d ";
     break;
   case CONSTANT:
     cout << constant;

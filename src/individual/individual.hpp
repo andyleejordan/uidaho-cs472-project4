@@ -15,8 +15,9 @@
 namespace individual {
   using problem::Problem;
 
-  enum Type { ADD, SUBTRACT, DIVIDE, MULTIPLY, CONSTANT, INPUT };
-  const int internal_types = 4;
+  enum Type { ADD, SUBTRACT, DIVIDE, MULTIPLY, COND, CONSTANT, INPUT };
+  const int binary_types = 4;
+  const int internal_types = 5;
   const int terminal_types = 2;
 
   struct Size {
@@ -27,7 +28,6 @@ namespace individual {
 
   class Node {
   protected:
-    static const short int arity = 2;
     Type type;
     double constant = 0; // excess for internal nodes
     std::vector<Node> children;

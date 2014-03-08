@@ -135,6 +135,18 @@ void Individual::print_formula() const {
 	    << " and " << size.leafs << " leafs"
 	    << " has the following formula: " << std::endl;
   root.print();
-  std::cout << std::endl
-	    << "Has a fitness of: " << evaluate() << std::endl;
+  std::cout << std::endl;
+}
+
+void Individual::print_calculation() const {
+  double fitness = 0;
+  for (auto pair : problem.values) {
+    double output = root.evaluate(std::get<0>(pair));
+    double error = std::pow(output - std::get<1>(pair), 2);
+    fitness += error;
+    std::cout << "For pair: (" << std::get<0>(pair) << ", " << std::get<1>(pair)
+	      << "), the function's value was: " << output
+	      << ", and the error was: " << error << ".\n";
+  }
+  std::cout << "Total fitness: " << std::sqrt(fitness) << ".\n";
 }

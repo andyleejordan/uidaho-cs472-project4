@@ -46,8 +46,13 @@ namespace individual {
     Node root;
   public:
     Individual(const Problem &);
-    void print();
     double evaluate() const;
+    void print_formula() const;
+    void print_calculation() const;
+    double get_fitness() const {return fitness;}
+    int get_total() const {return size.total;}
+    int get_internals() const {return size.internals;}
+    int get_leafs() const {return size.leafs;}
   };
 }
 

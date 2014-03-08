@@ -143,9 +143,9 @@ void Individual::print_calculation() const {
     double output = root.evaluate(std::get<0>(pair));
     double error = std::pow(output - std::get<1>(pair), 2);
     fitness += error;
-    std::cout << "For pair: (" << std::get<0>(pair) << ", " << std::get<1>(pair)
-	      << "), the function's value was: " << output
-	      << ", and the error was: " << error << ".\n";
+    std::cout << "f(" << std::get<0>(pair) << ", " << std::get<1>(pair)
+	      << ") = " << output
+	      << ", error = " << error << ".\n";
   }
   std::cout << "Total fitness: " << std::sqrt(fitness) << ".\n";
 }

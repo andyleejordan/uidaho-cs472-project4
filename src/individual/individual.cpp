@@ -20,19 +20,19 @@ using problem::Problem;
 
 Node::Node(const Problem & problem, const int & depth) {
   if (depth < problem.max_depth) {
-    // Assign random internal type
-    int_dist dist(0, internal_types - 1); // Closed interval
+    // assign random internal type
+    int_dist dist(0, internal_types - 1); // closed interval
     type = Type(dist(engine));
-    // Recursively create subtrees
+    // recursively create subtrees
     for (int i = 0; i < arity; i++)
       children.emplace_back(Node(problem, depth + 1));
   } else {
-    // Reached max depth, assign random terminal type
-    int_dist dist(internal_types, internal_types + terminal_types - 1); // Closed interval
+    // reached max depth, assign random terminal type
+    int_dist dist(internal_types, internal_types + terminal_types - 1); // closed interval
     type = Type(dist(engine));
-    // Setup constant type; input is provided on evaluation
+    // setup constant type; input is provided on evaluation
     if (type == CONSTANT) {
-      // Choose a random value between the problem's min and max
+      // choose a random value between the problem's min and max
       real_dist dist(problem.constant_min, problem.constant_max);
       constant = dist(engine);
     }
@@ -53,9 +53,7 @@ double Node::evaluate(const double & input) {
   case MULTIPLY:
     return left * right;
   case DIVIDE:
-    if (right == 0)
-      return 1;
-    return left / right;
+    return right == 0 ? 1 : left / right; // protected
   case CONSTANT:
     return constant;
   case INPUT:
@@ -79,30 +77,31 @@ Size Node::size() {
 
 void Node::print(const int & depth) {
   // Post-order traversal print of expression in RPN/posfix notation
-  std::cout << '(';
+  using std::cout;
+  cout << '(';
   for (auto child : children)
     child.print(depth + 1);
   switch(type) {
   case ADD:
-    std:: cout << " + ";
+    cout << " + ";
     break;
   case SUBTRACT:
-    std:: cout << " - ";
+    cout << " - ";
     break;
   case MULTIPLY:
-    std:: cout << " * ";
+    cout << " * ";
     break;
   case DIVIDE:
-    std:: cout << " / ";
+    cout << " / ";
     break;
   case CONSTANT:
-    std:: cout << constant;
+    cout << constant;
     break;
   case INPUT:
-    std:: cout << "X";
+    cout << "X";
     break;
   }
-  std:: cout << ')';
+  cout << ')';
 }
 
 Individual::Individual(const Problem & p): problem(p), root(Node(problem)) {
@@ -122,7 +121,7 @@ double Individual::evaluate() {
 void Individual::print() {
   std::cout << "Expression tree of size " << size.total
 	    << " with " << size.internals << " internals"
-	    << " and " << size.leafs << " leafs "
+	    << " and " << size.leafs << " leafs"
 	    << " has the following formula: " << std::endl;
   root.print();
   std::cout << std::endl

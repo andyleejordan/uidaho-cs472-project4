@@ -27,7 +27,7 @@ int main() {
   best.print_calculation();
   std::cout << "Average fitness: " << sum / population.size() << std::endl;
   int total_size = 0;
-  for (const Individual member : population) total_size += member.get_total();
+  total_size = std::accumulate(population.begin(), population.end(), 0, [](const int & a, const Individual & b)->double {return a + b.get_total();});
   std::cout << "Average size: " << total_size / population.size() << std::endl;
   return 0;
 }

@@ -21,7 +21,6 @@ namespace individual {
   const int terminal_types = 2;
 
   struct Size {
-    int total = 0;
     int internals = 0;
     int leafs = 0;
   };
@@ -50,7 +49,7 @@ namespace individual {
     void print_formula() const;
     void print_calculation() const;
     double get_fitness() const {return fitness;}
-    int get_total() const {return size.total;}
+    int get_total() const {return size.internals + size.leafs;}
     int get_internals() const {return size.internals;}
     int get_leafs() const {return size.leafs;}
   };

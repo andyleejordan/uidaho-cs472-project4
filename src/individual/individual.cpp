@@ -79,7 +79,6 @@ Size Node::size() const {
   }
   if (children.size() == 0) ++size.leafs;
   else ++size.internals;
-  size.total = size.leafs + size.internals;
   return size;
 }
 
@@ -130,9 +129,9 @@ double Individual::evaluate() const {
 }
 
 void Individual::print_formula() const {
-  std::cout << "Expression tree of size " << size.total
-	    << " with " << size.internals << " internals"
-	    << " and " << size.leafs << " leafs"
+  std::cout << "Expression tree of size " << get_total()
+	    << " with " << get_internals() << " internals"
+	    << " and " << get_leafs() << " leafs"
 	    << " has the following formula: " << std::endl;
   root.print();
   std::cout << std::endl;

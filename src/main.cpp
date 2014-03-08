@@ -2,6 +2,7 @@
  * Copyright 2014 Andrew Schwartzmeyer
  */
 
+#include <cmath>
 #include <iostream>
 #include <algorithm>
 #include <numeric>
@@ -14,9 +15,9 @@ int main() {
   using individual::Individual;
   using namespace problem;
 
-  const pairs values = { {1, 1}, {2, 4}, {3, 9}, {4, 16}, {5, 25}, {6, 36},
-			 {7, 49}, {8, 64}, {9, 81}, {10, 100}, {11, 121} };
-  const Problem problem(values, 3);
+  pairs values;
+  for (int i = 0; i <=16; ++i) values.emplace_back(std::make_tuple(i, std::pow(i, 2)));
+  const Problem problem(values, 8);
   const int population_size = 256;
   std::vector<Individual> population;
   for (int i = 0; i < population_size; ++i)

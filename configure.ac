@@ -3,11 +3,10 @@
 
 AC_PREREQ([2.69])
 AC_INIT([CS 472: Genetic Programming], [0.1], [andrew@schwartzmeyer.com])
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
 AC_CONFIG_SRCDIR([config.h.in])
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_FILES([Makefile
-                 src/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile])
 AC_CONFIG_MACRO_DIRS([m4])
 
 # Checks for programs.

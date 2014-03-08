@@ -28,10 +28,9 @@ autoreconf -vfi
 #+end_src
 
 * Assignment :noexport:
-[[http://www2.cs.uidaho.edu/~cs472_572/s14/GPProjectA.html][From Professor Terry Soule]]
-** Project #2a Genetic Program
+** DONE Project #2a Genetic Program
    DEADLINE: <2014-03-07 Fri>
-
+[[http://www2.cs.uidaho.edu/~cs472_572/s14/GPProjectA.html][From Professor Terry Soule]]
 This is the first subproject of the GP project. The goal of this
 subproject is to create a population of GP tree structures for a
 symbolic regression problem.  If you want to use it, or refer to it, I
@@ -83,6 +82,37 @@ For the report:
 - Results - Basically, does it seem to be working.
 - Conclusions - If it's not working, why not. And what are then next
   steps to complete the project.
+
+** TODO Project #2b Genetic Program
+   DEADLINE: <2014-03-14 Fri>
+This is the second subproject of the GP project. The goal of this subproject is to finish the pieces of the GP for a symbolic regression problem.
+For this subproject you will need to complete the GP including the following functionallity (in addition to the functions from the previous assignment):
+
+- Add a conditional to the function set of the expression trees.
+- Mutation
+- Crossover of two trees
+- Selection
+- Elitism if you are using a generational model
+- Test the GP to make sure that it is working.
+
+Project Write-up: For this subproject you only need a description of
+the general algorithm:
+
+- generational or steady-state
+- how mutation works
+- the selction mechanism, etc.
+- a description of any problems so far
+
+Note that the write-up may be fairly short.
+** TODO Project #2 Genetic Program
+   DEADLINE: <2014-03-23 Sun>
+
+This is the final part of Project 2. For this project you need to
+present a summary of your GP program and the results. Here is a
+template for the summary in Word and pdf (and the latex). Note that
+for this project you do not need to do a lot of writting. An abstract,
+fill in the table summarizing your algorithms, two graphs, and a
+conclusion/discussion.
 
 * Algorithm
 

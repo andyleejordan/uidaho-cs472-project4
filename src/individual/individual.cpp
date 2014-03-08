@@ -76,30 +76,32 @@ void Node::print(const int & depth) {
   std::cout << '(';
   for (auto child : children)
     child.print(depth + 1);
-    switch(type) {
-    case ADD:
-      std:: cout << " + ";
-      break;
-    case SUBTRACT:
-      std:: cout << " - ";
-      break;
-    case MULTIPLY:
-      std:: cout << " * ";
-      break;
-    case DIVIDE:
-      std:: cout << " / ";
-      break;
-    case CONSTANT:
-      std:: cout << constant;
-      break;
-    case INPUT:
-      std:: cout << "X";
-      break;
-    }
+  switch(type) {
+  case ADD:
+    std:: cout << " + ";
+    break;
+  case SUBTRACT:
+    std:: cout << " - ";
+    break;
+  case MULTIPLY:
+    std:: cout << " * ";
+    break;
+  case DIVIDE:
+    std:: cout << " / ";
+    break;
+  case CONSTANT:
+    std:: cout << constant;
+    break;
+  case INPUT:
+    std:: cout << "X";
+    break;
+  }
   std:: cout << ')';
 }
 
 Individual::Individual(const Problem & p): problem(p), root(Node(problem)) {
+  size = root.size();
+  fitness = evaluate();
 }
 
 double Individual::evaluate() {

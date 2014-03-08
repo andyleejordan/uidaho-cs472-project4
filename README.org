@@ -5,16 +5,28 @@
 #+DESCRIPTION:
 #+KEYWORDS:
 #+LANGUAGE:  en
-#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   H:3 num:t toc:nil \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
 #+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
 #+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
 #+EXPORT_SELECT_TAGS: export
 #+EXPORT_EXCLUDE_TAGS: noexport
-#+LINK_UP:   
-#+LINK_HOME: 
+#+LINK_UP:
+#+LINK_HOME:
 #+XSLT:
 
-* Assignment
+* Build :noexport:
+Makes use of autotools. Necessary files:
+- configure.ac (with help from autoscan)
+- Makefile.am
+- src/Makefile.am
+- m4/AX_CXX_COMPILE_STDCXX_11.m4 (for C++11 macro)
+
+To configure and build:
+#+begin_src sh
+autoreconf -vfi
+./configure && make
+#+end_src
+
 [[http://www2.cs.uidaho.edu/~cs472_572/s14/GPProjectA.html][From Professor Terry Soule]]
 ** Project #2a Genetic Program
    DEADLINE: <2014-03-07 Fri>
@@ -71,15 +83,6 @@ For the report:
 - Conclusions - If its not working, why not. And what are then next
   steps to complete the project.
 
-* Build
-Makes use of autotools. Necessary files:
-- configure.ac (with help from autoscan)
-- Makefile.am
-- src/Makefile.am
-- m4/AX_CXX_COMPILE_STDCXX_11.m4 (for C++11 macro)
+* Algorithm
 
-To configure and build:
-#+begin_src sh
-autoreconf -vfi
-./configure && make
 #+end_src

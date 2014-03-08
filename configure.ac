@@ -6,7 +6,6 @@ AC_INIT([CS 472: Genetic Programming], [0.1], [andrew@schwartzmeyer.com])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
 AC_CONFIG_SRCDIR([config.h.in])
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_FILES([Makefile])
 AC_CONFIG_MACRO_DIRS([m4])
 
 # Checks for programs.
@@ -20,8 +19,10 @@ AX_CXX_COMPILE_STDCXX_11
 # Checks for header files.
 
 # Checks for typedefs, structures, and compiler characteristics.
+AC_CHECK_HEADER_STDBOOL
 
 # Checks for library functions.
 AC_CHECK_FUNCS([pow sqrt])
 
+AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

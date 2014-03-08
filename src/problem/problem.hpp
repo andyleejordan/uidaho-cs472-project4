@@ -22,7 +22,7 @@ namespace problem {
     const double constant_max;
     Problem(const pairs & v,
 	    const int & depth = 10,
-	    const double & min = -10,
+	    const double & min = 0,
 	    const double & max = 10):
       values(v), max_depth(depth), constant_min(min), constant_max(max) {}
   };

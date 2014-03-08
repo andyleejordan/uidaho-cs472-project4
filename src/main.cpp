@@ -10,8 +10,9 @@
 int main() {
   using individual::Individual;
   using namespace problem;
+
   pairs values = { {1, 1}, {2, 4}, {3, 9}, {4, 16}, {5, 25}, {6, 36} };
-  Problem problem(values, 3);
+  Problem problem(values, 16);
   Individual solution(problem);
   solution.print();
   return 0;

@@ -1,0 +1,27 @@
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+
+AC_PREREQ([2.69])
+AC_INIT([CS 472: Genetic Programming], [0.1], [andrew@schwartzmeyer.com])
+AM_INIT_AUTOMAKE
+AC_CONFIG_SRCDIR([config.h.in])
+AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_FILES([Makefile
+                 src/Makefile])
+AC_CONFIG_MACRO_DIRS([m4])
+
+# Checks for programs.
+AC_PROG_CXX
+
+AX_CXX_COMPILE_STDCXX_11
+
+# Checks for libraries.
+
+# Checks for header files.
+
+# Checks for typedefs, structures, and compiler characteristics.
+
+# Checks for library functions.
+AC_CHECK_FUNCS([pow sqrt])
+
+AC_OUTPUT

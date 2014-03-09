@@ -11,15 +11,18 @@ AC_CONFIG_MACRO_DIRS([m4])
 # Checks for programs.
 AC_PROG_CXX
 
-# Checks for C++11.
-AX_CXX_COMPILE_STDCXX_11
-
 # Checks for libraries.
 
 # Checks for header files.
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL
+
+# Checks for compiler warnings.
+AX_CXXFLAGS_WARN_ALL
+
+# Checks for C++11.
+AX_CXX_COMPILE_STDCXX_11
 
 # Checks for library functions.
 AC_CHECK_FUNCS([pow sqrt])

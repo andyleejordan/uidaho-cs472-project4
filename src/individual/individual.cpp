@@ -14,6 +14,13 @@
 #include "../problem/problem.hpp"
 #include "../random/random_generator.hpp"
 
+namespace individual {
+  const int terminals = 2;
+  const int unaries = 4;
+  const int binaries = 4;
+  const int quadnaries = 1;
+}
+
 using namespace individual;
 using namespace random_generator;
 using problem::Problem;
@@ -21,51 +28,61 @@ using problem::Problem;
 Node::Node(const Problem & problem, const int & depth) {
   if (depth < problem.max_depth) {
     // assign random internal type
-    int_dist dist(0, internal_types - 1); // closed interval
+    int_dist dist(terminals + unaries, terminals + unaries + binaries + quadnaries - 1); // closed interval
     type = Type(dist(engine));
     int arity = 0;
-    if (type < binary_types) arity = 2; // for binary operators
-    else if (type == COND) arity = 4; // if-else conditional
+    if (type - terminals < unaries) arity = 1; // for unary operators
+    else if (type - terminals < unaries + binaries) arity = 2; // for binary operators
+    else if (type - terminals < unaries + binaries + quadnaries) arity = 4; // if-else conditional
     // recursively create subtrees
     for (int i = 0; i < arity; i++)
       children.emplace_back(Node(problem, depth + 1));
   } else {
     // reached max depth, assign random terminal type
-    int_dist dist(internal_types, internal_types + terminal_types - 1); // closed interval
+    int_dist dist(0, terminals - 1); // closed interval
     type = Type(dist(engine));
     // setup constant type; input is provided on evaluation
-    if (type == CONSTANT) {
+    if (type == constant) {
       // choose a random value between the problem's min and max
       real_dist dist(problem.constant_min, problem.constant_max);
-      constant = dist(engine);
+      k = dist(engine);
     }
   }
 }
 
-double Node::evaluate(const double & input) const {
-  double left, right;
-  if (type != INPUT and type != CONSTANT) {
-    left = children[0].evaluate(input);
-    right = children[1].evaluate(input);
+double Node::evaluate(const double & x) const {
+  double a, b, c, d;
+  if (type > terminals) // evaulate unary
+    a = children[0].evaluate(x);
+  if (type > terminals + unaries) // evaluate binary
+    b = children[1].evaluate(x);
+  if (type > terminals + unaries + binaries) {
+    c = children[2].evaluate(x);
+    d = children[3].evaluate(x);
   }
   switch(type) {
-  case ADD:
-    return left + right;
-  case SUBTRACT:
-    return left - right;
-  case MULTIPLY:
-    return left * right;
-  case DIVIDE:
-    return right == 0 ? 1 : left / right; // protected
-  case COND: {
-    double if_true = children[2].evaluate(input);
-    double if_false = children[3].evaluate(input);
-    return left < right ? if_true : if_false;
-  }
-  case CONSTANT:
-    return constant;
-  case INPUT:
-    return input;
+  case constant:
+    return k;
+  case input:
+    return x;
+  case sqrt:
+    return std::sqrt(std::abs(a)); // protected
+  case sin:
+    return std::sin(a);
+  case log:
+    return (a == 0) ? 0 : std::log(std::abs(a)); // protected
+  case exp:
+    return std::exp(a);
+  case add:
+    return a + b;
+  case subtract:
+    return a - b;
+  case multiply:
+    return a * b;
+  case divide:
+    return (b == 0) ? 1 : a / b; // protected
+  case cond:
+    return (a < b) ? c : d;
   }
 }
 

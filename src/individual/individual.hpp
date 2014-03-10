@@ -15,10 +15,10 @@
 namespace individual {
   using problem::Problem;
 
-  enum Type { ADD, SUBTRACT, DIVIDE, MULTIPLY, COND, CONSTANT, INPUT };
-  const int binary_types = 4;
-  const int internal_types = 5;
-  const int terminal_types = 2;
+  enum  { constant, input,
+	      sqrt, sin, log, exp,
+	      add, subtract, divide, multiply,
+	      cond };
 
   struct Size {
     int internals = 0;
@@ -28,11 +28,11 @@ namespace individual {
   class Node {
   protected:
     Type type;
-    double constant = 0; // excess for internal nodes
+    double k = 0; // excess for internal nodes
     std::vector<Node> children;
   public:
     Node(const Problem & problem, const int & depth = 0);
-    double evaluate(const double & input = 1) const;
+    double evaluate(const double & x = 1) const;
     void print(const int & depth = 0) const;
     Size size() const;
   };

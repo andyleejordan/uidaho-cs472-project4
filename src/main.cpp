@@ -37,9 +37,9 @@ int test_runner() {
   // find Individual with lowest "fitness" AKA error from populaiton
   Individual best = *std::min_element(population.begin(), population.end(), [](const Individual & a, const Individual & b)->bool {return a.get_fitness() < b.get_fitness();});
   // calculate sum of fitnesses
-  double total_fitness = std::accumulate(population.begin(), population.end(), 0., [](const double & a, const Individual & b)->double {return a + b.get_fitness();});
+  double total_fitness = std::accumulate(population.begin(), population.end(), 0., [](const double & a, const Individual & b)->double const {return a + b.get_fitness();});
   // caclulate sum of tree sizes
-  int total_size = std::accumulate(population.begin(), population.end(), 0, [](const int & a, const Individual & b)->double {return a + b.get_total();});
+  int total_size = std::accumulate(population.begin(), population.end(), 0, [](const int & a, const Individual & b)->double const {return a + b.get_total();});
   // print results
   best.print_formula();
   best.print_calculation();

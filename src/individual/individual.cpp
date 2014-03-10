@@ -4,7 +4,9 @@
  * Source file for Individual
  */
 
+#include <cassert>
 #include <cmath>
+#include <algorithm>
 #include <iostream>
 #include <memory>
 #include <tuple>
@@ -14,33 +16,37 @@
 #include "../problem/problem.hpp"
 #include "../random/random_generator.hpp"
 
-namespace individual {
-  const int terminals = 2;
-  const int unaries = 4;
-  const int binaries = 4;
-  const int quadnaries = 1;
-}
-
 using namespace individual;
 using namespace random_generator;
 using problem::Problem;
 
+namespace individual {
+  using std::vector;
+  vector<Function> terminals { constant, input };
+  vector<Function> unaries { sqrt, sin, log, exp };
+  vector<Function> binaries { add, subtract, divide, multiply, pow };
+  vector<Function> quadnaries { cond };
+  vector<Function> internals {log, sqrt, sin, add, subtract, divide, multiply, cond};
+}
+
 Node::Node(const Problem & problem, const int & depth) {
+  using std::find;
   if (depth < problem.max_depth) {
     // assign random internal type
-    int_dist dist(terminals + unaries, terminals + unaries + binaries + quadnaries - 1); // closed interval
-    type = Type(dist(engine));
+    int_dist dist(0, internals.size() - 1); // closed interval
+    type = Function(internals[dist(engine)]);
     int arity = 0;
-    if (type - terminals < unaries) arity = 1; // for unary operators
-    else if (type - terminals < unaries + binaries) arity = 2; // for binary operators
-    else if (type - terminals < unaries + binaries + quadnaries) arity = 4; // if-else conditional
+    if (find(unaries.begin(), unaries.end(), type) != unaries.end()) arity = 1;
+    else if (find(binaries.begin(), binaries.end(), type) != binaries.end()) arity = 2;
+    else if (find(quadnaries.begin(), quadnaries.end(), type) != quadnaries.end()) arity = 4;
+    assert(arity != 0);
     // recursively create subtrees
     for (int i = 0; i < arity; i++)
       children.emplace_back(Node(problem, depth + 1));
   } else {
     // reached max depth, assign random terminal type
-    int_dist dist(0, terminals - 1); // closed interval
-    type = Type(dist(engine));
+    int_dist dist(0, terminals.size() - 1); // closed interval
+    type = Function(terminals[dist(engine)]);
     // setup constant type; input is provided on evaluation
     if (type == constant) {
       // choose a random value between the problem's min and max
@@ -52,11 +58,15 @@ Node::Node(const Problem & problem, const int & depth) {
 
 double Node::evaluate(const double & x) const {
   double a, b, c, d;
-  if (type > terminals) // evaulate unary
+  if (find(unaries.begin(), unaries.end(), type) != unaries.end())
     a = children[0].evaluate(x);
-  if (type > terminals + unaries) // evaluate binary
+  if (find(binaries.begin(), binaries.end(), type) != binaries.end()) {
+    a = children[0].evaluate(x);
     b = children[1].evaluate(x);
-  if (type > terminals + unaries + binaries) {
+  }
+  if (find(quadnaries.begin(), quadnaries.end(), type) != quadnaries.end()) {
+    a = children[0].evaluate(x);
+    b = children[1].evaluate(x);
     c = children[2].evaluate(x);
     d = children[3].evaluate(x);
   }
@@ -81,18 +91,21 @@ double Node::evaluate(const double & x) const {
     return a * b;
   case divide:
     return (b == 0) ? 1 : a / b; // protected
+  case pow:
+    return std::pow(std::abs(a), std::abs(b));
   case cond:
     return (a < b) ? c : d;
   }
 }
 
 Size Node::size() const {
-  // Recursively count children via pre-order traversal
-  // Keep track of internals, leafs, and total
+  // Recursively count children via post-order traversal
+  // Keep track of internals and leafs via Size struct
   Size size;
-  for (auto child : children) {
-    size.internals += child.size().internals;
-    size.leafs += child.size().leafs;
+  for (const Node & child : children) {
+    Size temp = child.size(); // is this micro-optimizing?
+    size.internals += temp.internals;
+    size.leafs += temp.leafs;
   }
   if (children.size() == 0) ++size.leafs;
   else ++size.internals;
@@ -121,19 +134,19 @@ std::string Node::represent() const {
     return " *";
   case divide:
     return " /";
+  case pow:
+    return " ^";
   case cond:
     return " a < b ? c : d";
   }
 }
 
-void Node::print(const int & depth) const {
+std::string Node::print() const {
   // Post-order traversal print of expression in RPN/posfix notation
-  using std::cout;
-  cout << '(';
+  std::string formula = "(";
   for (auto child : children)
-    child.print(depth + 1);
-  cout << represent();
-  cout << ')';
+    formula += child.print();
+  return formula + represent() + ")";
 }
 
 Individual::Individual(const Problem & p): problem(p), root(Node(problem)) {
@@ -154,9 +167,8 @@ void Individual::print_formula() const {
   std::cout << "Expression tree of size " << get_total()
 	    << " with " << get_internals() << " internals"
 	    << " and " << get_leafs() << " leafs"
-	    << " has the following formula: " << std::endl;
-  root.print();
-  std::cout << std::endl;
+	    << " has the following formula: " << std::endl
+	    << root.print() << std::endl;
 }
 
 void Individual::print_calculation() const {

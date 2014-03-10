@@ -15,10 +15,10 @@
 namespace individual {
   using problem::Problem;
 
-  enum  { constant, input,
-	      sqrt, sin, log, exp,
-	      add, subtract, divide, multiply,
-	      cond };
+  enum Function { constant, input,
+		  sqrt, sin, log, exp,
+		  add, subtract, divide, multiply, pow,
+		  cond };
 
   struct Size {
     int internals = 0;
@@ -26,14 +26,14 @@ namespace individual {
   };
 
   class Node {
-  protected:
-    Type type;
-    double k = 0; // excess for internal nodes
+  private:
+    Function type;
+    double k = 0;
     std::vector<Node> children;
   public:
     Node(const Problem & problem, const int & depth = 0);
     double evaluate(const double & x = 1) const;
-    void print(const int & depth = 0) const;
+    std::string print() const;
     std::string represent() const;
     Size size() const;
   };

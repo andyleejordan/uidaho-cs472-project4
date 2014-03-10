@@ -99,35 +99,40 @@ Size Node::size() const {
   return size;
 }
 
+std::string Node::represent() const {
+  switch(type) {
+  case constant:
+    return std::to_string(k);
+  case input:
+    return "x";
+  case sqrt:
+    return " sqrt";
+  case sin:
+    return " sin";
+  case log:
+    return " log";
+  case exp:
+    return " exp";
+  case add:
+    return " +";
+  case subtract:
+    return " -";
+  case multiply:
+    return " *";
+  case divide:
+    return " /";
+  case cond:
+    return " a < b ? c : d";
+  }
+}
+
 void Node::print(const int & depth) const {
   // Post-order traversal print of expression in RPN/posfix notation
   using std::cout;
   cout << '(';
   for (auto child : children)
     child.print(depth + 1);
-  switch(type) {
-  case ADD:
-    cout << " + ";
-    break;
-  case SUBTRACT:
-    cout << " - ";
-    break;
-  case MULTIPLY:
-    cout << " * ";
-    break;
-  case DIVIDE:
-    cout << " / ";
-    break;
-  case COND:
-    cout << " a < b ? c : d ";
-    break;
-  case CONSTANT:
-    cout << constant;
-    break;
-  case INPUT:
-    cout << "X";
-    break;
-  }
+  cout << represent();
   cout << ')';
 }
 

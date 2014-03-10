@@ -34,6 +34,7 @@ namespace individual {
     Node(const Problem & problem, const int & depth = 0);
     double evaluate(const double & x = 1) const;
     void print(const int & depth = 0) const;
+    std::string represent() const;
     Size size() const;
   };
 

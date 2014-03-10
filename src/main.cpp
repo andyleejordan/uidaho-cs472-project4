@@ -28,8 +28,8 @@ int test_runner() {
     values.emplace_back(std::make_tuple(x, y));
   }
   // create Problem and population of Individuals
-  const int population_size = 4096;
-  const int tree_depth = 4;
+  const int population_size = 128;
+  const int tree_depth = 3;
   const Problem problem(values, tree_depth);
   std::vector<Individual> population;
   for (int i = 0; i < population_size; ++i)

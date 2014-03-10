@@ -18,8 +18,7 @@
 Makes use of autotools. Necessary files:
 - configure.ac (with help from autoscan)
 - Makefile.am
-- src/Makefile.am
-- m4/AX_CXX_COMPILE_STDCXX_11.m4 (for C++11 macro)
+- m4/* for macros
 
 To configure and build:
 #+begin_src sh

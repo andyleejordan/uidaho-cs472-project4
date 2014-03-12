@@ -59,6 +59,9 @@ void Node::set_constant(const Problem & problem) {
 }
 
 double Node::evaluate(const double & x) const {
+  // depth-first post-order recursive evaluation tree
+  // slight overhead with find() to make calls a) clearer and b) easy
+  // to protect without excess recursive calls
   double a, b, c, d;
   if (find(unaries.begin(), unaries.end(), type) != unaries.end())
     a = children[0].evaluate(x);
@@ -72,6 +75,7 @@ double Node::evaluate(const double & x) const {
     c = children[2].evaluate(x);
     d = children[3].evaluate(x);
   }
+  // calculate the result
   switch(type) {
   case constant:
     return k;
@@ -94,7 +98,7 @@ double Node::evaluate(const double & x) const {
   case divide:
     return (b == 0) ? 1 : a / b; // protected
   case pow:
-    return std::pow(std::abs(a), std::abs(b));
+    return std::pow(std::abs(a), std::abs(b)); // protected
   case cond:
     return (a < b) ? c : d;
   }

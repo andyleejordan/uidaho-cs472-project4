@@ -118,6 +118,28 @@ const Size Node::size() const {
   return size;
 }
 
+void Node::mutate(const Problem & problem) {
+  // single node mutation to different function of same arity
+  using std::find;
+  if (find(terminals.begin(), terminals.end(), type) != terminals.end()) {
+    int_dist dist(0, terminals.size() - 1);
+    type = Function(terminals[dist(rg.engine)]);
+    if (type == constant) set_constant(problem);
+  }
+  else if (find(unaries.begin(), unaries.end(), type) != unaries.end()) {
+    int_dist dist(0, unaries.size() - 1);
+    type = Function(unaries[dist(rg.engine)]);
+  }
+  else if (find(binaries.begin(), binaries.end(), type) != binaries.end()) {
+    int_dist dist(0, binaries.size() - 1);
+    type = Function(binaries[dist(rg.engine)]);
+  }
+  else if (find(quadnaries.begin(), quadnaries.end(), type) != quadnaries.end()) {
+    int_dist dist(0, quadnaries.size() - 1);
+    type = Function(quadnaries[dist(rg.engine)]);
+  }
+}
+
 std::string Node::represent() const {
   switch(type) {
   case constant:

@@ -48,12 +48,14 @@ Node::Node(const Problem & problem, const int & depth) {
     int_dist dist(0, terminals.size() - 1); // closed interval
     type = Function(terminals[dist(rg.engine)]);
     // setup constant type; input is provided on evaluation
-    if (type == constant) {
-      // choose a random value between the problem's min and max
-      real_dist dist(problem.constant_min, problem.constant_max);
-      k = dist(rg.engine);
-    }
+    if (type == constant) set_constant(problem);
   }
+}
+
+void Node::set_constant(const Problem & problem) {
+  // choose a random value between the problem's min and max
+  real_dist dist(problem.constant_min, problem.constant_max);
+  k = dist(rg.engine);
 }
 
 double Node::evaluate(const double & x) const {

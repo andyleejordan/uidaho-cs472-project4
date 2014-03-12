@@ -14,7 +14,7 @@
 
 #include "individual.hpp"
 #include "../problem/problem.hpp"
-#include "../random/random_generator.hpp"
+#include "../random_generator/random_generator.hpp"
 
 using namespace individual;
 using namespace random_generator;
@@ -34,7 +34,7 @@ Node::Node(const Problem & problem, const int & depth) {
   if (depth < problem.max_depth) {
     // assign random internal type
     int_dist dist(0, internals.size() - 1); // closed interval
-    type = Function(internals[dist(engine)]);
+    type = Function(internals[dist(rg.engine)]);
     int arity = 0;
     if (find(unaries.begin(), unaries.end(), type) != unaries.end()) arity = 1;
     else if (find(binaries.begin(), binaries.end(), type) != binaries.end()) arity = 2;
@@ -46,12 +46,12 @@ Node::Node(const Problem & problem, const int & depth) {
   } else {
     // reached max depth, assign random terminal type
     int_dist dist(0, terminals.size() - 1); // closed interval
-    type = Function(terminals[dist(engine)]);
+    type = Function(terminals[dist(rg.engine)]);
     // setup constant type; input is provided on evaluation
     if (type == constant) {
       // choose a random value between the problem's min and max
       real_dist dist(problem.constant_min, problem.constant_max);
-      k = dist(engine);
+      k = dist(rg.engine);
     }
   }
 }

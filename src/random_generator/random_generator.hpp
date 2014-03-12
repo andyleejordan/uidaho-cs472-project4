@@ -9,10 +9,18 @@
 #include <random>
 
 namespace random_generator {
-  std::random_device rd;
-  std::mt19937_64 engine(rd());
   typedef std::uniform_real_distribution<double> real_dist;
   typedef std::uniform_int_distribution<> int_dist;
+
+  class RandomGenerator {
+  private:
+    std::random_device rd;
+  public:
+    RandomGenerator();
+    std::mt19937_64 engine;
+  };
+
+  extern RandomGenerator rg;
 }
 
 #endif /* _RANDOM_GENERATOR_H_ */

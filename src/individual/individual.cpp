@@ -4,9 +4,9 @@
  * Source file for Individual
  */
 
+#include <algorithm>
 #include <cassert>
 #include <cmath>
-#include <algorithm>
 #include <iostream>
 #include <memory>
 #include <tuple>
@@ -98,7 +98,7 @@ double Node::evaluate(const double & x) const {
   }
 }
 
-Size Node::size() const {
+const Size Node::size() const {
   // Recursively count children via post-order traversal
   // Keep track of internals and leafs via Size struct
   Size size;

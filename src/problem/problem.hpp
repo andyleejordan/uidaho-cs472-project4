@@ -11,9 +11,7 @@
 #include <tuple>
 
 namespace problem {
-  using std::vector;
-  using std::tuple;
-  typedef vector<const tuple<const double, const double>> pairs;
+  typedef std::vector<const std::tuple<const double, const double>> pairs;
   
   struct Problem {
     const pairs values;

@@ -1,2 +1,6 @@
 bin_PROGRAMS = search
-search_SOURCES = src/main.cpp src/individual/individual.cpp
+search_SOURCES = \
+	src/main.cpp \
+	src/random_generator/random_generator.cpp \
+	src/individual/individual.cpp \
+	src/problem/problem.cpp

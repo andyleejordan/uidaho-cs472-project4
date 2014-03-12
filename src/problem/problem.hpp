@@ -7,8 +7,9 @@
 #ifndef _PROBLEM_H_
 #define _PROBLEM_H_
 
-#include <vector>
+#include <string>
 #include <tuple>
+#include <vector>
 
 namespace problem {
   typedef std::vector<const std::tuple<const double, const double>> pairs;
@@ -24,6 +25,8 @@ namespace problem {
 	    const double & max = 10):
       values(v), max_depth(depth), constant_min(min), constant_max(max) {}
   };
+
+  const pairs get_data(std::string file_name = "test/cs472.dat");
 }
 
 #endif /* _PROBLEM_H_ */

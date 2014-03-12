@@ -15,21 +15,11 @@
 int test_runner() {
   // basic test runner
   using individual::Individual;
-  using problem::pairs;
   using problem::Problem;
-  std::ifstream test_file("test/cs472.dat");
-  if (!test_file.is_open()) return 1;
-  pairs values;
-  while (!test_file.eof()) {
-    // fill values vector with (x, y) pairs
-    int x;
-    double y;
-    test_file >> x >> y;
-    values.emplace_back(std::make_tuple(x, y));
-  }
   // create Problem and population of Individuals
   const int population_size = 128;
   const int tree_depth = 3;
+  const problem::pairs values = problem::get_data();
   const Problem problem(values, tree_depth);
   std::vector<Individual> population;
   for (int i = 0; i < population_size; ++i)

@@ -15,10 +15,12 @@
 namespace individual {
   using problem::Problem;
 
-  enum Function { constant, input,
-		  sqrt, sin, log, exp,
-		  add, subtract, divide, multiply, pow,
-		  cond };
+  enum Function {
+    null,
+    constant, input,
+    sqrt, sin, log, exp,
+    add, subtract, divide, multiply, pow,
+    lesser, greater };
 
   struct Size {
     int internals = 0;
@@ -27,7 +29,7 @@ namespace individual {
 
   class Node {
   private:
-    Function type;
+    Function function = null;
     int arity = 0; // space for time trade-off
     double k = 0; // excess for internal nodes
     std::vector<Node> children;

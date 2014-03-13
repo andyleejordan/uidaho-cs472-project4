@@ -22,11 +22,12 @@ using problem::Problem;
 
 namespace individual {
   using std::vector;
-  vector<Function> terminals { constant, input };
-  vector<Function> unaries { sqrt, sin, log, exp };
-  vector<Function> binaries { add, subtract, divide, multiply, pow };
-  vector<Function> quadnaries { cond };
-  vector<Function> internals {log, sqrt, sin, add, subtract, divide, multiply, cond};
+  // vectors of same-arity function enums
+  vector<Function> terminals {constant, input};
+  vector<Function> unaries {sqrt, sin, log, exp};
+  vector<Function> binaries {add, subtract, divide, multiply, pow};
+  vector<Function> quadnaries {lesser, greater};
+  vector<Function> internals {log, sqrt, sin, add, subtract, divide, multiply, lesser, greater};
 }
 
 Node::Node(const Problem & problem, const int & depth) {
@@ -74,7 +75,9 @@ double Node::evaluate(const double & x) const {
     d = children[3].evaluate(x);
   }
   // calculate the result
-  switch(type) {
+  switch(function) {
+  case null:
+    assert(false); // never calculate empty node
   case constant:
     return k;
   case input:
@@ -97,8 +100,10 @@ double Node::evaluate(const double & x) const {
     return (b == 0) ? 1 : a / b; // protected
   case pow:
     return std::pow(std::abs(a), std::abs(b)); // protected
-  case cond:
+  case lesser:
     return (a < b) ? c : d;
+  case greater:
+    return (a > b) ? c : d;
   }
 }
 

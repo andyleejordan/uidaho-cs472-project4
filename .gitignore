@@ -18,3 +18,8 @@
 /src/individual/.deps/
 /src/individual/.dirstamp
 /stamp-h1
+/config.h.in~
+/src/problem/.deps/
+/src/problem/.dirstamp
+/src/random_generator/.deps/
+/src/random_generator/.dirstamp

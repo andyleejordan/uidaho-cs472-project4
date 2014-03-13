@@ -18,17 +18,17 @@ namespace problem {
 
   struct Problem {
     const pairs values;
-    const int iterations = 128;
-    const int population_size = 64;
-    const int max_depth = 3;
-    const int tournament_size = 4;
-    const int crossover_size = 2;
-    const int elitism_size = 2;
-    const double constant_min = 0;
-    const double constant_max = 10;
-    const double mutate_chance = 0.01;
-    const double crossover_chance = 0.8;
-    Problem(const pairs & v): values(v) {}
+    const int iterations;
+    const int population_size;
+    const int max_depth;
+    const int tournament_size;
+    const int crossover_size;
+    const int elitism_size;
+    const double constant_min;
+    const double constant_max;
+    const double mutate_chance;
+    const double crossover_chance;
+    Problem(const pairs & v, const int & i, const int & p);
   };
 }
 

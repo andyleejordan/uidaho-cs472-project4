@@ -10,6 +10,6 @@
   // int total_size = std::accumulate(population.begin(), population.end(), 0, [](const int & a, const Individual & b)->double const {return a + b.get_total();});
 
 int main() {
-  const problem::Problem problem{problem::get_data()};
+  const problem::Problem problem{problem::get_data(), 512, 2048};
   algorithm::genetic(problem);
 }

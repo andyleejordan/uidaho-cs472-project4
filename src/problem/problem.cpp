@@ -30,3 +30,7 @@ const problem::pairs problem::get_data(std::string file_name) {
   }
   return values;
 }
+
+problem::Problem::Problem(const pairs & v, const int & i, const int & p):
+  values(v), iterations(i), population_size(p), max_depth(4), tournament_size(4), crossover_size(2),
+  elitism_size(2), constant_min(0), constant_max(10), mutate_chance(0.01), crossover_chance(0.8) {}

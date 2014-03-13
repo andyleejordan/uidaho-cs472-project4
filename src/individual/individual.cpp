@@ -35,7 +35,6 @@ Node::Node(const Problem & problem, const int & depth) {
     // assign random internal type
     int_dist dist(0, internals.size() - 1); // closed interval
     type = Function(internals[dist(rg.engine)]);
-    int arity = 0;
     if (find(unaries.begin(), unaries.end(), type) != unaries.end()) arity = 1;
     else if (find(binaries.begin(), binaries.end(), type) != binaries.end()) arity = 2;
     else if (find(quadnaries.begin(), quadnaries.end(), type) != quadnaries.end()) arity = 4;
@@ -49,6 +48,7 @@ Node::Node(const Problem & problem, const int & depth) {
     type = Function(terminals[dist(rg.engine)]);
     // setup constant type; input is provided on evaluation
     if (type == constant) set_constant(problem);
+    assert(arity == 0);
   }
 }
 
@@ -60,16 +60,14 @@ void Node::set_constant(const Problem & problem) {
 
 double Node::evaluate(const double & x) const {
   // depth-first post-order recursive evaluation tree
-  // slight overhead with find() to make calls a) clearer and b) easy
-  // to protect without excess recursive calls
   double a, b, c, d;
-  if (find(unaries.begin(), unaries.end(), type) != unaries.end())
+  if (arity == 1)
     a = children[0].evaluate(x);
-  if (find(binaries.begin(), binaries.end(), type) != binaries.end()) {
+  else if (arity == 2) {
     a = children[0].evaluate(x);
     b = children[1].evaluate(x);
   }
-  if (find(quadnaries.begin(), quadnaries.end(), type) != quadnaries.end()) {
+  else if (arity == 4) {
     a = children[0].evaluate(x);
     b = children[1].evaluate(x);
     c = children[2].evaluate(x);
@@ -120,21 +118,20 @@ const Size Node::size() const {
 
 void Node::mutate(const Problem & problem) {
   // single node mutation to different function of same arity
-  using std::find;
-  if (find(terminals.begin(), terminals.end(), type) != terminals.end()) {
+  if (arity == 0) {
     int_dist dist(0, terminals.size() - 1);
     type = Function(terminals[dist(rg.engine)]);
     if (type == constant) set_constant(problem);
   }
-  else if (find(unaries.begin(), unaries.end(), type) != unaries.end()) {
+  else if (arity == 1) {
     int_dist dist(0, unaries.size() - 1);
     type = Function(unaries[dist(rg.engine)]);
   }
-  else if (find(binaries.begin(), binaries.end(), type) != binaries.end()) {
+  else if (arity == 2) {
     int_dist dist(0, binaries.size() - 1);
     type = Function(binaries[dist(rg.engine)]);
   }
-  else if (find(quadnaries.begin(), quadnaries.end(), type) != quadnaries.end()) {
+  else if (arity == 4) {
     int_dist dist(0, quadnaries.size() - 1);
     type = Function(quadnaries[dist(rg.engine)]);
   }

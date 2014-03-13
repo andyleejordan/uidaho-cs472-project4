@@ -275,7 +275,7 @@ Node & Individual::operator[](const int & i) {
   return root.visit(i, visiting);
 }
 
-void crossover(Individual & mother, Individual & father) {
+void individual::crossover(Individual & mother, Individual & father) {
   int_dist dis_a(0, mother.get_total() - 1);
   int_dist dis_b(0, father.get_total() - 1);
   std::swap(mother[dis_a(rg.engine)], father[dis_b(rg.engine)]);

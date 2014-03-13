@@ -123,6 +123,20 @@ const Size Node::size() const {
 }
 
 void Node::mutate(const Problem & problem) {
+namespace individual {
+  Node empty;
+}
+
+Node & Node::visit(const int & i, int & visiting) {
+  // depth-first search for taget node
+  if (visiting == i) return *this; // return reference to found node
+  for (Node & child : children) {
+    Node & temp = child.visit(i, ++visiting); // mark each node
+    if (temp.function != null) return temp; // return found node
+  }
+  return empty; // need to indicate "not-found"
+}
+
   // single node mutation to different function of same arity
   if (arity == 0) {
     int_dist dist(0, terminals.size() - 1);

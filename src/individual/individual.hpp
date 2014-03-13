@@ -34,11 +34,13 @@ namespace individual {
     double k = 0; // excess for internal nodes
     std::vector<Node> children;
   public:
+    Node() {};
     Node(const Problem & problem, const int & depth = 0);
     std::string print() const;
     std::string represent() const;
     double evaluate(const double & x = 1) const;
     const Size size() const;
+    Node & visit(const int & i, int & visiting);
   };
 
   class Individual {

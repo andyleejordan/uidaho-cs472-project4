@@ -28,7 +28,7 @@ namespace individual {
   vector<Function> unaries {sqrt, sin, log, exp};
   vector<Function> binaries {add, subtract, divide, multiply, pow};
   vector<Function> quadnaries {lesser, greater};
-  vector<Function> internals {log, sqrt, sin, add, subtract, divide, multiply, lesser, greater};
+  vector<Function> internals {sqrt, sin, log, exp, add, subtract, divide, multiply, pow, lesser, greater};
 }
 
 Node::Node(const Problem & problem, const int & depth) {

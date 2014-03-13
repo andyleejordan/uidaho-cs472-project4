@@ -19,6 +19,7 @@
 using namespace individual;
 using namespace random_generator;
 using problem::Problem;
+using std::string;
 
 namespace individual {
   using std::vector;
@@ -54,7 +55,7 @@ Node::Node(const Problem & problem, const int & depth) {
   }
 }
 
-std::string Node::represent() const {
+string Node::represent() const {
   switch(function) {
   case null:
     assert(false); // never represent empty node
@@ -87,9 +88,9 @@ std::string Node::represent() const {
   }
 }
 
-std::string Node::print() const {
+string Node::print() const {
   // Post-order traversal print of expression in RPN/postfix notation
-  std::string formula = "(";
+  string formula = "(";
   for (auto child : children)
     formula += child.print();
   return formula + represent() + ")";
@@ -221,26 +222,32 @@ Individual::Individual(const Problem & problem) {
   evaluate(problem.values);
 }
 
-void Individual::print_formula() const {
-  std::cout << "Expression tree of size " << get_total()
-	    << " with " << get_internals() << " internals"
-	    << " and " << get_leafs() << " leafs"
-	    << " has the following formula: " << std::endl
-	    << root.print() << std::endl;
+string Individual::print_formula() const {
+  using std::to_string;
+  string formula = "Expression tree of size " + to_string(get_total())
+    + " with " + to_string(get_internals()) + " internals"
+    + " and " + to_string(get_leafs()) + " leafs"
+    + " has the following formula: " + "\n"
+    + root.print() + "\n";
+  return formula;
 }
 
 string Individual::print_calculation(const problem::pairs & values) const {
+  using std::to_string;
+  using std::get;
   double fitness = 0;
-    double output = root.evaluate(std::get<0>(pair));
-    double error = std::pow(output - std::get<1>(pair), 2);
+  string calculation;
   for (auto pair : values) {
+    double output = root.evaluate(get<0>(pair));
+    double error = std::pow(output - get<1>(pair), 2);
     fitness += error;
-    std::cout << "f(" << std::get<0>(pair)
-	      << ") = " << output
-	      << ", expected " << std::get<1>(pair)
-	      << ", error = " << error << "\n";
+    calculation += + "f(" + to_string(get<0>(pair))
+      + ") = " + to_string(output)
+      + ", expected " + to_string(get<1>(pair))
+      + ", error = " + to_string(error) + "\n";
   }
-  std::cout << "Total fitness: " << std::sqrt(fitness) << ".\n";
+  calculation += "Total fitness: " + to_string(std::sqrt(fitness)) + ".\n";
+  return calculation;
 }
 
 void Individual::update_size() {

@@ -14,6 +14,7 @@
 
 namespace individual {
   using problem::Problem;
+  using std::string;
 
   enum Function {
     null,
@@ -37,9 +38,9 @@ namespace individual {
     void mutate_self(const double &, const double &);
   public:
     Node() {};
-    std::string print() const;
-    std::string represent() const;
     Node(const Problem &, const int & depth = 0);
+    string print() const;
+    string represent() const;
     double evaluate(const double &) const;
     const Size size() const;
     Node & visit(const int &, int &);

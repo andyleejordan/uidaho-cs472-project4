@@ -33,6 +33,7 @@ namespace individual {
     int arity = 0; // space for time trade-off
     double k = 0; // excess for internal nodes
     std::vector<Node> children;
+    void set_constant(const Problem & problem);
   public:
     Node() {};
     Node(const Problem & problem, const int & depth = 0);

@@ -10,9 +10,7 @@
 
 #include "problem.hpp"
 
-using problem::pairs;
-
-const pairs problem::get_data(std::string file_name) {
+const problem::pairs problem::get_data(std::string file_name) {
   std::ifstream data_file(file_name);
   if (!data_file.is_open()) {
     std::cerr << "Data file " << file_name << " could not be read!";

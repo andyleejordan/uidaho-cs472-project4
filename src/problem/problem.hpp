@@ -14,24 +14,22 @@
 namespace problem {
   typedef std::vector<const std::tuple<const double, const double>> pairs;
   
+  const pairs get_data(std::string file_name = "test/cs472.dat");
+
   struct Problem {
     const pairs values;
-    const int max_depth;
-    const double constant_min;
-    const double constant_max;
-    const double mutate_chance;
-    const double crossover_chance;
-    Problem(const pairs & v,
-	    const int & depth = 10,
-	    const double & min = 0,
-	    const double & max = 10,
-	    const double & mutate = 0.2,
-	    const double & crossover = 0.8 ):
-      values(v), max_depth(depth), constant_min(min), constant_max(max),
-      mutate_chance(mutate), crossover_chance(crossover) {}
+    const int iterations = 128;
+    const int population_size = 64;
+    const int max_depth = 3;
+    const int tournament_size = 4;
+    const int crossover_size = 2;
+    const int elitism_size = 2;
+    const double constant_min = 0;
+    const double constant_max = 10;
+    const double mutate_chance = 0.01;
+    const double crossover_chance = 0.8;
+    Problem(const pairs & v): values(v) {}
   };
-
-  const pairs get_data(std::string file_name = "test/cs472.dat");
 }
 
 #endif /* _PROBLEM_H_ */

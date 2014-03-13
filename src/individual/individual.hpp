@@ -53,6 +53,7 @@ namespace individual {
     double fitness;
     Node root;
   public:
+    Individual() {}
     Individual(const Problem &);
     string print_formula() const;
     string print_calculation(const problem::pairs &) const;

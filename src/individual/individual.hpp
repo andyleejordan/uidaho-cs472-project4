@@ -63,6 +63,7 @@ namespace individual {
     double evaluate() const;
     void mutate();
     Node & operator[](const int & i);
+    friend void crossover(Individual & mother, Individual & father);
   };
 }
 

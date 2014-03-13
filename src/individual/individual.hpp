@@ -33,37 +33,37 @@ namespace individual {
     int arity = 0; // space for time trade-off
     double k = 0; // excess for internal nodes
     std::vector<Node> children;
-    void set_constant(const Problem & problem);
-    void mutate_self(const Problem & problem);
+    void set_constant(const double &, const double &);
+    void mutate_self(const double &, const double &);
   public:
     Node() {};
-    Node(const Problem & problem, const int & depth = 0);
     std::string print() const;
     std::string represent() const;
-    double evaluate(const double & x = 1) const;
+    Node(const Problem &, const int & depth = 0);
+    double evaluate(const double &) const;
     const Size size() const;
-    Node & visit(const int & i, int & visiting);
-    void mutate_tree(const Problem & problem);
+    Node & visit(const int &, int &);
+    void mutate_tree(const double &, const double &, const double &);
   };
 
   class Individual {
   private:
-    const Problem problem;
     Size size;
     double fitness;
     Node root;
   public:
     Individual(const Problem &);
-    void print_formula() const;
-    void print_calculation() const;
+    string print_formula() const;
+    string print_calculation(const problem::pairs &) const;
     int get_internals() const {return size.internals;}
     int get_leafs() const {return size.leafs;}
     int get_total() const {return size.internals + size.leafs;}
     double get_fitness() const {return fitness;}
-    double evaluate() const;
-    void mutate();
-    Node & operator[](const int & i);
-    friend void crossover(Individual & mother, Individual & father);
+    void update_size();
+    void evaluate(const problem::pairs &);
+    void mutate(const double &, const double &, const double &);
+    Node & operator[](const int &);
+    friend void crossover(Individual &, Individual &);
   };
 }
 

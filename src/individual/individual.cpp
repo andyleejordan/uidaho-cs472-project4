@@ -50,7 +50,7 @@ Node::Node(const Problem & problem, const int & depth) {
     function = Function(terminals[dist(rg.engine)]);
     assert(arity == 0);
     // setup constant function; input is provided on evaluation
-    if (function == constant) set_constant(problem);
+    if (function == constant) set_constant(problem.constant_min, problem.constant_max);
   }
 }
 
@@ -95,9 +95,9 @@ std::string Node::print() const {
   return formula + represent() + ")";
 }
 
-void Node::set_constant(const Problem & problem) {
+void Node::set_constant(const double & min, const double & max) {
   // choose a random value between the problem's min and max
-  real_dist dist(problem.constant_min, problem.constant_max);
+  real_dist dist(min, max);
   k = dist(rg.engine);
 }
 
@@ -177,14 +177,14 @@ Node & Node::visit(const int & i, int & visiting) {
   return empty; // need to indicate "not-found"
 }
 
-void Node::mutate_self(const Problem & problem) {
+void Node::mutate_self(const double & min, const double & max) {
   // single node mutation to different function of same arity
   if (arity == 0) {
     int_dist dist(0, terminals.size() - 1);
     Function prior = function;
     while (function == prior)
       function = Function(terminals[dist(rg.engine)]);
-    if (function == constant) set_constant(problem);
+    if (function == constant) set_constant(min, max);
   }
   else if (arity == 1) {
     int_dist dist(0, unaries.size() - 1);
@@ -206,21 +206,19 @@ void Node::mutate_self(const Problem & problem) {
   }
 }
 
-void Node::mutate_tree(const Problem & problem) {
+void Node::mutate_tree(const double & chance, const double & min, const double & max) {
   // recursively mutate nodes with problem.mutate_chance probability
   real_dist dis(0, 1);
   for (Node & child : children) {
-    if (dis(rg.engine) < problem.mutate_chance) {
-      std::cout << "Mutating child\n";
-      child.mutate_self(problem);
-    }
-    child.mutate_tree(problem);
+    if (dis(rg.engine) < chance) child.mutate_self(min, max);
+    child.mutate_tree(chance, min, max);
   }
 }
 
-Individual::Individual(const Problem & p): problem(p), root(Node(problem)) {
-  size = root.size();
-  fitness = evaluate();
+Individual::Individual(const Problem & problem) {
+  root = Node(problem);
+  update_size();
+  evaluate(problem.values);
 }
 
 void Individual::print_formula() const {
@@ -231,11 +229,11 @@ void Individual::print_formula() const {
 	    << root.print() << std::endl;
 }
 
-void Individual::print_calculation() const {
+string Individual::print_calculation(const problem::pairs & values) const {
   double fitness = 0;
-  for (auto pair : problem.values) {
     double output = root.evaluate(std::get<0>(pair));
     double error = std::pow(output - std::get<1>(pair), 2);
+  for (auto pair : values) {
     fitness += error;
     std::cout << "f(" << std::get<0>(pair)
 	      << ") = " << output
@@ -245,18 +243,21 @@ void Individual::print_calculation() const {
   std::cout << "Total fitness: " << std::sqrt(fitness) << ".\n";
 }
 
-double Individual::evaluate() const {
-  double fitness = 0;
-  for (auto pair : problem.values) {
+void Individual::update_size() {
+  size = root.size();
+}
+
+void Individual::evaluate(const problem::pairs & values) {
+  for (auto pair : values) {
     double output = root.evaluate(std::get<0>(pair));
     fitness += std::pow(output - std::get<1>(pair), 2);
   }
   return std::sqrt(fitness);
 }
 
-void Individual::mutate() {
+void Individual::mutate(const double & chance, const double & min, const double & max) {
   // mutate each node with a problem.mutate_chance probability
-  root.mutate_tree(problem);
+  root.mutate_tree(chance, min, max);
 }
 
 Node & Individual::operator[](const int & i) {

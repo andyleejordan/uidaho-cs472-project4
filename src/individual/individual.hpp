@@ -34,6 +34,7 @@ namespace individual {
     double k = 0; // excess for internal nodes
     std::vector<Node> children;
     void set_constant(const Problem & problem);
+    void mutate_self(const Problem & problem);
   public:
     Node() {};
     Node(const Problem & problem, const int & depth = 0);
@@ -42,6 +43,7 @@ namespace individual {
     double evaluate(const double & x = 1) const;
     const Size size() const;
     Node & visit(const int & i, int & visiting);
+    void mutate_tree(const Problem & problem);
   };
 
   class Individual {

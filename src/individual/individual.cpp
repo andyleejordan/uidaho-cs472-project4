@@ -122,7 +122,6 @@ const Size Node::size() const {
   return size;
 }
 
-void Node::mutate(const Problem & problem) {
 namespace individual {
   Node empty;
 }
@@ -137,6 +136,7 @@ Node & Node::visit(const int & i, int & visiting) {
   return empty; // need to indicate "not-found"
 }
 
+void Node::mutate_self(const Problem & problem) {
   // single node mutation to different function of same arity
   if (arity == 0) {
     int_dist dist(0, terminals.size() - 1);
@@ -191,6 +191,15 @@ std::string Node::represent() const {
     return " ^";
   case cond:
     return " a < b ? c : d";
+void Node::mutate_tree(const Problem & problem) {
+  // recursively mutate nodes with problem.mutate_chance probability
+  real_dist dis(0, 1);
+  for (Node & child : children) {
+    if (dis(rg.engine) < problem.mutate_chance) {
+      std::cout << "Mutating child\n";
+      child.mutate_self(problem);
+    }
+    child.mutate_tree(problem);
   }
 }
 

@@ -61,6 +61,7 @@ namespace individual {
     int get_internals() const {return size.internals;}
     int get_leafs() const {return size.leafs;}
     int get_total() const {return size.internals + size.leafs;}
+    void mutate();
     Node & operator[](const int & i);
   };
 }

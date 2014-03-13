@@ -246,6 +246,11 @@ void Individual::print_calculation() const {
   }
   std::cout << "Total fitness: " << std::sqrt(fitness) << ".\n";
 }
+void Individual::mutate() {
+  // mutate each node with a problem.mutate_chance probability
+  root.mutate_tree(problem);
+}
+
 Node & Individual::operator[](const int & i) {
   assert(i < get_total());
   int visiting = 0;

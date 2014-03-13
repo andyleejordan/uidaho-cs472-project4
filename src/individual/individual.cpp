@@ -246,3 +246,9 @@ void Individual::print_calculation() const {
   }
   std::cout << "Total fitness: " << std::sqrt(fitness) << ".\n";
 }
+Node & Individual::operator[](const int & i) {
+  assert(i < get_total());
+  int visiting = 0;
+  return root.visit(i, visiting);
+}
+

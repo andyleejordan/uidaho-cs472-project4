@@ -53,6 +53,7 @@ Node::Node(const Problem & problem, const int & depth) {
     // setup constant function; input is provided on evaluation
     if (function == constant) set_constant(problem.constant_min, problem.constant_max);
   }
+  assert(function != null); // do not create null types
 }
 
 string Node::represent() const {
@@ -255,11 +256,12 @@ void Individual::update_size() {
 }
 
 void Individual::evaluate(const problem::pairs & values) {
+  double error = 0;
   for (auto pair : values) {
     double output = root.evaluate(std::get<0>(pair));
-    fitness += std::pow(output - std::get<1>(pair), 2);
+    error += std::pow(output - std::get<1>(pair), 2);
   }
-  return std::sqrt(fitness);
+  fitness = std::sqrt(error);
 }
 
 void Individual::mutate(const double & chance, const double & min, const double & max) {

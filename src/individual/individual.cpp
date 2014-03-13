@@ -33,23 +33,24 @@ namespace individual {
 Node::Node(const Problem & problem, const int & depth) {
   using std::find;
   if (depth < problem.max_depth) {
-    // assign random internal type
+    // assign random internal function
     int_dist dist(0, internals.size() - 1); // closed interval
-    type = Function(internals[dist(rg.engine)]);
-    if (find(unaries.begin(), unaries.end(), type) != unaries.end()) arity = 1;
-    else if (find(binaries.begin(), binaries.end(), type) != binaries.end()) arity = 2;
-    else if (find(quadnaries.begin(), quadnaries.end(), type) != quadnaries.end()) arity = 4;
+    function = Function(internals[dist(rg.engine)]);
+    // determine node's arity
+    if (find(unaries.begin(), unaries.end(), function) != unaries.end()) arity = 1;
+    else if (find(binaries.begin(), binaries.end(), function) != binaries.end()) arity = 2;
+    else if (find(quadnaries.begin(), quadnaries.end(), function) != quadnaries.end()) arity = 4;
     assert(arity != 0);
     // recursively create subtrees
     for (int i = 0; i < arity; i++)
       children.emplace_back(Node(problem, depth + 1));
   } else {
-    // reached max depth, assign random terminal type
+    // reached max depth, assign random terminal function
     int_dist dist(0, terminals.size() - 1); // closed interval
-    type = Function(terminals[dist(rg.engine)]);
-    // setup constant type; input is provided on evaluation
-    if (type == constant) set_constant(problem);
+    function = Function(terminals[dist(rg.engine)]);
     assert(arity == 0);
+    // setup constant function; input is provided on evaluation
+    if (function == constant) set_constant(problem);
   }
 }
 
@@ -125,20 +126,28 @@ void Node::mutate(const Problem & problem) {
   // single node mutation to different function of same arity
   if (arity == 0) {
     int_dist dist(0, terminals.size() - 1);
-    type = Function(terminals[dist(rg.engine)]);
-    if (type == constant) set_constant(problem);
+    Function prior = function;
+    while (function == prior)
+      function = Function(terminals[dist(rg.engine)]);
+    if (function == constant) set_constant(problem);
   }
   else if (arity == 1) {
     int_dist dist(0, unaries.size() - 1);
-    type = Function(unaries[dist(rg.engine)]);
+    Function prior = function;
+    while (function == prior)
+      function = Function(unaries[dist(rg.engine)]);
   }
   else if (arity == 2) {
     int_dist dist(0, binaries.size() - 1);
-    type = Function(binaries[dist(rg.engine)]);
+    Function prior = function;
+    while (function == prior)
+      function = Function(binaries[dist(rg.engine)]);
   }
   else if (arity == 4) {
     int_dist dist(0, quadnaries.size() - 1);
-    type = Function(quadnaries[dist(rg.engine)]);
+    Function prior = function;
+    while (function == prior)
+      function = Function(quadnaries[dist(rg.engine)]);
   }
 }
 

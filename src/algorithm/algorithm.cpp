@@ -72,7 +72,6 @@ void algorithm::genetic(const Problem & problem) {
 	child.mutate(problem.mutate_chance, problem.constant_min, problem.constant_max);
 	// update fitness and size
 	child.evaluate(problem.values);
-	child.update_size();
 	// save children
 	offspring.emplace_back(child);
       }

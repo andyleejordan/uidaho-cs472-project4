@@ -52,6 +52,7 @@ namespace individual {
     Size size;
     double fitness;
     Node root;
+    void update_size();
   public:
     Individual() {}
     Individual(const Problem &);
@@ -61,7 +62,6 @@ namespace individual {
     int get_leafs() const {return size.leafs;}
     int get_total() const {return size.internals + size.leafs;}
     double get_fitness() const {return fitness;}
-    void update_size();
     void evaluate(const problem::pairs &);
     void mutate(const double &, const double &, const double &);
     Node & operator[](const int &);

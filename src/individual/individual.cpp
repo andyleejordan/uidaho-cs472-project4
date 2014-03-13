@@ -261,7 +261,8 @@ void Individual::evaluate(const problem::pairs & values) {
     double output = root.evaluate(std::get<0>(pair));
     error += std::pow(output - std::get<1>(pair), 2);
   }
-  fitness = std::sqrt(error);
+  update_size();
+  fitness = std::sqrt(error) + std::sqrt(get_total());
 }
 
 void Individual::mutate(const double & chance, const double & min, const double & max) {

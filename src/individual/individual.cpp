@@ -54,6 +54,47 @@ Node::Node(const Problem & problem, const int & depth) {
   }
 }
 
+std::string Node::represent() const {
+  switch(function) {
+  case null:
+    assert(false); // never represent empty node
+  case constant:
+    return std::to_string(k);
+  case input:
+    return "x";
+  case sqrt:
+    return " sqrt";
+  case sin:
+    return " sin";
+  case log:
+    return " log";
+  case exp:
+    return " exp";
+  case add:
+    return " +";
+  case subtract:
+    return " -";
+  case multiply:
+    return " *";
+  case divide:
+    return " /";
+  case pow:
+    return " ^";
+  case lesser:
+    return " a < b ? c : d";
+  case greater:
+    return " a > b ? c : d";
+  }
+}
+
+std::string Node::print() const {
+  // Post-order traversal print of expression in RPN/postfix notation
+  std::string formula = "(";
+  for (auto child : children)
+    formula += child.print();
+  return formula + represent() + ")";
+}
+
 void Node::set_constant(const Problem & problem) {
   // choose a random value between the problem's min and max
   real_dist dist(problem.constant_min, problem.constant_max);
@@ -109,8 +150,8 @@ double Node::evaluate(const double & x) const {
 }
 
 const Size Node::size() const {
-  // Recursively count children via post-order traversal
-  // Keep track of internals and leafs via Size struct
+  // recursively count children via post-order traversal
+  // keep track of internals and leafs via Size struct
   Size size;
   for (const Node & child : children) {
     Size temp = child.size(); // is this micro-optimizing?
@@ -165,32 +206,6 @@ void Node::mutate_self(const Problem & problem) {
   }
 }
 
-std::string Node::represent() const {
-  switch(type) {
-  case constant:
-    return std::to_string(k);
-  case input:
-    return "x";
-  case sqrt:
-    return " sqrt";
-  case sin:
-    return " sin";
-  case log:
-    return " log";
-  case exp:
-    return " exp";
-  case add:
-    return " +";
-  case subtract:
-    return " -";
-  case multiply:
-    return " *";
-  case divide:
-    return " /";
-  case pow:
-    return " ^";
-  case cond:
-    return " a < b ? c : d";
 void Node::mutate_tree(const Problem & problem) {
   // recursively mutate nodes with problem.mutate_chance probability
   real_dist dis(0, 1);
@@ -203,26 +218,9 @@ void Node::mutate_tree(const Problem & problem) {
   }
 }
 
-std::string Node::print() const {
-  // Post-order traversal print of expression in RPN/posfix notation
-  std::string formula = "(";
-  for (auto child : children)
-    formula += child.print();
-  return formula + represent() + ")";
-}
-
 Individual::Individual(const Problem & p): problem(p), root(Node(problem)) {
   size = root.size();
   fitness = evaluate();
-}
-
-double Individual::evaluate() const {
-  double fitness = 0;
-  for (auto pair : problem.values) {
-    double output = root.evaluate(std::get<0>(pair));
-    fitness += std::pow(output - std::get<1>(pair), 2);
-  }
-  return std::sqrt(fitness);
 }
 
 void Individual::print_formula() const {
@@ -246,6 +244,16 @@ void Individual::print_calculation() const {
   }
   std::cout << "Total fitness: " << std::sqrt(fitness) << ".\n";
 }
+
+double Individual::evaluate() const {
+  double fitness = 0;
+  for (auto pair : problem.values) {
+    double output = root.evaluate(std::get<0>(pair));
+    fitness += std::pow(output - std::get<1>(pair), 2);
+  }
+  return std::sqrt(fitness);
+}
+
 void Individual::mutate() {
   // mutate each node with a problem.mutate_chance probability
   root.mutate_tree(problem);

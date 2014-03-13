@@ -56,11 +56,11 @@ namespace individual {
     Individual(const Problem &);
     void print_formula() const;
     void print_calculation() const;
-    double evaluate() const;
-    double get_fitness() const {return fitness;}
     int get_internals() const {return size.internals;}
     int get_leafs() const {return size.leafs;}
     int get_total() const {return size.internals + size.leafs;}
+    double get_fitness() const {return fitness;}
+    double evaluate() const;
     void mutate();
     Node & operator[](const int & i);
   };

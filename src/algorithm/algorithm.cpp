@@ -70,8 +70,9 @@ namespace algorithm {
 
   const vector<Individual> get_children(const unsigned long & size, const vector<Individual> & population, const Problem & problem) {
     // select parents for children
-    vector<Individual> nodes;
-    while (nodes.size() != size) {
+    vector<Individual> block;
+    while (block.size() != size) {
+      vector<Individual> nodes;
       for (int i = 0; i < problem.crossover_size; ++i)
 	nodes.emplace_back(selection(problem, population));
       // crossover with probability
@@ -85,8 +86,9 @@ namespace algorithm {
 	// update fitness (and size)
 	child.evaluate(problem.values);
       }
+      block.insert(block.end(), nodes.begin(), nodes.end());
     }
-    return nodes;
+    return block;
   }
 
   vector<Individual> new_offspring(const Problem & problem, const vector<Individual> & population) {

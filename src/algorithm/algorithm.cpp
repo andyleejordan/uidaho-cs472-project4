@@ -70,25 +70,25 @@ namespace algorithm {
 
   const vector<Individual> get_children(const unsigned long & size, const vector<Individual> & population, const Problem & problem) {
     // select parents for children
-    vector<Individual> block;
-    while (block.size() != size) {
-      vector<Individual> nodes;
-      for (int i = 0; i < problem.crossover_size; ++i)
-	nodes.emplace_back(selection(problem, population));
+    vector<Individual> nodes;
+    while (nodes.size() != size) {
+      Individual mother = selection(problem, population);
+      Individual father = selection(problem, population);
       // crossover with probability
       real_dist dis(0, 1);
       if (dis(rg.engine) < problem.crossover_chance)
-	crossover(problem.internals_chance, nodes[0], nodes[1]);
-      // process children
-      for (Individual & child : nodes) {
-	// mutate children
-	child.mutate(problem.mutate_chance, problem.constant_min, problem.constant_max);
-	// update fitness (and size)
-	child.evaluate(problem.values);
-      }
-      block.insert(block.end(), nodes.begin(), nodes.end());
+	crossover(problem.internals_chance, mother, father);
+      // places mother and father in nodes
+      nodes.emplace_back(mother);
+      nodes.emplace_back(father);
     }
-    return block;
+    for (Individual & child : nodes) {
+      // mutate children
+      child.mutate(problem.mutate_chance, problem.constant_min, problem.constant_max);
+      // update fitness (and size)
+      child.evaluate(problem.values);
+    }
+    return nodes;
   }
 
   vector<Individual> new_offspring(const Problem & problem, const vector<Individual> & population) {

@@ -24,8 +24,9 @@ namespace individual {
     lesser, greater };
 
   struct Size {
-    int internals = 0;
-    int leafs = 0;
+    int internals;
+    int leafs;
+    Size(const int & i = 0, const int & l = 0): internals(i), leafs(l) {}
   };
 
   class Node {

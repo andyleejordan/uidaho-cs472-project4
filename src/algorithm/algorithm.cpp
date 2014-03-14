@@ -15,59 +15,67 @@
 #include "../problem/problem.hpp"
 #include "../random_generator/random_generator.hpp"
 
-using namespace algorithm;
-using namespace random_generator;
+namespace algorithm {
+  using std::vector;
+  using individual::Individual;
+  using problem::Problem;
+  using namespace random_generator;
 
-bool algorithm::compare_fitness(const Individual & a, const Individual & b) {
-  return (std::isnan(a.get_fitness())) ? false : a.get_fitness() < b.get_fitness();
-}
+  bool compare_fitness(const Individual & a, const Individual & b) {
+    return (std::isnan(a.get_fitness())) ? false : a.get_fitness() < b.get_fitness();
+  }
 
-Individual algorithm::selection(const Problem & problem, const vector<Individual> & population) {
-  int_dist dis(0, problem.population_size - 1); // closed interval
-  vector<Individual> contestants;
-  // get contestants
-  for (int i = 0; i < problem.tournament_size; ++i)
-    contestants.emplace_back(population[dis(rg.engine)]);
-  return *std::min_element(contestants.begin(), contestants.end(), compare_fitness);
-}
+  std::ofstream open_log(const std::time_t & time) {
+    std::stringstream time_string;
+    time_string << std::put_time(std::localtime(&time), "%y%m%d_%H%M%S");
+    std::ofstream log("logs/" + time_string.str());
+    if (!log.is_open()) {
+      std::cerr << "Log file logs/" << time_string.str() << " could not be opened!";
+      std::exit(EXIT_FAILURE);
+    }
+    return log;
+  }
 
-void algorithm::genetic(const Problem & problem) {
-  // setup time and start log
-  std::time_t t = std::time(nullptr);
-  std::chrono::time_point<std::chrono::system_clock> start, end;
-  std::stringstream time_string;
-  time_string << std::put_time(std::localtime(&t), "%y%m%d_%H%M%S");
-  std::ofstream log("logs/" + time_string.str());
-  log << "# running a Genetic Program on "
-      << std::ctime(&t) << "\n";
-  // TODO add sizes
-  // start timing algorithm
-  start = std::chrono::system_clock::now();
+  void log_info(std::ofstream & log, const Individual & best, const vector<Individual> & population) {
+    double total_fitness = std::accumulate(population.begin(), population.end(), 0.,
+					   [](const double & a, const Individual & b)->double const {return a + b.get_fitness();});
+    int total_size = std::accumulate(population.begin(), population.end(), 0,
+				     [](const int & a, const Individual & b)->double const {return a + b.get_total();});
+    log << best.get_fitness() << "\t"
+	<< total_fitness / population.size() << "\t"
+	<< best.get_total() << "\t"
+	<< total_size / population.size() << "\n";
+  }
 
-  // run algorithm
-  vector<Individual> population;
-  for (int i = 0; i < problem.population_size; ++i)
-    population.emplace_back(Individual(problem));
-  Individual best;
-  for (int i = 0; i < problem.iterations; ++i) {
-    // find Individual with lowest "fitness" AKA error from populaiton
-    best = *std::min_element(population.begin(), population.end(), compare_fitness);
-    log << best.get_fitness();
-    // log average fitness
-    double total_fitness = std::accumulate(population.begin(), population.end(), 0., [](const double & a, const Individual & b)->double const {return a + b.get_fitness();});
-    log << "\t" << total_fitness / problem.population_size << "\n";
-    // create replacement population
+  vector<Individual> new_population(const Problem & problem) {
+    vector<Individual> population;
+    for (int i = 0; i < problem.population_size; ++i)
+      population.emplace_back(Individual(problem));
+    return population;
+  }
+
+  Individual selection(const Problem & problem, const vector<Individual> & population) {
+    int_dist dis(0, problem.population_size - 1); // closed interval
+    vector<Individual> contestants;
+    // get contestants
+    for (int i = 0; i < problem.tournament_size; ++i)
+      contestants.emplace_back(population[dis(rg.engine)]);
+    return *std::min_element(contestants.begin(), contestants.end(), compare_fitness);
+  }
+
+  vector<Individual> new_offspring(const Problem & problem, const vector<Individual> & population) {
     vector<Individual> offspring;
     while (offspring.size() != population.size()) {
-      // select parents
-      vector<Individual> children;
-      for (int j = 0; j < problem.crossover_size; ++j)
-	children.emplace_back(selection(problem, population));
+      // select parents for children
+      vector<Individual> parents;
+      for (int i = 0; i < problem.crossover_size; ++i)
+	parents.emplace_back(selection(problem, population));
       // crossover with probability
       real_dist dis(0, 1);
       if (dis(rg.engine) < problem.crossover_chance)
-	crossover(problem.internals_chance, children[0], children[1]);
-      for (Individual & child : children) {
+	crossover(problem.internals_chance, parents[0], parents[1]);
+      // process children
+      for (Individual & child : parents) {
 	// mutate children
 	child.mutate(problem.mutate_chance, problem.constant_min, problem.constant_max);
 	// update fitness and size
@@ -76,19 +84,43 @@ void algorithm::genetic(const Problem & problem) {
 	offspring.emplace_back(child);
       }
     }
-    int_dist dis(0, problem.population_size - 1);
-    // perform elitism
-    for (int j = 0; j < problem.elitism_size; ++j)
-      offspring[dis(rg.engine)] = best;
-    population.swap(offspring);
+    return offspring;
   }
-  // end timing algorithm
-  end = std::chrono::system_clock::now();
-  log << best.print_formula();
-  // log duration
-  std::chrono::duration<double> elapsed_seconds = end - start;
-  std::time_t end_time = std::chrono::system_clock::to_time_t(end);
-  log << "Finished computation at " << std::ctime(&end_time)
-      << "Elapsed time: " << elapsed_seconds.count() << "s\n";
-  log.close();
+
+  const individual::Individual genetic(const problem::Problem & problem) {
+    // setup time and start log
+    std::time_t time = std::time(nullptr);
+    std::ofstream log = open_log(time);
+    log << "# running a Genetic Program on "
+	<< std::ctime(&time) << "\n";
+    // start timing algorithm
+    std::chrono::time_point<std::chrono::system_clock> start, end;
+    start = std::chrono::system_clock::now();
+    // create initial popuation
+    vector<Individual> population = new_population(problem);
+    Individual best;
+    // run algorithm to termination
+    for (int iteration = 0; iteration < problem.iterations; ++iteration) {
+      // find Individual with lowest "fitness" AKA error from populaiton
+      best = *std::min_element(population.begin(), population.end(), compare_fitness);
+      log_info(log, best, population);
+      // create replacement population
+      vector<Individual> offspring = new_offspring(problem, population);
+      // perform elitism
+      int_dist dis(0, problem.population_size - 1);
+      for (int i = 0; i < problem.elitism_size; ++i)
+	offspring[dis(rg.engine)] = best;
+      // replace current population with offspring
+      population.swap(offspring);
+    }
+    // end timing algorithm
+    end = std::chrono::system_clock::now();
+    // log duration
+    std::chrono::duration<double> elapsed_seconds = end - start;
+    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+    log << "# finished computation at " << std::ctime(&end_time)
+	<< "# elapsed time: " << elapsed_seconds.count() << "s\n";
+    log.close();
+    return best;
+  }
 }

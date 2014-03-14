@@ -11,13 +11,7 @@
 #include "../problem/problem.hpp"
 
 namespace algorithm {
-  using individual::Individual;
-  using problem::Problem;
-  using std::vector;
-
-  bool compare_fitness(const Individual & a, const Individual & b);
-  Individual selection(const Problem & problem, const vector<Individual> & population);
-  void genetic(const Problem & problem);
+  const individual::Individual genetic(const problem::Problem & problem);
 }
 
 #endif /* _ALGORITHM_H_ */

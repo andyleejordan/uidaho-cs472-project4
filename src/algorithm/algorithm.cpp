@@ -7,6 +7,8 @@
 #include <ctime>
 #include <iostream>
 #include <fstream>
+#include <functional>
+#include <future>
 #include <iomanip>
 #include <sstream>
 #include <thread>
@@ -66,11 +68,10 @@ namespace algorithm {
     return *std::min_element(contestants.begin(), contestants.end(), compare_fitness);
   }
 
-  vector<Individual> new_offspring(const Problem & problem, const vector<Individual> & population) {
-    vector<Individual> offspring;
-    while (offspring.size() != population.size()) {
-      // select parents for children
-      vector<Individual> nodes;
+  const vector<Individual> get_children(const unsigned long & size, const vector<Individual> & population, const Problem & problem) {
+    // select parents for children
+    vector<Individual> nodes;
+    while (nodes.size() != size) {
       for (int i = 0; i < problem.crossover_size; ++i)
 	nodes.emplace_back(selection(problem, population));
       // crossover with probability
@@ -81,11 +82,27 @@ namespace algorithm {
       for (Individual & child : nodes) {
 	// mutate children
 	child.mutate(problem.mutate_chance, problem.constant_min, problem.constant_max);
-	// update fitness and size
+	// update fitness (and size)
 	child.evaluate(problem.values);
-	// save children
-	offspring.emplace_back(child);
       }
+    }
+    return nodes;
+  }
+
+  vector<Individual> new_offspring(const Problem & problem, const vector<Individual> & population) {
+    vector<Individual> offspring;
+    offspring.reserve(population.size());
+    const unsigned long hardware_threads = std::thread::hardware_concurrency();
+    const unsigned long num_threads = hardware_threads != 0 ? hardware_threads : 2;
+    const unsigned long block_size = population.size() / num_threads;
+    vector<std::future<const vector<Individual>>> blocks;
+    // spawn threads
+    for (unsigned long i = 0; i < num_threads; ++i)
+      blocks.push_back(std::async(get_children, block_size, std::ref(population), std::ref(problem)));
+    // gather results
+    for (std::future<const vector<Individual>> & block : blocks) {
+      const vector<Individual> nodes = block.get();
+      offspring.insert(offspring.end(), nodes.begin(), nodes.end());
     }
     return offspring;
   }
@@ -112,7 +129,7 @@ namespace algorithm {
     for (int iteration = 0; iteration < problem.iterations; ++iteration) {
       // find Individual with lowest "fitness" AKA error from populaiton
       best = *std::min_element(population.begin(), population.end(), compare_fitness);
-      std::thread log_thread([time, best, population] {log_info(time, best, population);});
+      std::thread log_thread(log_info, time, best, population);
       // create replacement population
       vector<Individual> offspring = new_offspring(problem, population);
       // perform elitism

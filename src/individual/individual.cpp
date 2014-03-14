@@ -26,9 +26,9 @@ namespace individual {
   // vectors of same-arity function enums
   vector<Function> terminals {constant, input};
   vector<Function> unaries {sqrt, sin, log, exp};
-  vector<Function> binaries {add, subtract, divide, multiply, pow};
+  vector<Function> binaries {add, subtract, multiply, divide, pow};
   vector<Function> quadnaries {lesser, greater};
-  vector<Function> internals {sqrt, sin, log, exp, add, subtract, divide, multiply, pow, lesser, greater};
+  vector<Function> internals {add, subtract, multiply, divide, lesser, greater};
 
   Node::Node(const Problem & problem, const int & depth) {
     using std::find;

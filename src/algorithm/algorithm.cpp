@@ -97,13 +97,13 @@ namespace algorithm {
     const unsigned long hardware_threads = std::thread::hardware_concurrency();
     const unsigned long num_threads = hardware_threads != 0 ? hardware_threads : 2;
     const unsigned long block_size = population.size() / num_threads;
-    vector<std::future<const vector<Individual>>> blocks;
+    vector<std::future<const vector<Individual>>> results;
     // spawn threads
     for (unsigned long i = 0; i < num_threads; ++i)
-      blocks.push_back(std::async(get_children, block_size, std::ref(population), std::ref(problem)));
+      results.emplace_back(std::async(std::launch::async, get_children, block_size, std::ref(population), problem));
     // gather results
-    for (std::future<const vector<Individual>> & block : blocks) {
-      const vector<Individual> nodes = block.get();
+    for (std::future<const vector<Individual>> & result : results) {
+      const vector<Individual> nodes = result.get();
       offspring.insert(offspring.end(), nodes.begin(), nodes.end());
     }
     return offspring;

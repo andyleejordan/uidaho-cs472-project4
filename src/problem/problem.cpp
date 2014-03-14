@@ -33,9 +33,9 @@ namespace problem {
     return values;
   }
 
-  Problem::Problem(const pairs & v, const int & i, const int & p):
-    values(v), iterations(i), population_size(p), max_depth(4),
-    tournament_size(4), crossover_size(2), elitism_size(2),
+  Problem::Problem(const pairs & v, const int & i, const int & p, const int & d, const int & t):
+    values(v), iterations(i), population_size(p), max_depth(d),
+    tournament_size(t), crossover_size(2), elitism_size(2),
     constant_min(0), constant_max(10),
-    mutate_chance(0.01), crossover_chance(0.8), internals_chance(0.9) {}
+    mutate_chance(0.02), crossover_chance(0.8), internals_chance(0.9) {}
 }

@@ -29,7 +29,7 @@ namespace problem {
     const double mutate_chance;
     const double crossover_chance;
     const double internals_chance;
-    Problem(const pairs & v, const int & i, const int & p);
+    Problem(const pairs &, const int & i = 128, const int & p = 1024, const int & d = 5, const int & t = 3);
   };
 }
 

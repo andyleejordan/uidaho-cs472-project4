@@ -9,6 +9,7 @@
 #include <fstream>
 #include <iomanip>
 #include <sstream>
+#include <thread>
 
 #include "algorithm.hpp"
 #include "../individual/individual.hpp"
@@ -28,7 +29,7 @@ namespace algorithm {
   std::ofstream open_log(const std::time_t & time) {
     std::stringstream time_string;
     time_string << std::put_time(std::localtime(&time), "%y%m%d_%H%M%S");
-    std::ofstream log("logs/" + time_string.str());
+    std::ofstream log("logs/" + time_string.str(), std::ios_base::app);
     if (!log.is_open()) {
       std::cerr << "Log file logs/" << time_string.str() << " could not be opened!";
       std::exit(EXIT_FAILURE);
@@ -36,15 +37,17 @@ namespace algorithm {
     return log;
   }
 
-  void log_info(std::ofstream & log, const Individual & best, const vector<Individual> & population) {
+  void log_info(const std::time_t & time, const Individual & best, const vector<Individual> & population) {
     double total_fitness = std::accumulate(population.begin(), population.end(), 0.,
 					   [](const double & a, const Individual & b)->double const {return a + b.get_fitness();});
     int total_size = std::accumulate(population.begin(), population.end(), 0,
 				     [](const int & a, const Individual & b)->double const {return a + b.get_total();});
+    std::ofstream log = open_log(time);
     log << best.get_fitness() << "\t"
 	<< total_fitness / population.size() << "\t"
 	<< best.get_total() << "\t"
 	<< total_size / population.size() << "\n";
+    log.close();
   }
 
   vector<Individual> new_population(const Problem & problem) {
@@ -93,6 +96,7 @@ namespace algorithm {
     std::ofstream log = open_log(time);
     log << "# running a Genetic Program on "
 	<< std::ctime(&time) << "\n";
+    log.close();
     // start timing algorithm
     std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
@@ -103,7 +107,7 @@ namespace algorithm {
     for (int iteration = 0; iteration < problem.iterations; ++iteration) {
       // find Individual with lowest "fitness" AKA error from populaiton
       best = *std::min_element(population.begin(), population.end(), compare_fitness);
-      log_info(log, best, population);
+      std::thread log_thread([time, best, population] {log_info(time, best, population);});
       // create replacement population
       vector<Individual> offspring = new_offspring(problem, population);
       // perform elitism
@@ -112,15 +116,17 @@ namespace algorithm {
 	offspring[dis(rg.engine)] = best;
       // replace current population with offspring
       population.swap(offspring);
+      log_thread.join();
     }
     // end timing algorithm
     end = std::chrono::system_clock::now();
     // log duration
     std::chrono::duration<double> elapsed_seconds = end - start;
     std::time_t end_time = std::chrono::system_clock::to_time_t(end);
-    log << "# finished computation at " << std::ctime(&end_time)
-	<< "# elapsed time: " << elapsed_seconds.count() << "s\n";
-    log.close();
+    std::ofstream log_after = open_log(time);
+    log_after << "# finished computation at " << std::ctime(&end_time)
+	      << "# elapsed time: " << elapsed_seconds.count() << "s\n";
+    log_after.close();
     return best;
   }
 }

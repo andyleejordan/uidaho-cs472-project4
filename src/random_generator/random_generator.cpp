@@ -7,13 +7,11 @@
 
 #include "random_generator.hpp"
 
-using random_generator::RandomGenerator;
-
-RandomGenerator::RandomGenerator() {
-  engine.seed(rd());
-}
-
 namespace random_generator {
+  RandomGenerator::RandomGenerator() {
+    engine.seed(rd());
+  }
+
   // Singleton RandomGenerator object for shared use
   RandomGenerator rg;
 }

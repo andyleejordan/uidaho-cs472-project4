@@ -120,7 +120,7 @@ namespace algorithm {
       for (int i = 0; i < problem.elitism_size; ++i)
 	offspring[dis(rg.engine)] = best;
       // replace current population with offspring
-      population.swap(offspring);
+      population = offspring;
       log_thread.join();
     }
     // end timing algorithm

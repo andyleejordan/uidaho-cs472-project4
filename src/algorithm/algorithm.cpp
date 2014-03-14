@@ -19,7 +19,7 @@ using namespace algorithm;
 using namespace random_generator;
 
 bool algorithm::compare_fitness(const Individual & a, const Individual & b) {
-  return a.get_fitness() < b.get_fitness();
+  return (std::isnan(a.get_fitness())) ? false : a.get_fitness() < b.get_fitness();
 }
 
 Individual algorithm::selection(const Problem & problem, const vector<Individual> & population) {

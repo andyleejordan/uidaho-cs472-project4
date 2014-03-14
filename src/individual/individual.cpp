@@ -262,7 +262,7 @@ namespace individual {
       error += std::pow(output - std::get<1>(pair), 2);
     }
     update_size();
-    fitness = std::sqrt(error) + std::sqrt(get_total());
+    fitness = std::sqrt(error);
   }
 
   void Individual::mutate(const double & chance, const double & min, const double & max) {

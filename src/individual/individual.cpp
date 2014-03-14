@@ -222,8 +222,7 @@ namespace individual {
     }
   }
 
-  Individual::Individual(const Problem & problem) {
-    root = Node(problem);
+  Individual::Individual(const Problem & problem): root{Node{problem}} {
     update_size();
     evaluate(problem.values);
   }
@@ -264,8 +263,10 @@ namespace individual {
     double error = 0;
     for (auto pair : values) {
       double output = root.evaluate(std::get<0>(pair));
+      assert(not std::isnan(output) and not std::isinf(output));
       error += std::pow(output - std::get<1>(pair), 2);
     }
+    // update size on evaluation because it's incredibly convenient
     update_size();
     fitness = std::sqrt(error);
   }

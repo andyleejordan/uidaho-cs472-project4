@@ -28,6 +28,7 @@ namespace problem {
     const double constant_max;
     const double mutate_chance;
     const double crossover_chance;
+    const double internals_chance;
     Problem(const pairs & v, const int & i, const int & p);
   };
 }

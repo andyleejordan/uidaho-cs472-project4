@@ -66,7 +66,7 @@ void algorithm::genetic(const Problem & problem) {
       // crossover with probability
       real_dist dis(0, 1);
       if (dis(rg.engine) < problem.crossover_chance)
-	crossover(children[0], children[1]);
+	crossover(problem.internals_chance, children[0], children[1]);
       for (Individual & child : children) {
 	// mutate children
 	child.mutate(problem.mutate_chance, problem.constant_min, problem.constant_max);

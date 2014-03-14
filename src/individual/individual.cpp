@@ -280,8 +280,25 @@ Node & Individual::operator[](const Size & i) {
   return root.visit(i, visiting);
 }
 
-void individual::crossover(Individual & mother, Individual & father) {
-  int_dist dis_a(0, mother.get_total() - 1);
-  int_dist dis_b(0, father.get_total() - 1);
-  std::swap(mother[dis_a(rg.engine)], father[dis_b(rg.engine)]);
+void individual::crossover(const double & chance, Individual & a, Individual & b) {
+  real_dist probability(0, 1);
+  Size target_a, target_b;
+  if (probability(rg.engine) < chance) {
+    // choose an internal
+    int_dist dis(0, a.get_internals() - 1);
+    target_a.internals = dis(rg.engine);
+  } else {
+    // otherwise we choose a leaf
+    int_dist dis(0, a.get_leafs() - 1);
+    target_a.leafs = dis(rg.engine);
+  }
+  // do the same thing for the second individual
+  if (probability(rg.engine) < chance) {
+    int_dist dis(0, b.get_internals() - 1);
+    target_b.internals = dis(rg.engine);
+  } else {
+    int_dist dis(0, b.get_leafs() - 1);
+    target_b.leafs = dis(rg.engine);
+  }
+  std::swap(a[target_a], b[target_b]);
 }

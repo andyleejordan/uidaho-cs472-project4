@@ -65,8 +65,8 @@ namespace individual {
     double get_fitness() const {return fitness;}
     void evaluate(const problem::pairs &);
     void mutate(const double &, const double &, const double &);
-    friend void crossover(Individual &, Individual &);
     Node & operator[](const Size &);
+    friend void crossover(const double &, Individual &, Individual &);
   };
 }
 

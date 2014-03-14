@@ -94,8 +94,13 @@ namespace algorithm {
     // setup time and start log
     std::time_t time = std::time(nullptr);
     std::ofstream log = open_log(time);
-    log << "# running a Genetic Program on "
-	<< std::ctime(&time) << "\n";
+    log << "# running a Genetic Program @ "
+	<< std::ctime(&time)
+	<< "# initial depth: " << problem.max_depth
+	<< ", iterations: " << problem.iterations
+	<< ", population size: " << problem.population_size
+	<< ", tournament size: " << problem.tournament_size << "\n"
+	<< "# best fitness - average fitness - size of best - average size\n";
     log.close();
     // start timing algorithm
     std::chrono::time_point<std::chrono::system_clock> start, end;
@@ -124,7 +129,7 @@ namespace algorithm {
     std::chrono::duration<double> elapsed_seconds = end - start;
     std::time_t end_time = std::chrono::system_clock::to_time_t(end);
     std::ofstream log_after = open_log(time);
-    log_after << "# finished computation at " << std::ctime(&end_time)
+    log_after << "# finished computation @ " << std::ctime(&end_time)
 	      << "# elapsed time: " << elapsed_seconds.count() << "s\n";
     log_after.close();
     return best;

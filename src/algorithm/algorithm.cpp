@@ -70,15 +70,15 @@ namespace algorithm {
     vector<Individual> offspring;
     while (offspring.size() != population.size()) {
       // select parents for children
-      vector<Individual> parents;
+      vector<Individual> nodes;
       for (int i = 0; i < problem.crossover_size; ++i)
-	parents.emplace_back(selection(problem, population));
+	nodes.emplace_back(selection(problem, population));
       // crossover with probability
       real_dist dis(0, 1);
       if (dis(rg.engine) < problem.crossover_chance)
-	crossover(problem.internals_chance, parents[0], parents[1]);
+	crossover(problem.internals_chance, nodes[0], nodes[1]);
       // process children
-      for (Individual & child : parents) {
+      for (Individual & child : nodes) {
 	// mutate children
 	child.mutate(problem.mutate_chance, problem.constant_min, problem.constant_max);
 	// update fitness and size

@@ -26,14 +26,14 @@ namespace algorithm {
   using namespace random_generator;
 
   bool compare_fitness(const Individual & a, const Individual & b) {
-    return (std::isnan(a.get_fitness())) ? false : a.get_fitness() < b.get_fitness();
+    return (std::isnormal(a.get_fitness())) ? a.get_fitness() < b.get_fitness() : false;
   }
 
   std::ofstream open_log(const std::time_t & time) {
     std::stringstream time_string;
     time_string << std::put_time(std::localtime(&time), "%y%m%d_%H%M%S");
     std::ofstream log("logs/" + time_string.str(), std::ios_base::app);
-    if (!log.is_open()) {
+    if (not log.is_open()) {
       std::cerr << "Log file logs/" << time_string.str() << " could not be opened!";
       std::exit(EXIT_FAILURE);
     }
@@ -60,11 +60,11 @@ namespace algorithm {
     return population;
   }
 
-  Individual selection(const Problem & problem, const vector<Individual> & population) {
-    int_dist dis(0, problem.population_size - 1); // closed interval
+  Individual selection(const int & size, const vector<Individual> & population) {
+    int_dist dis(0, population.size() - 1); // closed interval
     vector<Individual> contestants;
     // get contestants
-    for (int i = 0; i < problem.tournament_size; ++i)
+    for (int i = 0; i < size; ++i)
       contestants.emplace_back(population[dis(rg.engine)]);
     return *std::min_element(contestants.begin(), contestants.end(), compare_fitness);
   }
@@ -73,8 +73,8 @@ namespace algorithm {
     // select parents for children
     vector<Individual> nodes;
     while (nodes.size() != size) {
-      Individual mother = selection(problem, population);
-      Individual father = selection(problem, population);
+      Individual mother = selection(problem.tournament_size, population);
+      Individual father = selection(problem.tournament_size, population);
       // crossover with probability
       real_dist dis(0, 1);
       if (dis(rg.engine) < problem.crossover_chance)
@@ -107,6 +107,7 @@ namespace algorithm {
       const vector<Individual> nodes = result.get();
       offspring.insert(offspring.end(), nodes.begin(), nodes.end());
     }
+    assert(offspring.size() == population.size());
     return offspring;
   }
 

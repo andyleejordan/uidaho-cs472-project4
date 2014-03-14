@@ -4,6 +4,7 @@
  * Source file for algorithm namespace
  */
 
+#include <cassert>
 #include <ctime>
 #include <iostream>
 #include <fstream>

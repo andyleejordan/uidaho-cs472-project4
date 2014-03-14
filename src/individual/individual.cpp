@@ -30,16 +30,20 @@ namespace individual {
   vector<Function> quadnaries {lesser, greater};
   vector<Function> internals {add, subtract, multiply, divide, lesser, greater};
 
+  template<typename I, typename S> bool contains(const I & item, const S & set) {
+    return std::find(set.begin(), set.end(), item) != set.end();
+  }
+
   Node::Node(const Problem & problem, const int & depth) {
-    using std::find;
     if (depth < problem.max_depth) {
       // assign random internal function
       int_dist dist(0, internals.size() - 1); // closed interval
       function = Function(internals[dist(rg.engine)]);
+      assert(contains(function, internals));
       // determine node's arity
-      if (find(unaries.begin(), unaries.end(), function) != unaries.end()) arity = 1;
-      else if (find(binaries.begin(), binaries.end(), function) != binaries.end()) arity = 2;
-      else if (find(quadnaries.begin(), quadnaries.end(), function) != quadnaries.end()) arity = 4;
+      if (contains(function, unaries)) arity = 1;
+      else if (contains(function, binaries)) arity = 2;
+      else if (contains(function, quadnaries)) arity = 4;
       assert(arity != 0);
       // recursively create subtrees
       for (int i = 0; i < arity; i++)
@@ -191,19 +195,20 @@ namespace individual {
     else if (arity == 1) {
       int_dist dist(0, unaries.size() - 1);
       Function prior = function;
-      while (function == prior)
+      // ensure we're using a specified available function
+      while (function == prior or not contains(function, internals))
 	function = Function(unaries[dist(rg.engine)]);
     }
     else if (arity == 2) {
       int_dist dist(0, binaries.size() - 1);
       Function prior = function;
-      while (function == prior)
+      while (function == prior or not contains(function, internals))
 	function = Function(binaries[dist(rg.engine)]);
     }
     else if (arity == 4) {
       int_dist dist(0, quadnaries.size() - 1);
       Function prior = function;
-      while (function == prior)
+      while (function == prior or not contains(function, internals))
 	function = Function(quadnaries[dist(rg.engine)]);
     }
   }

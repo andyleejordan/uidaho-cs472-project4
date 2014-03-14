@@ -169,11 +169,14 @@ namespace individual {
   Node empty;
 }
 
-Node & Node::visit(const int & i, int & visiting) {
-  // depth-first search for taget node
-  if (visiting == i) return *this; // return reference to found node
+Node & Node::visit(const Size & i, Size & visiting) {
+  // depth-first search for taget node, either internal or leaf
+  if (visiting.internals == i.internals) return *this;
+  else if (visiting.leafs == i.leafs) return *this;
   for (Node & child : children) {
-    Node & temp = child.visit(i, ++visiting); // mark each node
+    if (child.children.size() == 0) ++visiting.leafs;
+    else ++visiting.internals;
+    Node & temp = child.visit(i, visiting); // mark each node
     if (temp.function != null) return temp; // return found node
   }
   return empty; // need to indicate "not-found"
@@ -270,9 +273,10 @@ void Individual::mutate(const double & chance, const double & min, const double 
   root.mutate_tree(chance, min, max);
 }
 
-Node & Individual::operator[](const int & i) {
-  assert(i < get_total());
-  int visiting = 0;
+Node & Individual::operator[](const Size & i) {
+  assert(i.internals <= get_internals());
+  assert(i.leafs <= get_leafs());
+  Size visiting;
   return root.visit(i, visiting);
 }
 

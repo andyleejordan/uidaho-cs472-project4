@@ -43,7 +43,7 @@ namespace individual {
     string represent() const;
     double evaluate(const double &) const;
     const Size size() const;
-    Node & visit(const int &, int &);
+    Node & visit(const Size &, Size &);
     void mutate_tree(const double &, const double &, const double &);
   };
 
@@ -64,8 +64,8 @@ namespace individual {
     double get_fitness() const {return fitness;}
     void evaluate(const problem::pairs &);
     void mutate(const double &, const double &, const double &);
-    Node & operator[](const int &);
     friend void crossover(Individual &, Individual &);
+    Node & operator[](const Size &);
   };
 }
 

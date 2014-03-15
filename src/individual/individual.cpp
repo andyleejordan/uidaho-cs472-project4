@@ -176,28 +176,17 @@ namespace individual {
 
   Node & Node::visit(const Size & i, Size & visiting) {
     // depth-first search for taget node, either internal or leaf
-    if (visiting.internals == i.internals) return *this;
-    else if (visiting.leafs == i.leafs) return *this;
     for (Node & child : children) {
+      // increase relevant count
       if (child.children.size() == 0) ++visiting.leafs;
       else ++visiting.internals;
+      // return node reference if found
+      if (visiting.internals == i.internals or visiting.leafs == i.leafs)
+	return child;
       Node & temp = child.visit(i, visiting); // mark each node
       if (temp.function != null) return temp; // return found node
     }
     return empty; // need to indicate "not-found"
-  }
-
-  int Node::insert(const Size & i, Size & visiting, const Node & n) {
-    for (Node & child : children) {
-      if (child.children.size() == 0) ++visiting.leafs;
-      else ++visiting.internals;
-      if (visiting.internals == i.internals or visiting.leafs == i.leafs) {
-	child = n;
-	return 0;
-      }
-      if (child.insert(i, visiting, n) != 1) return 0;
-    }
-    return 1;
   }
 
   void Node::mutate_self(const double & min, const double & max) {
@@ -300,21 +289,15 @@ namespace individual {
     return root.visit(i, visiting);
   }
 
-  void Individual::insert(const Size & i, const Node & n) {
-    Size visiting;
-    int result = root.insert(i, visiting, n);
-    assert(result == 0);
-  }
-
   void crossover(const double & chance, Individual & a, Individual & b) {
     real_dist probability(0, 1);
     Size target_a, target_b;
     if (probability(rg.engine) < chance) {
-      // choose an internal
+      // choose an internal node
       int_dist dis(0, a.get_internals() - 1);
       target_a.internals = dis(rg.engine);
     } else {
-      // otherwise we choose a leaf
+      // otherwise we choose a leaf node
       int_dist dis(0, a.get_leafs() - 1);
       target_a.leafs = dis(rg.engine);
     }
@@ -327,7 +310,6 @@ namespace individual {
       target_b.leafs = dis(rg.engine);
     }
     // replace nodes
-    a.insert(target_a, b[target_b]);
-    b.insert(target_b, a[target_a]);
+    std::swap(a[target_a], b[target_b]);
   }
 }

@@ -187,6 +187,19 @@ namespace individual {
     return empty; // need to indicate "not-found"
   }
 
+  int Node::insert(const Size & i, Size & visiting, const Node & n) {
+    for (Node & child : children) {
+      if (child.children.size() == 0) ++visiting.leafs;
+      else ++visiting.internals;
+      if (visiting.internals == i.internals or visiting.leafs == i.leafs) {
+	child = n;
+	return 0;
+      }
+      if (child.insert(i, visiting, n) != 1) return 0;
+    }
+    return 1;
+  }
+
   void Node::mutate_self(const double & min, const double & max) {
     // single node mutation to different function of same arity
     if (arity == 0) {
@@ -287,6 +300,12 @@ namespace individual {
     return root.visit(i, visiting);
   }
 
+  void Individual::insert(const Size & i, const Node & n) {
+    Size visiting;
+    int result = root.insert(i, visiting, n);
+    assert(result == 0);
+  }
+
   void crossover(const double & chance, Individual & a, Individual & b) {
     real_dist probability(0, 1);
     Size target_a, target_b;
@@ -307,6 +326,8 @@ namespace individual {
       int_dist dis(0, b.get_leafs() - 1);
       target_b.leafs = dis(rg.engine);
     }
-    std::swap(a[target_a], b[target_b]);
+    // replace nodes
+    a.insert(target_a, b[target_b]);
+    b.insert(target_b, a[target_a]);
   }
 }

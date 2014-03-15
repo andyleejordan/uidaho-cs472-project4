@@ -45,6 +45,7 @@ namespace individual {
     double evaluate(const double &) const;
     const Size size() const;
     Node & visit(const Size &, Size &);
+    int insert(const Size &, Size &, const Node &);
     void mutate_tree(const double &, const double &, const double &);
   };
 
@@ -66,6 +67,7 @@ namespace individual {
     void evaluate(const problem::pairs &);
     void mutate(const double &, const double &, const double &);
     Node & operator[](const Size &);
+    void insert(const Size &, const Node &);
     friend void crossover(const double &, Individual &, Individual &);
   };
 }

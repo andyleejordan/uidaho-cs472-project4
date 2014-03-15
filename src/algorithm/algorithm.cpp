@@ -40,13 +40,14 @@ namespace algorithm {
     return log;
   }
 
-  void log_info(const std::time_t & time, const Individual & best, const vector<Individual> & population) {
+  void log_info(const std::time_t & time, const int & iteration, const Individual & best, const vector<Individual> & population) {
     double total_fitness = std::accumulate(population.begin(), population.end(), 0.,
-					   [](const double & a, const Individual & b)->double const {return a + b.get_fitness();});
+					   [](const double & a, const Individual & b)->double const {return a + b.get_adjusted();});
     int total_size = std::accumulate(population.begin(), population.end(), 0,
 				     [](const int & a, const Individual & b)->double const {return a + b.get_total();});
     std::ofstream log = open_log(time);
-    log << best.get_fitness() << "\t"
+    log << iteration << "\t"
+	<< best.get_adjusted() << "\t"
 	<< total_fitness / population.size() << "\t"
 	<< best.get_total() << "\t"
 	<< total_size / population.size() << "\n";
@@ -134,7 +135,7 @@ namespace algorithm {
     for (int iteration = 0; iteration < problem.iterations; ++iteration) {
       // find Individual with lowest "fitness" AKA error from populaiton
       best = *std::min_element(population.begin(), population.end(), compare_fitness);
-      std::thread log_thread(log_info, time, best, population);
+      std::thread log_thread{log_info, time, iteration, best, population};
       // create replacement population
       vector<Individual> offspring = new_offspring(problem, population);
       // perform elitism

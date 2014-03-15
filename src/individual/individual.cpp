@@ -24,14 +24,37 @@ namespace individual {
   using namespace random_generator;
 
   // vectors of same-arity function enums
-  vector<Function> terminals {constant, input};
-  vector<Function> unaries {sqrt, sin, cos, log, exp};
-  vector<Function> binaries {add, subtract, multiply, divide, pow};
-  vector<Function> quadnaries {lesser, greater};
-  vector<Function> internals {add, subtract, multiply, divide, lesser, greater};
+  vector<Function> nullaries{constant, input};
+  vector<Function> unaries{sqrt, sin, cos, log, exp};
+  vector<Function> binaries{add, subtract, multiply, divide, pow};
+  vector<Function> quadnaries{lesser, greater};
+  vector<Function> internals{add, subtract, multiply, divide, lesser, greater};
 
   template<typename I, typename S> bool contains(const I & item, const S & set) {
     return std::find(set.begin(), set.end(), item) != set.end();
+  }
+
+  Function get_internal() {
+    int_dist dist{0, int(internals.size()) - 1}; // closed interval
+    return Function(internals[dist(rg.engine)]);
+  }
+
+  Function get_leaf() {
+    int_dist dist{0, int(nullaries.size()) - 1}; // closed interval
+    return Function(nullaries[dist(rg.engine)]);
+  }
+
+  double get_constant(const double & min, const double & max) {
+    real_dist dist{min, max};
+    return dist(rg.engine);
+  }
+
+  int get_arity(const Function & function) {
+    if (contains(function, nullaries)) return 0;
+    else if (contains(function, unaries)) return 1;
+    else if (contains(function, binaries)) return 2;
+    else if (contains(function, quadnaries)) return 4;
+    assert(false);
   }
 
   Node::Node(const Problem & problem, const int & depth) {

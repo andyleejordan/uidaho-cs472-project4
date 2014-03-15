@@ -14,7 +14,7 @@
 namespace problem {
   // reads in columnar X Y data from file, creates a vector of pairs
   const problem::pairs get_data(std::string file_name) {
-    std::ifstream data_file(file_name);
+    std::ifstream data_file{file_name};
     if (!data_file.is_open()) {
       std::cerr << "Data file " << file_name << " could not be read!";
       std::exit(EXIT_FAILURE);
@@ -35,10 +35,11 @@ namespace problem {
   }
 
   Problem::Problem(const pairs & v, const int & i, const int & p, const int & d, const int & t):
-    values(v), iterations(i), population_size(p), max_depth(d - 1),
-    tournament_size(t), crossover_size(2), elitism_size(2),
-    constant_min(0), constant_max(10),
-    mutate_chance(0.02), crossover_chance(0.8), internals_chance(0.9)
+    values{v}, iterations{i}, population_size{p}, max_depth{d - 1},
+    tournament_size{t}, crossover_size{2}, elitism_size{2},
+    constant_min{0}, constant_max{10},
+    growth_chance{0.5}, mutate_chance{0.01},
+    crossover_chance{0.8}, internals_chance{0.9}
   {
     assert(values.size() > 0);
     assert(max_depth > 0);

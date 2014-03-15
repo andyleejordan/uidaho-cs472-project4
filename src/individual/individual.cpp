@@ -192,37 +192,38 @@ namespace individual {
     if (arity == 0) {
       // mutate constant to a value in its neighborhood, don't switch functions
       if (function == constant) {
-	normal_dist dis(0, 1);
-	k *= 1 + dis(rg.engine);
+	normal_dist dist{0, 1};
+	k *= 1 + dist(rg.engine);
       }
     }
     else if (arity == 1) {
-      int_dist dist(0, unaries.size() - 1);
+      int_dist dist{0, int(unaries.size()) - 1};
       Function prior = function;
       // ensure we're using a specified available function
       while (function == prior or not contains(function, internals))
 	function = Function(unaries[dist(rg.engine)]);
     }
     else if (arity == 2) {
-      int_dist dist(0, binaries.size() - 1);
+      int_dist dist{0, int(binaries.size()) - 1};
       Function prior = function;
       while (function == prior or not contains(function, internals))
 	function = Function(binaries[dist(rg.engine)]);
     }
     else if (arity == 4) {
-      int_dist dist(0, quadnaries.size() - 1);
+      int_dist dist{0, int(quadnaries.size()) - 1};
       Function prior = function;
       while (function == prior or not contains(function, internals))
 	function = Function(quadnaries[dist(rg.engine)]);
     }
+    assert(function != null);
   }
 
   void Node::mutate_tree(const double & chance, const double & min, const double & max) {
     // recursively mutate nodes with problem.mutate_chance probability
-    real_dist dis(0, 1);
+    real_dist dist{0, 1};
     for (Node & child : children) {
-      if (dis(rg.engine) < chance) child.mutate_self(min, max);
       child.mutate_tree(chance, min, max);
+      if (dist(rg.engine) < chance) child.mutate_self();
     }
   }
 
@@ -288,24 +289,24 @@ namespace individual {
   }
 
   void crossover(const double & chance, Individual & a, Individual & b) {
-    real_dist probability(0, 1);
+    real_dist probability{0, 1};
     Size target_a, target_b;
     if (probability(rg.engine) < chance) {
       // choose an internal node
-      int_dist dis(0, a.get_internals() - 1);
-      target_a.internals = dis(rg.engine);
+      int_dist dist{0, a.get_internals() - 1};
+      target_a.internals = dist(rg.engine);
     } else {
       // otherwise we choose a leaf node
-      int_dist dis(0, a.get_leafs() - 1);
-      target_a.leafs = dis(rg.engine);
+      int_dist dist{0, a.get_leafs() - 1};
+      target_a.leafs = dist(rg.engine);
     }
     // do the same thing for the second individual
     if (probability(rg.engine) < chance) {
-      int_dist dis(0, b.get_internals() - 1);
-      target_b.internals = dis(rg.engine);
+      int_dist dist{0, b.get_internals() - 1};
+      target_b.internals = dist(rg.engine);
     } else {
-      int_dist dis(0, b.get_leafs() - 1);
-      target_b.leafs = dis(rg.engine);
+      int_dist dist{0, b.get_leafs() - 1};
+      target_b.leafs = dist(rg.engine);
     }
     // replace nodes
     std::swap(a[target_a], b[target_b]);

@@ -13,5 +13,5 @@ namespace random_generator {
   }
 
   // Singleton RandomGenerator object for shared use
-  RandomGenerator rg;
+  RandomGenerator rg{};
 }

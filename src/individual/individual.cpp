@@ -25,7 +25,7 @@ namespace individual {
 
   // vectors of same-arity function enums
   vector<Function> terminals {constant, input};
-  vector<Function> unaries {sqrt, sin, log, exp};
+  vector<Function> unaries {sqrt, sin, cos, log, exp};
   vector<Function> binaries {add, subtract, multiply, divide, pow};
   vector<Function> quadnaries {lesser, greater};
   vector<Function> internals {add, subtract, multiply, divide, lesser, greater};
@@ -71,6 +71,8 @@ namespace individual {
       return " sqrt";
     case sin:
       return " sin";
+    case cos:
+      return " cos";
     case log:
       return " log";
     case exp:
@@ -133,6 +135,8 @@ namespace individual {
       return std::sqrt(std::abs(a)); // protected
     case sin:
       return std::sin(a);
+    case cos:
+      return std::cos(a);
     case log:
       return (a == 0) ? 0 : std::log(std::abs(a)); // protected
     case exp:

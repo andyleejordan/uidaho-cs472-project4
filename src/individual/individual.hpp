@@ -19,7 +19,7 @@ namespace individual {
   enum Function {
     null,
     constant, input,
-    sqrt, sin, log, exp,
+    sqrt, sin, cos, log, exp,
     add, subtract, divide, multiply, pow,
     lesser, greater };
 

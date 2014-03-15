@@ -11,6 +11,7 @@
 namespace random_generator {
   typedef std::uniform_real_distribution<double> real_dist;
   typedef std::uniform_int_distribution<> int_dist;
+  typedef std::normal_distribution<> normal_dist;
 
   class RandomGenerator {
   private:

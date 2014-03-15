@@ -54,7 +54,11 @@ namespace individual {
       function = Function(terminals[dist(rg.engine)]);
       assert(arity == 0);
       // setup constant function; input is provided on evaluation
-      if (function == constant) set_constant(problem.constant_min, problem.constant_max);
+      if (function == constant) {
+	// choose a random value between the problem's min and max
+	real_dist dist(problem.constant_min, problem.constant_max);
+	k = dist(rg.engine);
+      }
     }
     assert(function != null); // do not create null types
   }
@@ -100,12 +104,6 @@ namespace individual {
     for (auto child : children)
       formula += child.print();
     return formula + represent() + ")";
-  }
-
-  void Node::set_constant(const double & min, const double & max) {
-    // choose a random value between the problem's min and max
-    real_dist dist(min, max);
-    k = dist(rg.engine);
   }
 
   double Node::evaluate(const double & x) const {
@@ -192,11 +190,11 @@ namespace individual {
   void Node::mutate_self(const double & min, const double & max) {
     // single node mutation to different function of same arity
     if (arity == 0) {
-      int_dist dist(0, terminals.size() - 1);
-      Function prior = function;
-      while (function == prior)
-	function = Function(terminals[dist(rg.engine)]);
-      if (function == constant) set_constant(min, max);
+      // mutate constant to a value in its neighborhood, don't switch functions
+      if (function == constant) {
+	normal_dist dis(0, 1);
+	k *= 1 + dis(rg.engine);
+      }
     }
     else if (arity == 1) {
       int_dist dist(0, unaries.size() - 1);

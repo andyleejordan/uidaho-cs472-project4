@@ -63,6 +63,7 @@ namespace individual {
     int get_leafs() const {return size.leafs;}
     int get_total() const {return size.internals + size.leafs;}
     double get_fitness() const {return fitness;}
+    double get_adjusted() const {return 1./(1+fitness);}
     void evaluate(const problem::pairs &);
     void mutate(const double &, const double &, const double &);
     Node & operator[](const Size &);

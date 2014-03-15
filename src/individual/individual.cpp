@@ -58,32 +58,62 @@ namespace individual {
   }
 
   Node::Node(const Problem & problem, const int & depth) {
+    real_dist dist{0, 1};
+    if (dist(rg.engine) < problem.growth_chance)
+      full(problem, depth);
+    else
+      growth(problem, depth);
+    assert(int(children.size()) == arity);
+    assert(function != null); // do not create null types
+  }
+
+  void Node::full(const Problem & problem, const int & depth) {
     if (depth < problem.max_depth) {
       // assign random internal function
-      int_dist dist(0, internals.size() - 1); // closed interval
-      function = Function(internals[dist(rg.engine)]);
+      function = get_internal();
       assert(contains(function, internals));
       // determine node's arity
-      if (contains(function, unaries)) arity = 1;
-      else if (contains(function, binaries)) arity = 2;
-      else if (contains(function, quadnaries)) arity = 4;
+      arity = get_arity(function);
       assert(arity != 0);
       // recursively create subtrees
-      for (int i = 0; i < arity; i++)
-	children.emplace_back(Node(problem, depth + 1));
+      for (int i = 0; i < arity; ++i)
+	children.emplace_back(Node{problem, depth + 1});
     } else {
       // reached max depth, assign random terminal function
-      int_dist dist(0, terminals.size() - 1); // closed interval
-      function = Function(terminals[dist(rg.engine)]);
+      function = get_leaf();
       assert(arity == 0);
       // setup constant function; input is provided on evaluation
       if (function == constant) {
 	// choose a random value between the problem's min and max
-	real_dist dist(problem.constant_min, problem.constant_max);
-	k = dist(rg.engine);
+	k = get_constant(problem.constant_min, problem.constant_max);
       }
     }
-    assert(function != null); // do not create null types
+  }
+
+  void Node::growth(const Problem & problem, const int & depth) {
+    if (depth < problem.max_depth) {
+      // assign with probability internal or leaf node
+      // assign internal if root
+      real_dist dist{0, 1};
+      if (dist(rg.engine) < problem.growth_chance or depth == 0) {
+	function = get_internal();
+	arity = get_arity(function);
+	assert(arity != 0);
+	for (int i = 0; i < arity; ++i)
+	  children.emplace_back(Node{problem, depth + 1});
+      }
+      else {
+	function = get_leaf();
+	assert(arity == 0);
+      }
+    } else {
+      // maximum depth reached, must assign leaf node
+      function = get_leaf();
+      assert(arity == 0);
+    }
+    if (function == constant)
+      // choose a random value between the problem's min and max
+      k = get_constant(problem.constant_min, problem.constant_max);
   }
 
   string Node::represent() const {

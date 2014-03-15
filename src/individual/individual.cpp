@@ -272,9 +272,9 @@ namespace individual {
       assert(not std::isnan(output) and not std::isinf(output));
       error += std::pow(output - std::get<1>(pair), 2);
     }
+    fitness = error;
     // update size on evaluation because it's incredibly convenient
     update_size();
-    fitness = std::sqrt(error);
   }
 
   void Individual::mutate(const double & chance, const double & min, const double & max) {

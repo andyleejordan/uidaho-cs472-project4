@@ -240,7 +240,7 @@ namespace individual {
     return empty; // need to indicate "not-found"
   }
 
-  void Node::mutate_self(const double & min, const double & max) {
+  void Node::mutate_self() {
     // single node mutation to different function of same arity
     if (arity == 0) {
       // mutate constant to a value in its neighborhood, don't switch functions
@@ -271,12 +271,12 @@ namespace individual {
     assert(function != null);
   }
 
-  void Node::mutate_tree(const double & chance, const double & min, const double & max) {
+  void Node::mutate_tree(const double & chance) {
     // recursively mutate nodes with problem.mutate_chance probability
     real_dist dist{0, 1};
     for (Node & child : children) {
-      child.mutate_tree(chance, min, max);
       if (dist(rg.engine) < chance) child.mutate_self();
+      child.mutate_tree(chance);
     }
   }
 
@@ -329,9 +329,9 @@ namespace individual {
     update_size();
   }
 
-  void Individual::mutate(const double & chance, const double & min, const double & max) {
+  void Individual::mutate(const double & chance) {
     // mutate each node with a problem.mutate_chance probability
-    root.mutate_tree(chance, min, max);
+    root.mutate_tree(chance);
   }
 
   Node & Individual::operator[](const Size & i) {

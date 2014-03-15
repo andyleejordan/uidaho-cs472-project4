@@ -38,7 +38,7 @@ namespace individual {
     void full(const Problem &, const int &);
     void growth(const Problem &, const int &);
     void set_constant(const double &, const double &);
-    void mutate_self(const double &, const double &);
+    void mutate_self();
   public:
     Node() {};
     Node(const Problem &, const int & depth = 0);
@@ -47,7 +47,7 @@ namespace individual {
     double evaluate(const double &) const;
     const Size size() const;
     Node & visit(const Size &, Size &);
-    void mutate_tree(const double &, const double &, const double &);
+    void mutate_tree(const double &);
   };
 
   class Individual {
@@ -67,7 +67,7 @@ namespace individual {
     double get_fitness() const {return fitness;}
     double get_adjusted() const {return 1./(1+fitness);}
     void evaluate(const problem::pairs &);
-    void mutate(const double &, const double &, const double &);
+    void mutate(const double &);
     Node & operator[](const Size &);
     friend void crossover(const double &, Individual &, Individual &);
   };

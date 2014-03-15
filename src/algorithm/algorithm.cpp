@@ -87,7 +87,7 @@ namespace algorithm {
     }
     for (Individual & child : nodes) {
       // mutate children
-      child.mutate(problem.mutate_chance, problem.constant_min, problem.constant_max);
+      child.mutate(problem.mutate_chance);
       // update fitness (and size)
       child.evaluate(problem.values);
     }

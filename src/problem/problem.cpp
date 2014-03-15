@@ -4,6 +4,7 @@
  * Source file for problem namespace
  */
 
+#include <cassert>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -34,8 +35,12 @@ namespace problem {
   }
 
   Problem::Problem(const pairs & v, const int & i, const int & p, const int & d, const int & t):
-    values(v), iterations(i), population_size(p), max_depth(d),
+    values(v), iterations(i), population_size(p), max_depth(d - 1),
     tournament_size(t), crossover_size(2), elitism_size(2),
     constant_min(0), constant_max(10),
-    mutate_chance(0.02), crossover_chance(0.8), internals_chance(0.9) {}
+    mutate_chance(0.02), crossover_chance(0.8), internals_chance(0.9)
+  {
+    assert(values.size() > 0);
+    assert(max_depth > 0);
+  }
 }

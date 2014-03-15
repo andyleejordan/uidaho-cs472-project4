@@ -11,7 +11,7 @@
 
 int main() {
   using namespace problem;
-  const Problem problem{get_data(), 64, 1024};
+  const Problem problem{get_data(), 256, 256, 3, 3};
   individual::Individual best = algorithm::genetic(problem);
   std::cout << best.print_formula()
 	    << best.print_calculation(problem.values);

@@ -154,7 +154,7 @@ namespace individual {
   string Node::print() const {
     // Post-order traversal print of expression in RPN/postfix notation
     string formula = "(";
-    for (auto child : children)
+    for (const Node & child : children)
       formula += child.print();
     return formula + represent() + ")";
   }
@@ -306,10 +306,11 @@ namespace individual {
       fitness += error;
       calculation += + "f(" + to_string(get<0>(pair))
 	+ ") = " + to_string(output)
-	+ ", expected " + to_string(get<1>(pair))
-	+ ", error = " + to_string(error) + "\n";
+	+ ", y = " + to_string(get<1>(pair))
+	+ ", E = " + to_string(error) + "\n";
     }
-    calculation += "Total fitness: " + to_string(std::sqrt(fitness)) + ".\n";
+    calculation += "Residual sum of squares: " + to_string(fitness) + "\n"
+      + "Adjusted fitness: " + to_string(1./(1+fitness)) + "\n";
     return calculation;
   }
 

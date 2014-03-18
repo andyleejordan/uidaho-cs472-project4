@@ -24,6 +24,8 @@ AX_CXXFLAGS_WARN_ALL
 # Checks for C++11.
 AX_CXX_COMPILE_STDCXX_11
 
+AX_PTHREAD
+
 # Checks for library functions.
 AC_CHECK_FUNCS([pow sqrt])
 

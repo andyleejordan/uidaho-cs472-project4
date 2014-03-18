@@ -5,3 +5,6 @@ search_SOURCES = \
 	src/algorithm/algorithm.cpp \
 	src/individual/individual.cpp \
 	src/problem/problem.cpp
+
+AM_CPPFLAGS = ${CPPFLAGS} ${PTHREAD_CFLAGS}
+AM_LDFLAGS = ${PTHREAD_CFLAGS} ${LIBS}

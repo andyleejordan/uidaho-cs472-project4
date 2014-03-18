@@ -11,7 +11,9 @@
 #include "../problem/problem.hpp"
 
 namespace algorithm {
-  const individual::Individual genetic(const problem::Problem & problem);
+  using individual::Individual;
+  bool compare_fitness(const Individual & a, const Individual & b);
+  const Individual genetic(const problem::Problem & problem);
 }
 
 #endif /* _ALGORITHM_H_ */

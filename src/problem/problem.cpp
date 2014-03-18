@@ -13,10 +13,10 @@
 
 namespace problem {
   // reads in columnar X Y data from file, creates a vector of pairs
-  const problem::pairs get_data(std::string file_name) {
+  const pairs get_data(std::string file_name) {
     std::ifstream data_file{file_name};
     if (!data_file.is_open()) {
-      std::cerr << "Data file " << file_name << " could not be read!";
+      std::cerr << "Data file " << file_name << " could not be read!" << std::endl;
       std::exit(EXIT_FAILURE);
     }
     pairs values;
@@ -28,7 +28,7 @@ namespace problem {
       values.emplace_back(std::make_tuple(x, y));
     }
     if (!values.size()) {
-      std::cerr << "Data file " << file_name << " was empty!";
+      std::cerr << "Data file " << file_name << " was empty!" << std::endl;
       std::exit(EXIT_FAILURE);
     }
     return values;

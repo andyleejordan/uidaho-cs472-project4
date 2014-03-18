@@ -12,7 +12,7 @@
 #include <vector>
 
 namespace problem {
-  typedef std::vector<const std::tuple<const double, const double>> pairs;
+  typedef std::vector<std::tuple<double, double>> pairs;
   
   const pairs get_data(std::string file_name = "test/cs472.dat");
 

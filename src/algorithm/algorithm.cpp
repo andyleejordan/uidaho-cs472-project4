@@ -31,9 +31,7 @@ namespace algorithm {
   }
 
   void open_log(std::ofstream & log, const std::time_t & time) {
-    std::stringstream time_string;
-    time_string << std::put_time(std::localtime(&time), "%y%m%d_%H%M%S");
-    std::string file_name = "logs/" + time_string.str();
+    std::string file_name = "logs/" + std::to_string(time);
     log.open(file_name, std::ios_base::app);
     if (not log.is_open()) {
       std::cerr << "Log file " << file_name << " could not be opened!";

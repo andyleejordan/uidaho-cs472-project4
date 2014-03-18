@@ -8,8 +8,8 @@
 #ifndef _INDIVIDUAL_H_
 #define _INDIVIDUAL_H_
 
+#include <string>
 #include <vector>
-#include <memory>
 #include "../problem/problem.hpp"
 
 namespace individual {

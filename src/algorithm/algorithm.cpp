@@ -9,10 +9,7 @@
 #include <ctime>
 #include <iostream>
 #include <fstream>
-#include <functional>
 #include <future>
-#include <iomanip>
-#include <sstream>
 #include <thread>
 
 #include "algorithm.hpp"

@@ -149,6 +149,7 @@ namespace individual {
     case greater:
       return " a > b ? c : d";
     }
+    assert(false);
   }
 
   string Node::print() const {
@@ -179,34 +180,49 @@ namespace individual {
     case null:
       assert(false); // never calculate empty node
     case constant:
+      assert(arity == 0);
       return k;
     case input:
+      assert(arity == 0);
       return x;
     case sqrt:
+      assert(arity == 1);
       return std::sqrt(std::abs(a)); // protected
     case sin:
+      assert(arity == 1);
       return std::sin(a);
     case cos:
+      assert(arity == 1);
       return std::cos(a);
     case log:
+      assert(arity == 1);
       return (a == 0) ? 0 : std::log(std::abs(a)); // protected
     case exp:
+      assert(arity == 1);
       return std::exp(a);
     case add:
+      assert(arity == 2);
       return a + b;
     case subtract:
+      assert(arity == 2);
       return a - b;
     case multiply:
+      assert(arity == 2);
       return a * b;
     case divide:
+      assert(arity == 2);
       return (b == 0) ? 1 : a / b; // protected
     case pow:
+      assert(arity == 2);
       return std::pow(std::abs(a), std::abs(b)); // protected
     case lesser:
+      assert(arity == 4);
       return (a < b) ? c : d;
     case greater:
+      assert(arity == 4);
       return (a > b) ? c : d;
     }
+    assert(false);
   }
 
   const Size Node::size() const {

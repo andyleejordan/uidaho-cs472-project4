@@ -30,16 +30,15 @@ namespace algorithm {
     return (std::isnormal(a.get_fitness())) ? a.get_fitness() < b.get_fitness() : false;
   }
 
-  std::ofstream open_log(const std::time_t & time) {
+  void open_log(std::ofstream & log, const std::time_t & time) {
     std::stringstream time_string;
     time_string << std::put_time(std::localtime(&time), "%y%m%d_%H%M%S");
     std::string file_name = "logs/" + time_string.str();
-    std::ofstream log{file_name, std::ios_base::app};
+    log.open(file_name, std::ios_base::app);
     if (not log.is_open()) {
       std::cerr << "Log file " << file_name << " could not be opened!";
       std::exit(EXIT_FAILURE);
     }
-    return log;
   }
 
   void log_info(const std::time_t & time, const int & iteration, const Individual & best, const vector<Individual> & population) {
@@ -47,7 +46,8 @@ namespace algorithm {
 					   [](const double & a, const Individual & b)->double const {return a + b.get_adjusted();});
     int total_size = std::accumulate(population.begin(), population.end(), 0,
 				     [](const int & a, const Individual & b)->double const {return a + b.get_total();});
-    std::ofstream log = open_log(time);
+    std::ofstream log;
+    open_log(log, time);
     log << iteration << "\t"
 	<< best.get_adjusted() << "\t"
 	<< total_fitness / population.size() << "\t"
@@ -118,7 +118,8 @@ namespace algorithm {
   const individual::Individual genetic(const problem::Problem & problem) {
     // setup time and start log
     std::time_t time = std::time(nullptr);
-    std::ofstream log = open_log(time);
+    std::ofstream log;
+    open_log(log, time);
     log << "# running a Genetic Program @ "
 	<< std::ctime(&time)
 	<< "# initial depth: " << problem.max_depth
@@ -153,10 +154,10 @@ namespace algorithm {
     // log duration
     std::chrono::duration<double> elapsed_seconds = end - start;
     std::time_t end_time = std::chrono::system_clock::to_time_t(end);
-    std::ofstream log_after = open_log(time);
-    log_after << "# finished computation @ " << std::ctime(&end_time)
-	      << "# elapsed time: " << elapsed_seconds.count() << "s\n";
-    log_after.close();
+    open_log(log, time);
+    log << "# finished computation @ " << std::ctime(&end_time)
+	<< "# elapsed time: " << elapsed_seconds.count() << "s\n";
+    log.close();
     return best;
   }
 }

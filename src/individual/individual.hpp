@@ -59,6 +59,7 @@ namespace individual {
   public:
     Individual() {}
     Individual(const Problem &);
+    string print() const;
     string print_formula() const;
     string print_calculation(const problem::pairs &) const;
     int get_internals() const {return size.internals;}

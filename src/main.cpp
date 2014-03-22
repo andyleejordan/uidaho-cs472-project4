@@ -42,7 +42,7 @@ int main() {
   end = std::chrono::system_clock::now();
   std::chrono::duration<double> elapsed_seconds = end - start;
   const Individual best = *std::min_element(candidates.begin(), candidates.end(), algorithm::compare_fitness);
-  std::cout << " elapsed time: " << elapsed_seconds.count() << "s\n"
-	    << best.print_formula()
-	    << best.print_calculation(problem.values);
+  std::cout << "Total elapsed time: " << elapsed_seconds.count() << "s\n"
+	    << "Average time: " << elapsed_seconds.count() / trials << "s\n"
+	    << best.print();
 }

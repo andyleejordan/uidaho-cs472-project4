@@ -301,14 +301,18 @@ namespace individual {
     evaluate(problem.values);
   }
 
-  string Individual::print_formula() const {
+  string Individual::print() const {
     using std::to_string;
-    string formula = "Expression tree of size " + to_string(get_total())
-      + " with " + to_string(get_internals()) + " internals"
-      + " and " + to_string(get_leafs()) + " leafs"
-      + " has the following formula: " + "\n"
-      + root.print() + "\n";
-    return formula;
+    string info = "Size " + to_string(get_total())
+      + ", with " + to_string(get_internals())
+      + " internals, and " + to_string(get_leafs()) + " leafs.\n"
+      + "Raw fitness:  " + to_string(get_fitness())
+      + ", and adjusted: " + to_string(get_adjusted()) + ".\n";
+    return info;
+  }
+
+  string Individual::print_formula() const {
+    return "Formula: \n" + root.print() + "\n";
   }
 
   string Individual::print_calculation(const problem::pairs & values) const {

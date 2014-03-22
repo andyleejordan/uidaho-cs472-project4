@@ -125,39 +125,40 @@ namespace individual {
     case input:
       return "x";
     case sqrt:
-      return " sqrt";
+      return "sqrt";
     case sin:
-      return " sin";
+      return "sin";
     case cos:
-      return " cos";
+      return "cos";
     case log:
-      return " log";
+      return "log";
     case exp:
-      return " exp";
+      return "exp";
     case add:
-      return " +";
+      return "+";
     case subtract:
-      return " -";
+      return "-";
     case multiply:
-      return " *";
+      return "*";
     case divide:
-      return " /";
+      return "/";
     case pow:
-      return " ^";
+      return "^";
     case lesser:
-      return " a < b ? c : d";
+      return "<";
     case greater:
-      return " a > b ? c : d";
+      return ">";
     }
     assert(false);
   }
 
   string Node::print() const {
-    // Post-order traversal print of expression in RPN/postfix notation
-    string formula = "(";
+    // Pre-order traversal print of expression in Polish/prefix notation
+    if (children.size() == 0) return represent();
+    string formula = "(" + represent();
     for (const Node & child : children)
-      formula += child.print();
-    return formula + represent() + ")";
+      formula += " " + child.print();
+    return formula + ")";
   }
 
   double Node::evaluate(const double & x) const {

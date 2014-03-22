@@ -45,6 +45,7 @@ namespace algorithm {
     std::ofstream log;
     open_log(log, time, trial);
     log << iteration << "\t"
+	<< best.get_fitness() << "\t"
 	<< best.get_adjusted() << "\t"
 	<< total_fitness / population.size() << "\t"
 	<< best.get_total() << "\t"
@@ -121,7 +122,7 @@ namespace algorithm {
 	<< ", iterations: " << problem.iterations
 	<< ", population size: " << problem.population_size
 	<< ", tournament size: " << problem.tournament_size << "\n"
-	<< "# best fitness - average fitness - size of best - average size\n";
+	<< "# raw fitness - best (adjusted) fitness - average (adjusted) fitness - size of best - average size\n";
     log.close();
     // start timing algorithm
     std::chrono::time_point<std::chrono::system_clock> start, end;

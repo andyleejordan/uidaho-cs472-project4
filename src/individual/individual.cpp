@@ -141,7 +141,7 @@ namespace individual {
     case multiply:
       return "*";
     case divide:
-      return "/";
+      return "%";
     case pow:
       return "^";
     case lesser:

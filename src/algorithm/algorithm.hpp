@@ -7,13 +7,15 @@
 #ifndef _ALGORITHM_H_
 #define _ALGORITHM_H_
 
+#include <ctime>
+
 #include "../individual/individual.hpp"
 #include "../problem/problem.hpp"
 
 namespace algorithm {
   using individual::Individual;
   bool compare_fitness(const Individual & a, const Individual & b);
-  const Individual genetic(const problem::Problem & problem);
+  const Individual genetic(const problem::Problem & problem, std::time_t time = std::time(nullptr), const int & trial = 0);
 }
 
 #endif /* _ALGORITHM_H_ */

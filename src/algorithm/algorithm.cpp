@@ -24,11 +24,12 @@ namespace algorithm {
   using namespace random_generator;
 
   bool compare_fitness(const Individual & a, const Individual & b) {
+    // returns true if a is closer to 0 than b and is normal
     return (std::isnormal(a.get_fitness())) ? a.get_fitness() < b.get_fitness() : false;
   }
 
-  void open_log(std::ofstream & log, const std::time_t & time) {
-    std::string file_name = "logs/" + std::to_string(time);
+  void open_log(std::ofstream & log, const std::time_t & time, const int & trial) {
+    std::string file_name = "logs/" + std::to_string(time) + "_" + std::to_string(trial);
     log.open(file_name, std::ios_base::app);
     if (not log.is_open()) {
       std::cerr << "Log file " << file_name << " could not be opened!";
@@ -36,13 +37,13 @@ namespace algorithm {
     }
   }
 
-  void log_info(const std::time_t & time, const int & iteration, const Individual & best, const vector<Individual> & population) {
+  void log_info(const std::time_t & time, const int & trial, const int & iteration, const Individual & best, const vector<Individual> & population) {
     double total_fitness = std::accumulate(population.begin(), population.end(), 0.,
 					   [](const double & a, const Individual & b)->double const {return a + b.get_adjusted();});
     int total_size = std::accumulate(population.begin(), population.end(), 0,
 				     [](const int & a, const Individual & b)->double const {return a + b.get_total();});
     std::ofstream log;
-    open_log(log, time);
+    open_log(log, time, trial);
     log << iteration << "\t"
 	<< best.get_adjusted() << "\t"
 	<< total_fitness / population.size() << "\t"
@@ -110,11 +111,10 @@ namespace algorithm {
     return offspring;
   }
 
-  const individual::Individual genetic(const problem::Problem & problem) {
-    // setup time and start log
-    std::time_t time = std::time(nullptr);
+  const individual::Individual genetic(const Problem & problem, const std::time_t time, const int & trial) {
+    // start log
     std::ofstream log;
-    open_log(log, time);
+    open_log(log, time, trial);
     log << "# running a Genetic Program @ "
 	<< std::ctime(&time)
 	<< "# initial depth: " << problem.max_depth
@@ -133,7 +133,7 @@ namespace algorithm {
     for (int iteration = 0; iteration < problem.iterations; ++iteration) {
       // find Individual with lowest "fitness" AKA error from populaiton
       best = *std::min_element(population.begin(), population.end(), compare_fitness);
-      std::thread log_thread{log_info, time, iteration, best, population};
+      auto log_thread = std::async(std::launch::async, log_info, time, trial, iteration, best, population);
       // create replacement population
       vector<Individual> offspring = new_offspring(problem, population);
       // perform elitism
@@ -142,14 +142,14 @@ namespace algorithm {
 	offspring[dist(rg.engine)] = best;
       // replace current population with offspring
       population = offspring;
-      log_thread.join();
+      log_thread.wait();
     }
     // end timing algorithm
     end = std::chrono::system_clock::now();
     // log duration
     std::chrono::duration<double> elapsed_seconds = end - start;
     std::time_t end_time = std::chrono::system_clock::to_time_t(end);
-    open_log(log, time);
+    open_log(log, time, trial);
     log << "# finished computation @ " << std::ctime(&end_time)
 	<< "# elapsed time: " << elapsed_seconds.count() << "s\n";
     log.close();

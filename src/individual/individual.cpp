@@ -323,13 +323,16 @@ namespace individual {
     assert(i.internals <= get_internals());
     assert(i.leafs <= get_leafs());
     Size visiting;
+    if (i.internals == 0 and i.leafs == 0) // seeking root
+      return root;
     return root.visit(i, visiting);
   }
 
   void crossover(const double & chance, Individual & a, Individual & b) {
     real_dist probability{0, 1};
     Size target_a, target_b;
-    if (probability(rg.engine) < chance) {
+    // guaranteed to have at least 1 leaf, but may have 0 internals (root as leaf)
+    if (a.get_internals() != 0 and probability(rg.engine) < chance) {
       // choose an internal node
       int_dist dist{0, a.get_internals() - 1};
       target_a.internals = dist(rg.engine);
@@ -339,7 +342,7 @@ namespace individual {
       target_a.leafs = dist(rg.engine);
     }
     // do the same thing for the second individual
-    if (probability(rg.engine) < chance) {
+    if (b.get_internals() != 0 and probability(rg.engine) < chance) {
       int_dist dist{0, b.get_internals() - 1};
       target_b.internals = dist(rg.engine);
     } else {

@@ -335,11 +335,9 @@ namespace individual {
     return calculation;
   }
 
-  void Individual::update_size() {
-    size = root.size();
-  }
-
   void Individual::evaluate(const problem::pairs & values) {
+    // update size on evaluation because it's incredibly convenient
+    size = root.size();
     double error = 0;
     for (auto pair : values) {
       double output = root.evaluate(std::get<0>(pair));
@@ -347,8 +345,6 @@ namespace individual {
       error += std::pow(output - std::get<1>(pair), 2);
     }
     fitness = error;
-    // update size on evaluation because it's incredibly convenient
-    update_size();
   }
 
   void Individual::mutate(const double & chance) {

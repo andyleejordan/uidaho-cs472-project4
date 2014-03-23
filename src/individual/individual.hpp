@@ -53,9 +53,8 @@ namespace individual {
   class Individual {
   private:
     Size size;
-    double fitness;
+    double fitness = 0;
     Node root;
-    void update_size();
   public:
     Individual() {}
     Individual(const Problem &);

@@ -4,7 +4,7 @@ search_SOURCES = \
 	src/random_generator/random_generator.cpp \
 	src/algorithm/algorithm.cpp \
 	src/individual/individual.cpp \
-	src/problem/problem.cpp
+	src/options/options.cpp
 
 AM_CPPFLAGS = ${CPPFLAGS} ${PTHREAD_CFLAGS}
 AM_LDFLAGS = ${PTHREAD_CFLAGS} ${LIBS}

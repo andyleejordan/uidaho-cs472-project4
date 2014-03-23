@@ -10,10 +10,10 @@
 
 #include <string>
 #include <vector>
-#include "../problem/problem.hpp"
+#include "../options/options.hpp"
 
 namespace individual {
-  using problem::Problem;
+  using options::Options;
   using std::string;
 
   enum Function {
@@ -44,7 +44,7 @@ namespace individual {
     void mutate_self();
   public:
     Node() {};
-    Node(const Problem &, const Method &, const int &);
+    Node(const Options &, const Method &, const int &);
     string print() const;
     string represent() const;
     double evaluate(const double &) const;
@@ -60,7 +60,7 @@ namespace individual {
     Node root;
   public:
     Individual() {}
-    Individual(const Problem &, const Method, const int);
+    Individual(const Options &, const Method, const int);
     string print() const;
     string print_formula() const;
     int get_internals() const {return size.internals;}
@@ -68,7 +68,7 @@ namespace individual {
     int get_total() const {return size.internals + size.leafs;}
     double get_fitness() const {return fitness;}
     double get_adjusted() const {return 1./(1+fitness);}
-    string evaluate(const problem::pairs &, const double & penalty = 0, const bool & print = false);
+    string evaluate(const options::pairs &, const double & penalty = 0, const bool & print = false);
     void mutate(const double &);
     Node & operator[](const Size &);
     friend void crossover(const double &, Individual &, Individual &);

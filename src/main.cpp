@@ -12,14 +12,14 @@
 
 #include "algorithm/algorithm.hpp"
 #include "individual/individual.hpp"
-#include "problem/problem.hpp"
+#include "options/options.hpp"
 #include "random_generator/random_generator.hpp"
 
 int main() {
   using individual::Individual;
-  using namespace problem;
-  const Problem problem{get_data(), 64, 128, 3, 3};
-  const int trials = 16;
+  using namespace options;
+  const Options options{get_data(), 64, 128, 3, 3};
+  const int trials = 4;
   int trial = 0;
   const unsigned long hardware_threads = std::thread::hardware_concurrency();
   const unsigned long blocks = hardware_threads != 0 ? hardware_threads : 2;
@@ -33,7 +33,7 @@ int main() {
   for (unsigned long t = 0; t < trials / blocks; ++t) {
     std::vector<std::future<const Individual>> results;
     for (unsigned long i = 0; i < blocks; ++i)
-      results.emplace_back(std::async(std::launch::async, algorithm::genetic, problem, time, ++trial));
+      results.emplace_back(std::async(std::launch::async, algorithm::genetic, options, time, ++trial));
     // gather results
     for (std::future<const Individual> & result : results)
       candidates.emplace_back(result.get());

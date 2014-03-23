@@ -1,7 +1,7 @@
-/* problem.cpp - CS 472 Project #2: Genetic Programming
+/* options.cpp - CS 472 Project #2: Genetic Programming
  * Copyright 2014 Andrew Schwartzmeyer
  *
- * Source file for problem namespace
+ * Source file for options namespace
  */
 
 #include <cassert>
@@ -9,9 +9,9 @@
 #include <fstream>
 #include <iostream>
 
-#include "problem.hpp"
+#include "options.hpp"
 
-namespace problem {
+namespace options {
   // reads in columnar X Y data from file, creates a vector of pairs
   const pairs get_data(std::string file_name) {
     std::ifstream data_file{file_name};
@@ -34,7 +34,7 @@ namespace problem {
     return values;
   }
 
-  Problem::Problem(const pairs & v, const int & i, const int & p, const int & d, const int & t):
+  Options::Options(const pairs & v, const int & i, const int & p, const int & d, const int & t):
     values{v}, iterations{i}, population_size{p}, max_depth{d},
     tournament_size{t}, crossover_size{2}, elitism_size{2},
     constant_min{0}, constant_max{10}, penalty{0.1},

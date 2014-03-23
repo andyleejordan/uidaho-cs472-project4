@@ -1,22 +1,22 @@
-/* problem.hpp - CS 472 Project #2: Genetic Programming
+/* options.hpp - CS 472 Project #2: Genetic Programming
  * Copyright 2014 Andrew Schwartzmeyer
  *
- * Header file for struct definition of a problem space
+ * Header file for options namespace
  */
 
-#ifndef _PROBLEM_H_
-#define _PROBLEM_H_
+#ifndef _OPTIONS_H_
+#define _OPTIONS_H_
 
 #include <string>
 #include <tuple>
 #include <vector>
 
-namespace problem {
+namespace options {
   typedef std::vector<std::tuple<double, double>> pairs;
   
   const pairs get_data(std::string file_name = "test/cs472.dat");
 
-  struct Problem {
+  struct Options {
     const pairs values;
     const int iterations;
     const int population_size;
@@ -31,9 +31,9 @@ namespace problem {
     const double mutate_chance;
     const double crossover_chance;
     const double internals_chance;
-    Problem(const pairs &, const int & i = 128, const int & p = 1024,
+    Options(const pairs &, const int & i = 128, const int & p = 1024,
 	    const int & d = 5, const int & t = 3);
   };
 }
 
-#endif /* _PROBLEM_H_ */
+#endif /* _OPTIONS_H_ */

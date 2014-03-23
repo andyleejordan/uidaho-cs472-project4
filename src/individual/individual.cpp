@@ -13,14 +13,14 @@
 #include <vector>
 
 #include "individual.hpp"
-#include "../problem/problem.hpp"
+#include "../options/options.hpp"
 #include "../random_generator/random_generator.hpp"
 
 
 namespace individual {
   using std::vector;
   using std::string;
-  using problem::Problem;
+  using options::Options;
   using namespace random_generator;
 
   // vectors of same-arity function enums
@@ -57,7 +57,7 @@ namespace individual {
     assert(false);
   }
 
-  Node::Node(const Problem & problem, const Method & method, const int & max_depth) {
+  Node::Node(const Options & options, const Method & method, const int & max_depth) {
     real_dist dist{0, 1};
     double grow_chance = double(nullaries.size()) / double(nullaries.size() + internals.size());
     if (max_depth == 0 or (method == grow and dist(rg.engine) < grow_chance)) {
@@ -66,8 +66,8 @@ namespace individual {
       assert(arity == 0);
       // setup constant function; input is provided on evaluation
       if (function == constant) {
-	// choose a random value between the problem's min and max
-	k = get_constant(problem.constant_min, problem.constant_max);
+	// choose a random value between the options's min and max
+	k = get_constant(options.constant_min, options.constant_max);
       }
     }
     else {
@@ -78,7 +78,7 @@ namespace individual {
       assert(arity != 0);
       // recursively create subtrees
       for (int i = 0; i < arity; ++i)
-	children.emplace_back(Node{problem, method, max_depth - 1});
+	children.emplace_back(Node{options, method, max_depth - 1});
     }
     assert(int(children.size()) == arity); // ensure arity
     assert(function != null); // do not create null types
@@ -257,7 +257,7 @@ namespace individual {
   }
 
   void Node::mutate_tree(const double & chance) {
-    // recursively mutate nodes with problem.mutate_chance probability
+    // recursively mutate nodes with options.mutate_chance probability
     real_dist dist{0, 1};
     for (Node & child : children) {
       if (dist(rg.engine) < chance) child.mutate_self();
@@ -265,8 +265,8 @@ namespace individual {
     }
   }
 
-  Individual::Individual(const Problem & problem, const Method method, const int depth): root{Node{problem, method, depth}} {
-    evaluate(problem.values);
+  Individual::Individual(const Options & options, const Method method, const int depth): root{Node{options, method, depth}} {
+    evaluate(options.values);
   }
 
   string Individual::print() const {
@@ -283,7 +283,7 @@ namespace individual {
     return "Formula: " + root.print() + "\n";
   }
 
-  string Individual::evaluate(const problem::pairs & values, const double & penalty, const bool & print) {
+  string Individual::evaluate(const options::pairs & values, const double & penalty, const bool & print) {
     using std::to_string;
     using std::get;
     string calculation = "# x - y - expected - error\n";
@@ -307,7 +307,7 @@ namespace individual {
   }
 
   void Individual::mutate(const double & chance) {
-    // mutate each node with a problem.mutate_chance probability
+    // mutate each node with a options.mutate_chance probability
     root.mutate_tree(chance);
   }
 

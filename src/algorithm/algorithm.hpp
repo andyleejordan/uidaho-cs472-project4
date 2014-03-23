@@ -10,12 +10,12 @@
 #include <ctime>
 
 #include "../individual/individual.hpp"
-#include "../problem/problem.hpp"
+#include "../options/options.hpp"
 
 namespace algorithm {
   using individual::Individual;
   bool compare_fitness(const Individual & a, const Individual & b);
-  const Individual genetic(const problem::Problem & problem, std::time_t time = std::time(nullptr), const int & trial = 0);
+  const Individual genetic(const options::Options & options, std::time_t time = std::time(nullptr), const int & trial = 0);
 }
 
 #endif /* _ALGORITHM_H_ */

@@ -21,11 +21,16 @@ namespace individual {
     constant, input,
     sqrt, sin, cos, log, exp,
     add, subtract, divide, multiply, pow,
-    lesser, greater };
+    lesser, greater
+  };
+
+  enum Method {
+    grow, full
+  };
 
   struct Size {
-    int internals;
-    int leafs;
+    int internals = 0;
+    int leafs = 0;
     Size(const int & i = 0, const int & l = 0): internals(i), leafs(l) {}
   };
 
@@ -35,13 +40,11 @@ namespace individual {
     int arity = 0; // space for time trade-off
     double k = 0; // excess for internal nodes
     std::vector<Node> children;
-    void full(const Problem &, const int &);
-    void growth(const Problem &, const int &);
     void set_constant(const double &, const double &);
     void mutate_self();
   public:
     Node() {};
-    Node(const Problem &, const int & depth = 0);
+    Node(const Problem &, const Method &, const int &);
     string print() const;
     string represent() const;
     double evaluate(const double &) const;
@@ -57,7 +60,7 @@ namespace individual {
     Node root;
   public:
     Individual() {}
-    Individual(const Problem &);
+    Individual(const Problem &, const Method, const int);
     string print() const;
     string print_formula() const;
     string print_calculation(const problem::pairs &) const;

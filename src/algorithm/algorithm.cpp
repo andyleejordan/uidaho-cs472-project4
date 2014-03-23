@@ -55,8 +55,11 @@ namespace algorithm {
 
   vector<Individual> new_population(const Problem & problem) {
     vector<Individual> population;
+    int_dist depth_dist{0, problem.max_depth}; // ramped
+    real_dist dist{0, 1}; // half-and-half
     for (int i = 0; i < problem.population_size; ++i)
-      population.emplace_back(Individual{problem});
+      // pass problem, random method (grow or full), and random max depth in given range
+      population.emplace_back(Individual{problem, individual::Method(dist(rg.engine) < problem.grow_chance), depth_dist(rg.engine)});
     return population;
   }
 

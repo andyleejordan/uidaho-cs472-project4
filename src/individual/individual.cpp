@@ -57,30 +57,12 @@ namespace individual {
     assert(false);
   }
 
-  Node::Node(const Problem & problem, const int & depth) {
+  Node::Node(const Problem & problem, const Method & method, const int & max_depth) {
     real_dist dist{0, 1};
-    if (dist(rg.engine) < problem.growth_chance)
-      full(problem, depth);
-    else
-      growth(problem, depth);
-    assert(int(children.size()) == arity);
-    assert(function != null); // do not create null types
-  }
-
-  void Node::full(const Problem & problem, const int & depth) {
-    if (depth < problem.max_depth) {
-      // assign random internal function
-      function = get_internal();
-      assert(contains(function, internals));
-      // determine node's arity
-      arity = get_arity(function);
-      assert(arity != 0);
-      // recursively create subtrees
-      for (int i = 0; i < arity; ++i)
-	children.emplace_back(Node{problem, depth + 1});
-    } else {
-      // reached max depth, assign random terminal function
+    double grow_chance = double(nullaries.size()) / double(nullaries.size() + internals.size());
+    if (max_depth == 0 or (method == grow and dist(rg.engine) < grow_chance)) {
       function = get_leaf();
+      arity = get_arity(function);
       assert(arity == 0);
       // setup constant function; input is provided on evaluation
       if (function == constant) {
@@ -88,32 +70,18 @@ namespace individual {
 	k = get_constant(problem.constant_min, problem.constant_max);
       }
     }
-  }
-
-  void Node::growth(const Problem & problem, const int & depth) {
-    if (depth < problem.max_depth) {
-      // assign with probability internal or leaf node
-      // assign internal if root
-      real_dist dist{0, 1};
-      if (dist(rg.engine) < problem.growth_chance or depth == 0) {
-	function = get_internal();
-	arity = get_arity(function);
-	assert(arity != 0);
-	for (int i = 0; i < arity; ++i)
-	  children.emplace_back(Node{problem, depth + 1});
-      }
-      else {
-	function = get_leaf();
-	assert(arity == 0);
-      }
-    } else {
-      // maximum depth reached, must assign leaf node
-      function = get_leaf();
-      assert(arity == 0);
+    else {
+      function = get_internal();
+      assert(contains(function, internals));
+      // determine node's arity
+      arity = get_arity(function);
+      assert(arity != 0);
+      // recursively create subtrees
+      for (int i = 0; i < arity; ++i)
+	children.emplace_back(Node{problem, method, max_depth - 1});
     }
-    if (function == constant)
-      // choose a random value between the problem's min and max
-      k = get_constant(problem.constant_min, problem.constant_max);
+    assert(int(children.size()) == arity); // ensure arity
+    assert(function != null); // do not create null types
   }
 
   string Node::represent() const {
@@ -297,8 +265,7 @@ namespace individual {
     }
   }
 
-  Individual::Individual(const Problem & problem): root{Node{problem}} {
-    update_size();
+  Individual::Individual(const Problem & problem, const Method method, const int depth): root{Node{problem, method, depth}} {
     evaluate(problem.values);
   }
 

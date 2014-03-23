@@ -68,7 +68,7 @@ namespace individual {
     int get_total() const {return size.internals + size.leafs;}
     double get_fitness() const {return fitness;}
     double get_adjusted() const {return 1./(1+fitness);}
-    string evaluate(const problem::pairs &, const bool & print = false);
+    string evaluate(const problem::pairs &, const double & penalty = 0, const bool & print = false);
     void mutate(const double &);
     Node & operator[](const Size &);
     friend void crossover(const double &, Individual &, Individual &);

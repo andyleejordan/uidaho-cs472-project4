@@ -283,13 +283,13 @@ namespace individual {
     return "Formula: " + root.print() + "\n";
   }
 
-  string Individual::evaluate(const problem::pairs & values, const bool & print) {
+  string Individual::evaluate(const problem::pairs & values, const double & penalty, const bool & print) {
     using std::to_string;
     using std::get;
     string calculation = "# x - y - expected - error\n";
     // update size on evaluation because it's incredibly convenient
     size = root.size();
-    fitness = 0;
+    fitness = penalty * get_total(); // reset fitness and apply scaled size penalty
     for (auto pair : values) {
       double x = std::get<0>(pair);
       double y = root.evaluate(x);

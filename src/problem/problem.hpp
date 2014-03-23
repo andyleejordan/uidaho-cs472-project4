@@ -26,6 +26,7 @@ namespace problem {
     const int elitism_size;
     const double constant_min;
     const double constant_max;
+    const double penalty;
     const double grow_chance;
     const double mutate_chance;
     const double crossover_chance;

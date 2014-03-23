@@ -37,7 +37,7 @@ namespace problem {
   Problem::Problem(const pairs & v, const int & i, const int & p, const int & d, const int & t):
     values{v}, iterations{i}, population_size{p}, max_depth{d},
     tournament_size{t}, crossover_size{2}, elitism_size{2},
-    constant_min{0}, constant_max{10},
+    constant_min{0}, constant_max{10}, penalty{0.1},
     grow_chance{0.5}, mutate_chance{0.01},
     crossover_chance{0.8}, internals_chance{0.9}
   {

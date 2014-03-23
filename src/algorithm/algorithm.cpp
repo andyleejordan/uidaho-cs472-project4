@@ -90,7 +90,7 @@ namespace algorithm {
       // mutate children
       child.mutate(problem.mutate_chance);
       // update fitness (and size)
-      child.evaluate(problem.values);
+      child.evaluate(problem.values, problem.penalty);
     }
     return nodes;
   }

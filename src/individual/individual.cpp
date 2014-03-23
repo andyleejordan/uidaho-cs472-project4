@@ -283,35 +283,27 @@ namespace individual {
     return "Formula: " + root.print() + "\n";
   }
 
-  string Individual::print_calculation(const problem::pairs & values) const {
+  string Individual::evaluate(const problem::pairs & values, const bool & print) {
     using std::to_string;
     using std::get;
-    double fitness = 0;
-    string calculation;
-    for (auto pair : values) {
-      double output = root.evaluate(get<0>(pair));
-      double error = std::pow(output - get<1>(pair), 2);
-      fitness += error;
-      calculation += + "f(" + to_string(get<0>(pair))
-	+ ") = " + to_string(output)
-	+ ", y = " + to_string(get<1>(pair))
-	+ ", E = " + to_string(error) + "\n";
-    }
-    calculation += "Residual sum of squares: " + to_string(fitness) + "\n"
-      + "Adjusted fitness: " + to_string(1./(1+fitness)) + "\n";
-    return calculation;
-  }
-
-  void Individual::evaluate(const problem::pairs & values) {
+    string calculation = "# x - y - expected - error\n";
     // update size on evaluation because it's incredibly convenient
     size = root.size();
-    double error = 0;
+    fitness = 0;
     for (auto pair : values) {
-      double output = root.evaluate(std::get<0>(pair));
-      assert(not std::isnan(output) and not std::isinf(output));
-      error += std::pow(output - std::get<1>(pair), 2);
+      double x = std::get<0>(pair);
+      double y = root.evaluate(x);
+      assert(not std::isnan(y) and not std::isinf(y));
+      double expected = std::get<1>(pair);
+      double error = std::pow(y - expected, 2);
+      fitness += error;
+      if (print)
+	calculation += to_string(x) + "\t"
+	  + to_string(y) + "\t"
+	  + to_string(expected) + "\t"
+	  + to_string(error) + "\n";
     }
-    fitness = error;
+    return calculation;
   }
 
   void Individual::mutate(const double & chance) {

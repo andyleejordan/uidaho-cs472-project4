@@ -63,13 +63,12 @@ namespace individual {
     Individual(const Problem &, const Method, const int);
     string print() const;
     string print_formula() const;
-    string print_calculation(const problem::pairs &) const;
     int get_internals() const {return size.internals;}
     int get_leafs() const {return size.leafs;}
     int get_total() const {return size.internals + size.leafs;}
     double get_fitness() const {return fitness;}
     double get_adjusted() const {return 1./(1+fitness);}
-    void evaluate(const problem::pairs &);
+    string evaluate(const problem::pairs &, const bool & print = false);
     void mutate(const double &);
     Node & operator[](const Size &);
     friend void crossover(const double &, Individual &, Individual &);

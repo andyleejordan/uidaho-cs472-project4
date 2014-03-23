@@ -41,8 +41,10 @@ int main() {
   // end timing trials
   end = std::chrono::system_clock::now();
   std::chrono::duration<double> elapsed_seconds = end - start;
-  const Individual best = *std::min_element(candidates.begin(), candidates.end(), algorithm::compare_fitness);
+  std::vector<Individual>::iterator best = std::min_element(candidates.begin(), candidates.end(), algorithm::compare_fitness);
   std::cout << "Total elapsed time: " << elapsed_seconds.count() << "s\n"
 	    << "Average time: " << elapsed_seconds.count() / trials << "s\n"
-	    << best.print();
+	    << "Best trial: " << time << "_"
+	    << std::distance(candidates.begin(), best) + 1 << "\n"
+	    << best->print();
 }

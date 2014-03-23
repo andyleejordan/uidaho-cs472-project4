@@ -28,8 +28,8 @@ namespace algorithm {
     return (std::isnormal(a.get_fitness())) ? a.get_fitness() < b.get_fitness() : false;
   }
 
-  void open_log(std::ofstream & log, const std::time_t & time, const int & trial) {
-    std::string file_name = "logs/" + std::to_string(time) + "_" + std::to_string(trial);
+  void open_log(std::ofstream & log, const std::time_t & time, const int & trial, const std::string & folder = "logs/") {
+    std::string file_name = folder + std::to_string(time) + "_" + std::to_string(trial) + ".dat";
     log.open(file_name, std::ios_base::app);
     if (not log.is_open()) {
       std::cerr << "Log file " << file_name << " could not be opened!";
@@ -157,6 +157,10 @@ namespace algorithm {
     log << "# finished computation @ " << std::ctime(&end_time)
 	<< "# elapsed time: " << elapsed_seconds.count() << "s\n";
     log.close();
+    std::ofstream plot;
+    open_log(plot, time, trial, "logs/plots/");
+    plot << best.evaluate(problem.values, true);
+    plot.close();
     return best;
   }
 }

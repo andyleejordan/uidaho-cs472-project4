@@ -22,9 +22,18 @@ Makes use of autotools. Necessary files:
 
 To configure and build:
 #+begin_src sh
-autoreconf -vfi
-./configure && make
+autoreconf -vfi && ./configure && make
 #+end_src
+
+Boost must be built using the same compiler, so for OS X,
+=user-config.jam= needs the directive =using gcc : 4.8 : g++-4.8
+;=. Boost should then be bootstrapped like thus:
+
+#+begin_src sh
+./bootstrap.sh --with-libraries=program_options --with-toolset=gcc
+#+end_src
+
+And then built with =./b2= and installed with =./b2 install=.
 
 * Assignment :noexport:
 ** DONE Project #2a Genetic Program

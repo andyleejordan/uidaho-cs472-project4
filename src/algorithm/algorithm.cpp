@@ -37,7 +37,8 @@ namespace algorithm {
     }
   }
 
-  void log_info(const std::string & logs_dir, const std::time_t & time, const int & trial, const int & iteration, const Individual & best, const vector<Individual> & population) {
+  void log_info(const unsigned int verbosity, const std::string & logs_dir, const std::time_t & time, const int & trial, const int & iteration, const Individual & best, const vector<Individual> & population) {
+    if (verbosity < 1) return;
     double total_fitness = std::accumulate(population.begin(), population.end(), 0.,
 					   [](const double & a, const Individual & b)->double const {return a + b.get_adjusted();});
     int total_size = std::accumulate(population.begin(), population.end(), 0,
@@ -118,15 +119,17 @@ namespace algorithm {
   const individual::Individual genetic(const Options & options, const std::time_t time, const int & trial) {
     // start log
     std::ofstream log;
-    open_log(log, time, trial, options.logs_dir);
-    log << "# running a Genetic Program @ "
-	<< std::ctime(&time)
-	<< "# initial depth: " << options.max_depth
-	<< ", iterations: " << options.iterations
-	<< ", population size: " << options.population_size
-	<< ", tournament size: " << options.tournament_size << "\n"
-	<< "# raw fitness - best (adjusted) fitness - average (adjusted) fitness - size of best - average size\n";
-    log.close();
+    if (options.verbosity > 0) {
+      open_log(log, time, trial, options.logs_dir);
+      log << "# running a Genetic Program @ "
+	  << std::ctime(&time)
+	  << "# initial depth: " << options.max_depth
+	  << ", iterations: " << options.iterations
+	  << ", population size: " << options.population_size
+	  << ", tournament size: " << options.tournament_size << "\n"
+	  << "# raw fitness - best (adjusted) fitness - average (adjusted) fitness - size of best - average size\n";
+      log.close();
+    }
     // start timing algorithm
     std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
@@ -153,10 +156,13 @@ namespace algorithm {
     // log duration
     std::chrono::duration<double> elapsed_seconds = end - start;
     std::time_t end_time = std::chrono::system_clock::to_time_t(end);
-    open_log(log, time, trial, options.logs_dir);
-    log << "# finished computation @ " << std::ctime(&end_time)
-	<< "# elapsed time: " << elapsed_seconds.count() << "s\n";
-    log.close();
+    if (options.verbosity > 0) {
+      open_log(log, time, trial, options.logs_dir);
+      log << best.print() << best.print_formula()
+	  << "# finished computation @ " << std::ctime(&end_time)
+	  << "# elapsed time: " << elapsed_seconds.count() << "s\n";
+      log.close();
+    }
     std::ofstream plot;
     open_log(plot, time, trial, options.plots_dir);
     plot << best.evaluate(options.values, options.penalty, true);

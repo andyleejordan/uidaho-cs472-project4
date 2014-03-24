@@ -32,6 +32,7 @@ namespace options {
     double internals_chance;
     std::string logs_dir;
     std::string plots_dir;
+    unsigned int verbosity;
     void validate() const;
   };
 

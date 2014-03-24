@@ -94,7 +94,9 @@ namespace options {
       ("logs", po::value<std::string>(&options.logs_dir)->default_value("logs/"),
        "set the save directory for log files")
       ("plots", po::value<std::string>(&options.plots_dir)->default_value("plots/"),
-       "set the save directory for plot data files");
+       "set the save directory for plot data files")
+      ("verbosity,v", po::value<unsigned int>(&options.verbosity)->default_value(1),
+       "set the verbosity: 0 - no logging; 1 - normal logging; 2 - debug output");
     try {
       po::store(po::command_line_parser(argc, argv).
 		options(desc).positional(positionals).run(), variables_map);

@@ -27,3 +27,5 @@
 /src/options/.dirstamp
 /src/trials/.deps/
 /src/trials/.dirstamp
+/config.guess
+/config.sub

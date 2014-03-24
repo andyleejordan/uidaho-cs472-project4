@@ -1,7 +1,7 @@
 /* indivudal.cpp - CS 472 Project #2: Genetic Programming
  * Copyright 2014 Andrew Schwartzmeyer
  *
- * Source file for Individual
+ * Source file for individual namespace
  */
 
 #include <algorithm>

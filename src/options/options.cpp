@@ -63,19 +63,19 @@ namespace options {
       ("help,h", "produce help message")
       ("file,f", po::value<std::string>(&test_file)->default_value("test/cs472.dat"),
        "specify the location of the columnized test data \"X Y\"")
-      ("trials,t", po::value<int>(&options.trials)->default_value(4),
+      ("trials,t", po::value<unsigned int>(&options.trials)->default_value(4),
        "set the number of trials to run")
-      ("iterations,i", po::value<int>(&options.iterations)->default_value(128),
+      ("iterations,i", po::value<unsigned int>(&options.iterations)->default_value(128),
        "set the number of iterations for which to run each trial")
-      ("population,p", po::value<int>(&options.population_size)->default_value(128),
+      ("population,p", po::value<unsigned int>(&options.population_size)->default_value(128),
        "set the size of each population")
-      ("depth,d", po::value<int>(&options.max_depth)->default_value(4),
+      ("depth,d", po::value<unsigned int>(&options.max_depth)->default_value(4),
        "set the maximum depth for initial populations")
-      ("tournament,T", po::value<int>(&options.tournament_size)->default_value(3),
+      ("tournament,T", po::value<unsigned int>(&options.tournament_size)->default_value(3),
        "set the tournment size to adjust selection pressure")
-      ("crossover,c", po::value<int>(&options.crossover_size)->default_value(2),
+      ("crossover,c", po::value<unsigned int>(&options.crossover_size)->default_value(2),
        "set the crossover size (binary in current implementation)")
-      ("elitism,e", po::value<int>(&options.elitism_size)->default_value(2),
+      ("elitism,e", po::value<unsigned int>(&options.elitism_size)->default_value(2),
        "set the number of elitism replacements to make each iteration")
       ("min", po::value<double>(&options.constant_min)->default_value(0),
        "set the minimum value for random constants in an expression")

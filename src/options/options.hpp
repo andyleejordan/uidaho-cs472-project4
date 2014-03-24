@@ -16,13 +16,13 @@ namespace options {
 
   struct Options {
     pairs values;
-    int trials;
-    int iterations;
-    int population_size;
-    int max_depth;
-    int tournament_size;
-    int crossover_size;
-    int elitism_size;
+    unsigned int trials;
+    unsigned int iterations;
+    unsigned int population_size;
+    unsigned int max_depth;
+    unsigned int tournament_size;
+    unsigned int crossover_size;
+    unsigned int elitism_size;
     double constant_min;
     double constant_max;
     double penalty;

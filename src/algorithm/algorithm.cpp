@@ -55,9 +55,9 @@ namespace algorithm {
 
   vector<Individual> new_population(const Options & options) {
     vector<Individual> population;
-    int_dist depth_dist{0, options.max_depth}; // ramped
+    int_dist depth_dist{0, int(options.max_depth)}; // ramped
     real_dist dist{0, 1}; // half-and-half
-    for (int i = 0; i < options.population_size; ++i)
+    for (unsigned int i = 0; i < options.population_size; ++i)
       // pass options, random method (grow or full), and random max depth in given range
       population.emplace_back(Individual{options, individual::Method(dist(rg.engine) < options.grow_chance), depth_dist(rg.engine)});
     return population;
@@ -134,15 +134,15 @@ namespace algorithm {
     vector<Individual> population = new_population(options);
     Individual best;
     // run algorithm to termination
-    for (int iteration = 0; iteration < options.iterations; ++iteration) {
+    for (unsigned int iteration = 0; iteration < options.iterations; ++iteration) {
       // find Individual with lowest "fitness" AKA error from populaiton
       best = *std::min_element(population.begin(), population.end(), compare_fitness);
-      auto log_thread = std::async(std::launch::async, log_info, options.logs_dir, time, trial, iteration, best, population);
+      auto log_thread = std::async(std::launch::async, log_info, options.verbosity, options.logs_dir, time, trial, iteration, best, population);
       // create replacement population
       vector<Individual> offspring = new_offspring(options, population);
       // perform elitism
-      int_dist dist{0, options.population_size - 1};
-      for (int i = 0; i < options.elitism_size; ++i)
+      int_dist dist{0, int(options.population_size) - 1};
+      for (unsigned int i = 0; i < options.elitism_size; ++i)
 	offspring[dist(rg.engine)] = best;
       // replace current population with offspring
       population = offspring;

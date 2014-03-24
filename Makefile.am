@@ -7,5 +7,6 @@ search_SOURCES = \
 	src/random_generator/random_generator.cpp \
 	src/trials/trials.cpp
 
-AM_CPPFLAGS = ${CPPFLAGS} ${PTHREAD_CFLAGS}
-AM_LDFLAGS = ${PTHREAD_CFLAGS} ${LIBS}
+AM_CPPFLAGS = ${BOOST_CPPFLAGS} ${PTHREAD_CFLAGS}
+AM_LDFLAGS = ${BOOST_LDFLAGS} ${PTHREAD_LIBS}
+LDADD = ${BOOST_PROGRAM_OPTIONS_LIB}

@@ -19,9 +19,11 @@
 /src/individual/.dirstamp
 /stamp-h1
 /config.h.in~
-/src/problem/.deps/
-/src/problem/.dirstamp
 /src/random_generator/.deps/
 /src/random_generator/.dirstamp
 /src/algorithm/.deps/
 /src/algorithm/.dirstamp
+/src/options/.deps/
+/src/options/.dirstamp
+/src/trials/.deps/
+/src/trials/.dirstamp

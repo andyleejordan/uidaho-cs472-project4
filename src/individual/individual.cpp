@@ -131,18 +131,13 @@ namespace individual {
 
   double Node::evaluate(const double & x) const {
     // depth-first post-order recursive evaluation tree
-    double a, b, c, d;
+    double a, b;
     if (arity == 1)
       a = children[0].evaluate(x);
-    else if (arity == 2) {
+    else if (arity == 2 or arity == 4) {
+      // children c and d are evaluated conditionally
       a = children[0].evaluate(x);
       b = children[1].evaluate(x);
-    }
-    else if (arity == 4) {
-      a = children[0].evaluate(x);
-      b = children[1].evaluate(x);
-      c = children[2].evaluate(x);
-      d = children[3].evaluate(x);
     }
     // calculate the result
     switch(function) {
@@ -186,10 +181,10 @@ namespace individual {
       return std::pow(std::abs(a), std::abs(b)); // protected
     case lesser:
       assert(arity == 4);
-      return (a < b) ? c : d;
+      return (a < b) ? children[2].evaluate(x) : children[3].evaluate(x);
     case greater:
       assert(arity == 4);
-      return (a > b) ? c : d;
+      return (a > b) ? children[2].evaluate(x) : children[3].evaluate(x);
     }
     assert(false);
   }

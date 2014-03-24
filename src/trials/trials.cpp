@@ -16,15 +16,15 @@
 #include "../options/options.hpp"
 
 namespace trials {
-  const std::tuple<int, individual::Individual> run(const options::Options & options, const int & trials, const std::time_t & time) {
+  const std::tuple<int, individual::Individual> run(const options::Options & options, const std::time_t & time) {
     // spawn trials number of threads in blocks
     using individual::Individual;
     const unsigned long hardware_threads = std::thread::hardware_concurrency();
     const unsigned long blocks = hardware_threads != 0 ? hardware_threads : 2;
-    assert(trials % blocks == 0);
+    assert(options.trials % blocks == 0);
     int trial = 0;
     std::vector<Individual> candidates;
-    for (unsigned long t = 0; t < trials / blocks; ++t) {
+    for (unsigned long t = 0; t < options.trials / blocks; ++t) {
       std::vector<std::future<const Individual>> results;
       for (unsigned long i = 0; i < blocks; ++i)
 	results.emplace_back(std::async(std::launch::async, algorithm::genetic, options, time, ++trial));

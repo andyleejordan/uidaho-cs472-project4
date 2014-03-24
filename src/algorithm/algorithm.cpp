@@ -159,7 +159,7 @@ namespace algorithm {
     log.close();
     std::ofstream plot;
     open_log(plot, time, trial, "logs/plots/");
-    plot << best.evaluate(options.values, true);
+    plot << best.evaluate(options.values, options.penalty, true);
     plot.close();
     return best;
   }

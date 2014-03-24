@@ -1,5 +1,5 @@
 #!/bin/sh
-for file in logs/plots/*.dat; do
+for file in $1/*.dat; do
 gnuplot << EOF
 unset label
 set terminal png size 400,300

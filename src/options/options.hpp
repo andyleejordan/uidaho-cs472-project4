@@ -15,36 +15,24 @@ namespace options {
   typedef std::vector<std::tuple<double, double>> pairs;
 
   struct Options {
-    const pairs values;
-    const int trials;
-    const int iterations;
-    const int population_size;
-    const int max_depth;
-    const int tournament_size;
-    const int crossover_size;
-    const int elitism_size;
-    const double constant_min;
-    const double constant_max;
-    const double penalty;
-    const double grow_chance;
-    const double mutate_chance;
-    const double crossover_chance;
-    const double internals_chance;
-    Options(const pairs & values,
-	    const int & trials,
-	    const int & iterations,
-	    const int & population_size,
-	    const int & max_depth,
-	    const int & tournament_size,
-	    const int & crossover_size,
-	    const int & elitism_size,
-	    const double & constant_min,
-	    const double & constant_max,
-	    const double & penalty,
-	    const double & grow_chance,
-	    const double & mutate_chance,
-	    const double & crossover_chance,
-	    const double & internals_chance);
+    pairs values;
+    int trials;
+    int iterations;
+    int population_size;
+    int max_depth;
+    int tournament_size;
+    int crossover_size;
+    int elitism_size;
+    double constant_min;
+    double constant_max;
+    double penalty;
+    double grow_chance;
+    double mutate_chance;
+    double crossover_chance;
+    double internals_chance;
+    std::string logs_dir;
+    std::string plots_dir;
+    void validate() const;
   };
 
   const Options parse(int argc, char** argv);

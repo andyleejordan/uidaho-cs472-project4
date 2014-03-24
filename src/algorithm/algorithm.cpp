@@ -101,7 +101,7 @@ namespace algorithm {
     offspring.reserve(population.size());
     const unsigned long hardware_threads = std::thread::hardware_concurrency();
     const unsigned long num_threads = hardware_threads != 0 ? hardware_threads : 2;
-    assert(population.size() % num_threads == 0);
+    assert(num_threads == 1 or population.size() % num_threads == 0);
     const unsigned long block_size = population.size() / num_threads;
     vector<std::future<const vector<Individual>>> results;
     // spawn threads

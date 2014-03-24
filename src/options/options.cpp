@@ -41,10 +41,9 @@ namespace options {
     assert(trials > 0);
     assert(iterations > 0);
     assert(population_size > 0);
-    assert(max_depth >= 0);
     assert(tournament_size > 0 and tournament_size <= population_size);
     assert(crossover_size == 2);
-    assert(elitism_size >= 0 and elitism_size <= population_size);
+    assert(elitism_size <= population_size);
     assert(constant_min < constant_max);
     assert(grow_chance >= 0 and grow_chance <= 1);
     assert(mutate_chance >= 0 and mutate_chance <= 1);
@@ -52,7 +51,7 @@ namespace options {
     assert(internals_chance >= 0 and internals_chance <= 1);
   }
 
-  const Options parse(int argc, char* argv[]) {
+  const Options parse(int argc, char** argv) {
     namespace po = boost::program_options;
     std::string test_file;
     Options options;
@@ -98,22 +97,21 @@ namespace options {
       ("verbosity,v", po::value<unsigned int>(&options.verbosity)->default_value(1),
        "set the verbosity: 0 - no logging; 1 - normal logging; 2 - debug output");
     try {
-      po::store(po::command_line_parser(argc, argv).
-		options(desc).positional(positionals).run(), variables_map);
-      if (variables_map.count("help")) {
-	std::cout << "Genetic Program implemented in C++ by Andrew Schwartzmeyer\n"
-		  << "Code located at https://github.com/andschwa/uidaho-cs472-project2\n\n"
-		  << "Logs saved to <logs>/<Unix time>.dat\n"
-		  << "Plot data saved to <plots>/<Unix time>.dat\n"
-		  << "GNUPlot PNG generation script './plot <plots>'\n\n"
-		  << desc << std::endl;
-	exit(EXIT_SUCCESS);
-      }
+      po::store(po::command_line_parser(argc, argv).options(desc).positional(positionals).run(), variables_map);
       po::notify(variables_map);
-    }
-    catch(std::exception& e) {
-      std::cout << e.what() << '\n';
+    } catch(std::exception & e) {
+      std::cerr << e.what() << std::endl;
       exit(EXIT_FAILURE);
+    }
+    // print help
+    if (variables_map.count("help")) {
+      std::cout << "Genetic Program implemented in C++ by Andrew Schwartzmeyer\n"
+		<< "Code located at https://github.com/andschwa/uidaho-cs472-project2\n\n"
+		<< "Logs saved to <logs>/<Unix time>.dat\n"
+		<< "Plot data saved to <plots>/<Unix time>.dat\n"
+		<< "GNUPlot PNG generation script './plot <plots>'\n\n"
+		<< desc << std::endl;
+      exit(EXIT_SUCCESS);
     }
     // get values from given test file
     options.values = get_data(test_file);

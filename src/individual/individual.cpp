@@ -266,16 +266,16 @@ namespace individual {
 
   string Individual::print() const {
     using std::to_string;
-    string info = "Size " + to_string(get_total())
+    string info = "# Size " + to_string(get_total())
       + ", with " + to_string(get_internals())
       + " internals, and " + to_string(get_leafs()) + " leafs.\n"
-      + "Raw fitness: " + to_string(get_fitness())
+      + "# Raw fitness: " + to_string(get_fitness())
       + ", and adjusted: " + to_string(get_adjusted()) + ".\n";
     return info;
   }
 
   string Individual::print_formula() const {
-    return "Formula: " + root.print() + "\n";
+    return "# Formula: " + root.print() + "\n";
   }
 
   string Individual::evaluate(const options::pairs & values, const double & penalty, const bool & print) {

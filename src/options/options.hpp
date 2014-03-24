@@ -13,11 +13,10 @@
 
 namespace options {
   typedef std::vector<std::tuple<double, double>> pairs;
-  
-  const pairs get_data(std::string file_name = "test/cs472.dat");
 
   struct Options {
     const pairs values;
+    const int trials;
     const int iterations;
     const int population_size;
     const int max_depth;
@@ -31,9 +30,24 @@ namespace options {
     const double mutate_chance;
     const double crossover_chance;
     const double internals_chance;
-    Options(const pairs &, const int & i = 128, const int & p = 1024,
-	    const int & d = 5, const int & t = 3);
+    Options(const pairs & values,
+	    const int & trials,
+	    const int & iterations,
+	    const int & population_size,
+	    const int & max_depth,
+	    const int & tournament_size,
+	    const int & crossover_size,
+	    const int & elitism_size,
+	    const double & constant_min,
+	    const double & constant_max,
+	    const double & penalty,
+	    const double & grow_chance,
+	    const double & mutate_chance,
+	    const double & crossover_chance,
+	    const double & internals_chance);
   };
+
+  const Options parse(int argc, char** argv);
 }
 
 #endif /* _OPTIONS_H_ */

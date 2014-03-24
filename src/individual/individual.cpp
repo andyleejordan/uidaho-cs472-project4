@@ -28,7 +28,7 @@ namespace individual {
   vector<Function> unaries{sqrt, sin, cos, log, exp};
   vector<Function> binaries{add, subtract, multiply, divide, pow};
   vector<Function> quadnaries{lesser, greater};
-  vector<Function> internals{add, subtract, multiply, divide, lesser, greater};
+  vector<Function> internals{sin, cos, add, subtract, multiply, divide, lesser, greater};
 
   template<typename I, typename S> bool contains(const I & item, const S & set) {
     return std::find(set.begin(), set.end(), item) != set.end();

@@ -103,7 +103,7 @@ namespace options {
 		  << "Code located at https://github.com/andschwa/uidaho-cs472-project2\n\n"
 		  << "Logs saved to <logs>/<Unix time>.dat\n"
 		  << "Plot data saved to <plots>/<Unix time>.dat\n"
-		  << "GNUPlot PNG generation script `./plot.plg`\n\n"
+		  << "GNUPlot PNG generation script './plot <plots>'\n\n"
 		  << desc << std::endl;
 	exit(EXIT_SUCCESS);
       }

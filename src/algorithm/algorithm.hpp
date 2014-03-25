@@ -12,10 +12,16 @@
 #include "../individual/individual.hpp"
 #include "../options/options.hpp"
 
-namespace algorithm {
+namespace algorithm
+{
   using individual::Individual;
-  bool compare_fitness(const Individual & a, const Individual & b);
-  const Individual genetic(const options::Options & options, std::time_t time = std::time(nullptr), const int & trial = 0);
+
+  bool
+  compare_fitness (const Individual &, const Individual &);
+
+  const Individual
+  genetic (const options::Options &options,
+	   std::time_t time = std::time(nullptr), const int &trial = 0);
 }
 
 #endif /* _ALGORITHM_H_ */

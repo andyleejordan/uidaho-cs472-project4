@@ -1,7 +1,8 @@
 /* options.hpp - CS 472 Project #2: Genetic Programming
  * Copyright 2014 Andrew Schwartzmeyer
  *
- * Header file for options namespace
+ * header file for options namespace
+ * provides program options and gathers test data
  */
 
 #ifndef _OPTIONS_H_
@@ -11,10 +12,15 @@
 #include <tuple>
 #include <vector>
 
-namespace options {
-  typedef std::vector<std::tuple<double, double>> pairs;
+namespace options
+{
+  // a vector of (X, Y) pairs of doubles as tuples
+  typedef std::vector <std::tuple <double, double>> pairs;
 
-  struct Options {
+  // "singleton" struct with configured options for the algorithm
+  // setup and returned by parse()
+  struct Options
+  {
     pairs values;
     unsigned int trials;
     unsigned int iterations;
@@ -33,10 +39,11 @@ namespace options {
     std::string logs_dir;
     std::string plots_dir;
     unsigned int verbosity;
-    void validate() const;
+    void validate () const;
   };
 
-  const Options parse(int argc, char** argv);
+  // given argc and argv, returns a finished and validated Options object
+  const Options parse (int argc, char *argv[]);
 }
 
 #endif /* _OPTIONS_H_ */

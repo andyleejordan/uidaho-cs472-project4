@@ -13,8 +13,10 @@
 #include "../individual/individual.hpp"
 #include "../options/options.hpp"
 
-namespace trials {
-  const std::tuple<int, individual::Individual> run(const options::Options &, const std::time_t &);
+namespace trials
+{
+  const std::tuple <int, individual::Individual>
+  run (const options::Options&, const std::time_t&);
 }
 
 #endif /* _TRIALS_H_ */

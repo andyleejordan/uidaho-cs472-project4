@@ -12,66 +12,69 @@
 #include <vector>
 #include "../options/options.hpp"
 
-namespace individual {
+namespace individual
+{
   using options::Options;
   using std::string;
 
-  enum Function {
-    null,
-    constant, input,
-    sqrt, sin, cos, log, exp,
-    add, subtract, divide, multiply, pow,
-    lesser, greater
-  };
+  // Implemented functions for expression.
+  enum Function
+    {
+      NIL,
+      CONSTANT, INPUT,
+      SQRT, SIN, COS, LOG, EXP,
+      ADD, SUBTRACT, DIVIDE, MULTIPLY, POW,
+      LESSER, GREATER
+    };
 
-  enum Method {
-    grow, full
-  };
+  // Implemented initial population generation methods.
+  enum Method { GROW, FULL };
 
-  struct Size {
-    int internals = 0;
-    int leafs = 0;
-    Size(const int & i = 0, const int & l = 0): internals(i), leafs(l) {}
-  };
+  // Represents a tree's size in terms of internal and leaf nodes.
+  struct Size { unsigned int internals = 0; unsigned int leafs = 0; };
 
-  class Node {
-  private:
-    Function function = null;
-    int arity = 0; // space for time trade-off
-    double k = 0; // excess for internal nodes
-    std::vector<Node> children;
-    void set_constant(const double &, const double &);
-    void mutate_self();
+  // Implements a recursive parse tree representing an expression.
+  class Node
+  {
+    Function function = NIL; // Should never be in an expression.
+    unsigned int arity = 0; // Space for time trade-off.
+    double k = 0; // Excess for internal nodes.
+    std::vector <Node> children;
+
+    void set_constant (const double &, const double &);
+    void mutate_self ();
+
   public:
-    Node() {};
-    Node(const Options &, const Method &, const int &);
-    string print() const;
-    string represent() const;
-    double evaluate(const double &) const;
-    const Size size() const;
-    Node & visit(const Size &, Size &);
-    void mutate_tree(const double &);
+    Node () {};
+    Node (const Options &, const Method &, const unsigned int &);
+    string print () const;
+    string represent () const;
+    double evaluate (const double &) const;
+    const Size size () const;
+    Node & visit (const Size &, Size &);
+    void mutate_tree (const double &);
   };
 
-  class Individual {
-  private:
+  class Individual
+  {
+    Node root;
     Size size;
     double fitness = 0;
-    Node root;
   public:
-    Individual() {}
-    Individual(const Options &, const Method, const int);
-    string print() const;
-    string print_formula() const;
-    int get_internals() const {return size.internals;}
-    int get_leafs() const {return size.leafs;}
-    int get_total() const {return size.internals + size.leafs;}
-    double get_fitness() const {return fitness;}
-    double get_adjusted() const {return 1./(1+fitness);}
-    string evaluate(const options::pairs &, const double & penalty = 0, const bool & print = false);
-    void mutate(const double &);
-    Node & operator[](const Size &);
-    friend void crossover(const double &, Individual &, Individual &);
+    Individual () {}
+    Individual (const Options &, const Method, const unsigned int);
+    string print () const;
+    string print_formula () const;
+    unsigned int get_internals () const { return size.internals; }
+    unsigned int get_leafs () const { return size.leafs; }
+    unsigned int get_total () const { return size.internals + size.leafs; }
+    double get_fitness () const { return fitness; }
+    double get_adjusted () const { return 1. / (1 + fitness); }
+    string evaluate (const options::pairs &, const double &penalty = 0,
+		     const bool &print = false);
+    void mutate (const double &);
+    Node & operator[] (const Size &);
+    friend void crossover (const double &, Individual &, Individual &);
   };
 }
 

@@ -61,6 +61,8 @@ namespace options {
     desc.add_options()
       ("help,h", "produce help message")
       ("file,f", po::value<std::string>(&test_file)->default_value("test/cs472.dat"),
+      ("config,c", po::value<string>()->default_value("search.cfg"),
+       "specify the configuration file")
        "specify the location of the columnized test data \"X Y\"")
       ("trials,t", po::value<unsigned int>(&options.trials)->default_value(4),
        "set the number of trials to run")
@@ -86,7 +88,7 @@ namespace options {
        "set the probability that an initial tree will be made by the grow method")
       ("mutate,m", po::value<double>(&options.mutate_chance)->default_value(0.01),
        "set the probability that a single node will mutate")
-      ("crossover_chance,C", po::value<double>(&options.crossover_chance)->default_value(0.8),
+      ("crossover_chance", po::value<double>(&options.crossover_chance)->default_value(0.8),
        "set the probability that a selected pair of invididuals will undergo crossover")
       ("internals,I", po::value<double>(&options.internals_chance)->default_value(0.9),
        "set the probability that a target node for crossover will be an internal node")
@@ -113,6 +115,9 @@ namespace options {
 		<< desc << std::endl;
       exit(EXIT_SUCCESS);
     }
+	std::ifstream config(variables_map["config"].as<string>());
+	if (config.is_open())
+	  po::store(po::parse_config_file(config, description), variables_map);
     // get values from given test file
     options.values = get_data(test_file);
     options.validate();

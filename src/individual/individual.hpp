@@ -14,7 +14,6 @@
 
 namespace individual
 {
-  using options::Options;
   using std::string;
 
   // Implemented functions for expression.
@@ -46,9 +45,9 @@ namespace individual
 
   public:
     Node () {};
-    Node (const Options &, const Method &, const unsigned int &);
     string print () const;
     string represent () const;
+    Node (const Method &, const unsigned int &, const double &,const double &);
     double evaluate (const double &) const;
     const Size size () const;
     Node & visit (const Size &, Size &);
@@ -62,9 +61,11 @@ namespace individual
     double fitness = 0;
   public:
     Individual () {}
-    Individual (const Options &, const Method, const unsigned int);
     string print () const;
     string print_formula () const;
+    Individual (const Method, const unsigned int, const double &,
+		const double &, const options::pairs &);
+
     unsigned int get_internals () const { return size.internals; }
     unsigned int get_leafs () const { return size.leafs; }
     unsigned int get_total () const { return size.internals + size.leafs; }

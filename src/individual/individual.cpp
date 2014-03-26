@@ -21,7 +21,6 @@ namespace individual
 {
   using std::vector;
   using std::string;
-  using options::Options;
   using namespace random_generator;
 
   // Vectors of same-arity function enums.
@@ -75,10 +74,9 @@ namespace individual
   }
 
   /* Recursively constructs a parse tree using the given method
-     (either GROW or FULL).  TODO: replace options with necessary data
-     (min and max). */
-  Node::Node (const Options &options, const Method &method,
-	      const unsigned int &max_depth)
+     (either GROW or FULL). */
+  Node::Node (const Method &method, const unsigned int &max_depth,
+	      const double &constant_min, const double &constant_max)
   {
     // Create terminal node if at the max depth or randomly (if growing).
     real_dist dist { 0, 1 };
@@ -88,7 +86,7 @@ namespace individual
 	function = get_function (leafs);
 	// Setup constant function; input is provided on evaluation.
 	if (function == CONSTANT)
-	  k = get_constant (options.constant_min, options.constant_max);
+	  k = get_constant (constant_min, constant_max);
       }
     // Otherwise choose a non-terminal node.
     else
@@ -98,7 +96,8 @@ namespace individual
 	arity = get_arity (function);
 	// Recursively create subtrees.
 	for (unsigned int i = 0; i < arity; ++i)
-	  children.emplace_back (Node { options, method, max_depth - 1 });
+	  children.emplace_back (Node { method, max_depth - 1,
+		constant_min, constant_max });
       }
     assert (function != NIL); // do not create null types
     assert (children.size () == arity); // ensure arity
@@ -338,13 +337,14 @@ namespace individual
   }
 
   /* Create an Individual tree by having a root node (to which the
-     actual construction is delegated).  TODO: replace options with
-     necessary data (min, max, and values). */
-  Individual::Individual (const Options &options, const Method method,
-			  const unsigned int depth)
-    : root { Node { options, method, depth } }
+     actual construction is delegated). The method and depth are
+     passed by value as their creation elsewhere is temporary. */
+  Individual::Individual (const Method method, const unsigned int depth,
+			  const double &min, const double &max,
+			  const options::pairs &values)
+    : root { Node { method, depth, min, max } }
   {
-    evaluate(options.values);
+    evaluate(values);
   }
 
   // Return string representation of a tree's size and fitness.

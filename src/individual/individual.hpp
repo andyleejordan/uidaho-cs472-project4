@@ -14,8 +14,6 @@
 
 namespace individual
 {
-  using std::string;
-
   // Implemented functions for expression.
   enum Function
     {
@@ -45,9 +43,9 @@ namespace individual
 
   public:
     Node () {};
-    string print () const;
-    string represent () const;
     Node (const Method &, const unsigned int &, const double &,const double &);
+    std::string print () const;
+    std::string represent () const;
     double evaluate (const double &) const;
     const Size size () const;
     Node & visit (const Size &, Size &);
@@ -61,20 +59,22 @@ namespace individual
     double fitness = 0;
   public:
     Individual () {}
-    string print () const;
-    string print_formula () const;
     Individual (const Method, const unsigned int, const double &,
 		const double &, const options::pairs &);
+
+    std::string print () const;
+    std::string print_formula () const;
 
     unsigned int get_internals () const { return size.internals; }
     unsigned int get_leafs () const { return size.leafs; }
     unsigned int get_total () const { return size.internals + size.leafs; }
     double get_fitness () const { return fitness; }
     double get_adjusted () const { return 1. / (1 + fitness); }
-    string evaluate (const options::pairs &, const double &penalty = 0,
-		     const bool &print = false);
-    void mutate (const double &);
+
     Node & operator[] (const Size &);
+    void mutate (const double &);
+    std::string evaluate (const options::pairs &, const double &penalty = 0,
+			  const bool &print = false);
     friend void crossover (const double &, Individual &, Individual &);
   };
 }

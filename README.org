@@ -172,9 +172,8 @@ percent) addition to the fitness for the average size and fitness seen
 in experimentation.  Additionally, multiple trials are run in
 concurrent threads, rather than multiple runs of the program.
 
-* Graphs
-** Average and best fitness
-Note: the plotted data is the adjusted fitness, that is, =1/(1 + raw
+** Notes
+The plotted data is the adjusted fitness, that is, =1/(1 + raw
 fitness)= where raw fitness is the aforementioned residual sum of
 squares plus size penalty.  This scales the fitness to the range [0,
 1] where 1 is perfect (0 raw) and 0 is worst (infinite raw).  The size
@@ -182,14 +181,57 @@ penalty is subtracted from the fitness when adjusting it, so that it
 does not skew the data.  Eight trials were run to 256 iterations, the
 best two of which are reproduced here.
 
+Elapsed time for this run: 479.597s
+#+CAPTION: Best and average fitness for result #1
+#+NAME: fig:fitness-1
 [[./results_1/fitness.png]]
 
-[[./results_2/fitness.png]]
-
-** Test points
-
+#+CAPTION: Evaluated function and test data for result #1
+#+NAME: fig:function-1
 [[./results_1/function.png]]
 
+Elapsed time for this run: 945.17s.
+#+CAPTION: Best and average fitness for result #2
+#+NAME: fig:fitness-2
+[[./results_2/fitness.png]]
+
+#+CAPTION: Evaluated function and test data for result #2
+#+NAME: fig:function-1
 [[./results_2/function.png]]
 
-* Conclusion
+* Discussion
+
+** Result \#1
+
+The best fitness of this trial climbed steadily upward until about
+generation 175, where it started to plateau.  The best fitness has
+dips, even with elitism, because of subtraction of the size penalty
+from the adjusted fitness for the graphed data; this is interesting,
+but I think to be expected, as the fitness penalty causes smaller,
+though somewhat worse value-wise, functions to be considered better.
+The average fitness slowly climbs, but plateaus rather quickly.  More
+elitism may help in this case, or perhaps a higher mutation chance.
+
+The function values of the found expression appear to be spot on in
+the first region, as it captured the parabola quite
+well. Additionally, it captured the large spike, which although it may
+be noise, was significant.  The second region is less interesting,
+because its noise swallows up its periodicity.  The third region is
+less interesting still, but it was modeled pretty well by a straight
+line.
+
+** Result \#2
+
+The best fitness for this result climbed very fast around the fourth
+generation, and then continues to climb pretty steadily.  Again there
+are infrequent drops where the algorithm chooses a similarly fit but
+smaller function.  The average fitness plateaus a little less, but
+still climbs slowly.
+
+The function values for this result are a bit more interesting, and
+really demonstrate the randomness of genetic programming.  Noise at
+the bottom of the parabola in the first region was actually fit
+opposite what it should be (that is, for the small valley, the
+function has a hill, and vice versa for the small hill).  The noise in
+the second region caused a slow wave to form.  The noisy but positive
+slope in the third region was decently fit by the function.

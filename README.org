@@ -3,7 +3,7 @@
 #+EMAIL:     schw2620@vandals.uidaho.edu
 #+DATE:      2014-03-26 Wed
 #+LANGUAGE:  en
-#+OPTIONS:   H:3 num:t toc:nil \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   H:3 num:nil toc:nil \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
 #+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
 #+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
 #+EXPORT_SELECT_TAGS: export
@@ -18,7 +18,7 @@ provided test data.  The function is modeled as a parse tree,
 implemented recursively.  Algorithm details available in the table
 below.  This implementation can achieve varying degrees of fitness
 depending on the parameters it is run with, especially the maximum
-number of iterations.
+number of iterations.  The code can be found at: =https://github.com/andschwa/uidaho-cs472-project2=
 #+END_ABSTRACT
 
 * Build :noexport:
@@ -163,11 +163,11 @@ the other half are generated randomly.  The maximum depth of these
 trees is randomly chosen from the interval [0, 3].  The lower initial
 maximum depth was chosen due to code growth issues, as the trees soon
 grow significantly larger.  The fitness function is the residual sum
-of squares (of which the squareroot is /not/ taken), plus the size
+of squares (of which the square-root is /not/ taken), plus the size
 penalty.  Although fixing the maximum size to which trees can grow was
 an option, the size penalty well enough (though far from perfect) and
 was very easy to implement.  The penalty constant was chosen so that
-the the penalty produced a significant but not over-bearing (about 10
+the penalty produced a significant but not over-bearing (about 10
 percent) addition to the fitness for the average size and fitness seen
 in experimentation.  Additionally, multiple trials are run in
 concurrent threads, rather than multiple runs of the program.
@@ -181,27 +181,13 @@ penalty is subtracted from the fitness when adjusting it, so that it
 does not skew the data.  Eight trials were run to 256 iterations, the
 best two of which are reproduced here.
 
-Elapsed time for this run: 479.597s
-#+CAPTION: Best and average fitness for result #1
-#+NAME: fig:fitness-1
-[[./results_1/fitness.png]]
-
-#+CAPTION: Evaluated function and test data for result #1
-#+NAME: fig:function-1
-[[./results_1/function.png]]
-
-Elapsed time for this run: 945.17s.
-#+CAPTION: Best and average fitness for result #2
-#+NAME: fig:fitness-2
-[[./results_2/fitness.png]]
-
-#+CAPTION: Evaluated function and test data for result #2
-#+NAME: fig:function-1
-[[./results_2/function.png]]
-
 * Discussion
 
+The graphs are to be found at the end of this report.
+
 ** Result \#1
+
+Elapsed time for this run: 479.597s
 
 The best fitness of this trial climbed steadily upward until about
 generation 175, where it started to plateau.  The best fitness has
@@ -210,7 +196,7 @@ from the adjusted fitness for the graphed data; this is interesting,
 but I think to be expected, as the fitness penalty causes smaller,
 though somewhat worse value-wise, functions to be considered better.
 The average fitness slowly climbs, but plateaus rather quickly.  More
-elitism may help in this case, or perhaps a higher mutation chance.
+elitism may help in this case, or perhaps a higher mutation rate.
 
 The function values of the found expression appear to be spot on in
 the first region, as it captured the parabola quite
@@ -221,6 +207,8 @@ less interesting still, but it was modeled pretty well by a straight
 line.
 
 ** Result \#2
+
+Elapsed time for this run: 945.17s.
 
 The best fitness for this result climbed very fast around the fourth
 generation, and then continues to climb pretty steadily.  Again there
@@ -235,3 +223,41 @@ opposite what it should be (that is, for the small valley, the
 function has a hill, and vice versa for the small hill).  The noise in
 the second region caused a slow wave to form.  The noisy but positive
 slope in the third region was decently fit by the function.
+
+* Conclusion
+
+Overall this genetic program performed pretty well, and produced nice
+results actually quite quickly, considering that multiple trials were
+hogging the cores (which for a single trial are still utilized when
+making a new offspring population).  There was a lot learned,
+especially that the power function should probably not be included
+(makes the average fitness generally go to infinity), and many bugs
+squashed.  Further experimentation showed that more selection pressure
+(tournament size of 4) seemed to produce better results in same number
+of iterations, but took a about 50 generations to start producing any
+results at all; however, this could have just been a quirk.  A
+mutation rate of 4 percent (versus the earlier 1 percent) also seemed
+to produce more fit functions, but tended to cause the over-fitting.
+
+There are a few improvements I want to make: I want better control
+over code-growth, with perhaps a size-limiting crossover, and I also
+want to try no crossover but multiple types of randomly chosen
+mutations (subtree, shrink, hoist, etc.).  All considered I will
+probably spend more of this weekend working on these just for the fun
+of it.
+
+#+CAPTION: Best and average fitness for result #1
+#+NAME: fig:fitness-1
+[[./results_1/fitness.png]]
+
+#+CAPTION: Evaluated function and test data for result #1
+#+NAME: fig:function-1
+[[./results_1/function.png]]
+
+#+CAPTION: Best and average fitness for result #2
+#+NAME: fig:fitness-2
+[[./results_2/fitness.png]]
+
+#+CAPTION: Evaluated function and test data for result #2
+#+NAME: fig:function-1
+[[./results_2/function.png]]

@@ -57,6 +57,7 @@ namespace individual
     Node root;
     Size size;
     double fitness = 0;
+    double adjusted = 0;
   public:
     Individual () {}
     Individual (const Method, const unsigned int, const double &,
@@ -69,7 +70,7 @@ namespace individual
     unsigned int get_leafs () const { return size.leafs; }
     unsigned int get_total () const { return size.internals + size.leafs; }
     double get_fitness () const { return fitness; }
-    double get_adjusted () const { return 1. / (1 + fitness); }
+    double get_adjusted () const { return adjusted; }
 
     Node & operator[] (const Size &);
     void mutate (const double &);

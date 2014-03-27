@@ -396,6 +396,9 @@ namespace individual
 	      + to_string (error) + "\n";
 	  }
       }
+
+    adjusted = (double) 1 / (1 + fitness - penalty * get_total ());
+
     return calculation;
   }
 

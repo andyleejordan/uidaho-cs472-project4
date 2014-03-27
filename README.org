@@ -129,7 +129,7 @@ for this project you do not need to do a lot of writting. An abstract,
 fill in the table summarizing your algorithms, two graphs, and a
 conclusion/discussion.
 
-* Table
+* Algorithm Information
 #+ATTR_LATEX: :align |l|p{4in}|
 |------------------+--------------------------------------------------------------|
 |                  | <60>                                                         |
@@ -156,7 +156,26 @@ conclusion/discussion.
 | Size control     | Size penalty (0.1 * total nodes) in fitness function         |
 |------------------+--------------------------------------------------------------|
 
+** Changes Since Project \#2b
+The initial population generation is now created through the ramped
+half-and-half method, that is, half of the trees are fully generated,
+the other half are generated randomly.  The maximum depth of these
+trees is randomly chosen from the interval [0, 3].  The lower initial
+maximum depth was chosen due to code growth issues, as the trees soon
+grow significantly larger.  The fitness function is the residual sum
+of squares (of which the squareroot is /not/ taken), plus the size
+penalty (0.1 times the total number of nodes in the tree).  Although
+fixing the maximum size to which trees can grow was an option, the
+size penalty worked pretty well and was very easy to implement.
+Additionally, multiple trials are run in concurrent threads, rather
+than multiple runs of the program.
+
 * Graphs
 ** Average and best fitness
+Note: the plotted data is the adjusted fitness, that is, =1/(1 + raw
+fitness)= where raw fitness is the aforementioned residual sum of
+squares plus size penalty.  This scales the fitness to the range [0,
+1] where 1 is perfect (0 raw) and 0 is worst (infinite raw).
+
 ** Test points
 * Conclusion

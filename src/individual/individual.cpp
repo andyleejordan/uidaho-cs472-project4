@@ -27,13 +27,13 @@ namespace individual
   vector <Function> nullaries { CONSTANT, INPUT };
   vector <Function> unaries { SQRT, SIN, COS, LOG, EXP };
   vector <Function> binaries { ADD, SUBTRACT, MULTIPLY, DIVIDE, POW };
-  vector <Function> quadnaries { LESSER, GREATER};
+  vector <Function> quadnaries { LESSER, GREATER };
 
   /* Vectors of available function enums.  Should be moved into
      Options struct. */
   vector <Function> leafs { CONSTANT, INPUT };
   vector <Function> internals { SIN, COS, ADD, SUBTRACT, MULTIPLY, DIVIDE,
-      LESSER, GREATER};
+      LESSER, GREATER };
 
   // Returns bool of whether or not the item is in the set.
   template <typename I, typename S> bool

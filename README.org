@@ -153,7 +153,7 @@ conclusion/discussion.
 |------------------+--------------------------------------------------------------|
 | Fitness function | Residual sum of squares with size penalty                    |
 |------------------+--------------------------------------------------------------|
-| Size control     | Size penalty (0.1 * total nodes) in fitness function         |
+| Size control     | Size penalty (0.5 * total nodes) in fitness function         |
 |------------------+--------------------------------------------------------------|
 
 ** Changes Since Project \#2b
@@ -164,18 +164,32 @@ trees is randomly chosen from the interval [0, 3].  The lower initial
 maximum depth was chosen due to code growth issues, as the trees soon
 grow significantly larger.  The fitness function is the residual sum
 of squares (of which the squareroot is /not/ taken), plus the size
-penalty (0.1 times the total number of nodes in the tree).  Although
-fixing the maximum size to which trees can grow was an option, the
-size penalty worked pretty well and was very easy to implement.
-Additionally, multiple trials are run in concurrent threads, rather
-than multiple runs of the program.
+penalty.  Although fixing the maximum size to which trees can grow was
+an option, the size penalty well enough (though far from perfect) and
+was very easy to implement.  The penalty constant was chosen so that
+the the penalty produced a significant but not over-bearing (about 10
+percent) addition to the fitness for the average size and fitness seen
+in experimentation.  Additionally, multiple trials are run in
+concurrent threads, rather than multiple runs of the program.
 
 * Graphs
 ** Average and best fitness
 Note: the plotted data is the adjusted fitness, that is, =1/(1 + raw
 fitness)= where raw fitness is the aforementioned residual sum of
 squares plus size penalty.  This scales the fitness to the range [0,
-1] where 1 is perfect (0 raw) and 0 is worst (infinite raw).
+1] where 1 is perfect (0 raw) and 0 is worst (infinite raw).  The size
+penalty is subtracted from the fitness when adjusting it, so that it
+does not skew the data.  Eight trials were run to 256 iterations, the
+best two of which are reproduced here.
+
+[[./results_1/fitness.png]]
+
+[[./results_2/fitness.png]]
 
 ** Test points
+
+[[./results_1/function.png]]
+
+[[./results_2/function.png]]
+
 * Conclusion

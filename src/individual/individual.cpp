@@ -368,7 +368,7 @@ namespace individual
     using std::to_string;
     using std::get;
 
-    string calculation;
+    string calculation = "# x - y - expected - error\n";
 
     // Update size on evaluation because it's incredibly convenient.
     size = root.size ();
@@ -389,8 +389,7 @@ namespace individual
 
 	if (print) // Concatenate information if printing.
 	  {
-	    calculation += "# x - y - expected - error\n"
-	      + to_string (x) + "\t"
+	    calculation += to_string (x) + "\t"
 	      + to_string (y) + "\t"
 	      + to_string (expected) + "\t"
 	      + to_string (error) + "\n";

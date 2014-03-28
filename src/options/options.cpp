@@ -177,7 +177,7 @@ namespace options
 
 	notify (variables_map);
       }
-    catch (std::exception &e)
+    catch (std::exception& e)
       {
 	std::cerr << e.what () << std::endl;
 	exit (EXIT_FAILURE);

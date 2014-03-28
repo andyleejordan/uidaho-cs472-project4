@@ -19,7 +19,7 @@ namespace trials
 {
   // Spawn trials number of threads in blocks.
   const std::tuple <int, individual::Individual>
-  run (const options::Options &options, const std::time_t &time)
+  run (const options::Options& options, const std::time_t& time)
   {
     using individual::Individual;
 
@@ -39,7 +39,7 @@ namespace trials
 					    algorithm::genetic, options, time,
 					    ++trial));
 	// Gather future results.
-	for (std::future <const Individual> &result : results)
+	for (std::future <const Individual>& result : results)
 	  candidates.emplace_back (result.get ());
       }
     std::vector <Individual>::iterator best

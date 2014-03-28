@@ -37,14 +37,14 @@ namespace individual
 
   // Returns bool of whether or not the item is in the set.
   template <typename I, typename S> bool
-  contains (const I &item, const S &set)
+  contains (const I& item, const S& set)
   {
     return std::find (set.begin (), set.end (), item) != set.end ();
   }
 
   // Returns a random function from a given set of functions.
   Function
-  get_function (const vector <Function> &functions)
+  get_function (const vector <Function>& functions)
   {
     int_dist dist { 0, (int) functions.size () - 1 }; // closed interval
     return functions[dist (rg.engine)];
@@ -52,7 +52,7 @@ namespace individual
 
   // Returns a random double between min and max.
   double
-  get_constant (const double &min, const double &max)
+  get_constant (const double& min, const double& max)
   {
     real_dist dist { min, max };
     return dist (rg.engine);
@@ -60,7 +60,7 @@ namespace individual
 
   // Returns the appropriate arity for a given function.
   unsigned int
-  get_arity (const Function &function)
+  get_arity (const Function& function)
   {
     if (contains (function, nullaries))
       return 0;
@@ -153,7 +153,7 @@ namespace individual
 
     string formula = "(" + represent ();
 
-    for (const Node &child : children)
+    for (const Node& child : children)
       formula += " " + child.print ();
 
     return formula + ")";
@@ -162,7 +162,7 @@ namespace individual
   /* Returns a double as the result of a depth-first post-order
      recursive evaluation of a parse tree. */
   double
-  Node::evaluate (const double &x) const
+  Node::evaluate (const double& x) const
   {
     double a, b;
 
@@ -235,7 +235,7 @@ namespace individual
   {
     Size size;
 
-    for (const Node &child : children)
+    for (const Node& child : children)
       {
 	Size temp = child.size ();
 	size.internals += temp.internals;
@@ -255,10 +255,10 @@ namespace individual
 
   /* Depth-first search for taget node.  Must be seeking either
      internal or leaf, cannot be both. */
-  Node &
-  Node::visit (const Size &i, Size &visiting)
+  Node&
+  Node::visit (const Size& i, Size& visiting)
   {
-    for (Node &child : children) {
+    for (Node& child : children) {
       // Increase relevant count.
       if (child.children.size () == 0)
 	++visiting.leafs;
@@ -270,7 +270,7 @@ namespace individual
 	return child;
       else
 	{
-	  Node &temp = child.visit (i, visiting); // Recursive search.
+	  Node& temp = child.visit (i, visiting); // Recursive search.
 	  if (temp.function != NIL)
 	    return temp;
 	}
@@ -314,10 +314,10 @@ namespace individual
 
   // Recursively mutate nodes with given probability.
   void
-  Node::mutate_tree (const double &chance)
+  Node::mutate_tree (const double& chance)
   {
     real_dist dist { 0, 1 };
-    for (Node &child : children)
+    for (Node& child : children)
       {
 	if (dist (rg.engine) < chance)
 	  child.mutate_self ();
@@ -329,8 +329,8 @@ namespace individual
      actual construction is delegated). The method and depth are
      passed by value as their creation elsewhere is temporary. */
   Individual::Individual (const Method method, const unsigned int depth,
-			  const double &min, const double &max,
-			  const options::pairs &values)
+			  const double& min, const double& max,
+			  const options::pairs& values)
     : root { Node { method, depth, min, max } }
   {
     evaluate(values);
@@ -362,8 +362,8 @@ namespace individual
      Individual's size and fitness accordingly. Return non-empty
      string if printing. */
   string
-  Individual::evaluate (const options::pairs &values, const double &penalty,
-			const bool &print)
+  Individual::evaluate (const options::pairs& values, const double& penalty,
+			const bool& print)
   {
     using std::to_string;
     using std::get;
@@ -403,14 +403,14 @@ namespace individual
 
   // Mutate each node with given probability.
   void
-  Individual::mutate (const double &chance)
+  Individual::mutate (const double& chance)
   {
     root.mutate_tree (chance);
   }
 
   // Safely return reference to desired node.
-  Node &
-  Individual::operator[] (const Size &i)
+  Node&
+  Individual::operator[] (const Size& i)
   {
     assert (i.internals <= get_internals ());
     assert (i.leafs <= get_leafs ());
@@ -426,7 +426,7 @@ namespace individual
   /* Swap two random subtrees between Individuals "a" and "b",
      selecting an internal node with chance probability.  TODO: DRY */
   void
-  crossover (const double &chance, Individual &a, Individual &b)
+  crossover (const double& chance, Individual& a, Individual& b)
   {
     real_dist probability { 0, 1 };
     Size target_a, target_b;

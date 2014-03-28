@@ -38,18 +38,18 @@ namespace individual
     double k = 0; // Excess for internal nodes.
     std::vector <Node> children;
 
-    void set_constant (const double &, const double &);
+    void set_constant (const double&, const double&);
     void mutate_self ();
 
   public:
-    Node () {};
-    Node (const Method &, const unsigned int &, const double &,const double &);
+    Node ();
+    Node (const Method&, const unsigned int&, const double&,const double&);
     std::string print () const;
     std::string represent () const;
-    double evaluate (const double &) const;
+    double evaluate (const double&) const;
     const Size size () const;
-    Node & visit (const Size &, Size &);
-    void mutate_tree (const double &);
+    Node&  visit (const Size&, Size&);
+    void mutate_tree (const double&);
   };
 
   class Individual
@@ -60,8 +60,8 @@ namespace individual
     double adjusted = 0;
   public:
     Individual () {}
-    Individual (const Method, const unsigned int, const double &,
-		const double &, const options::pairs &);
+    Individual (const Method, const unsigned int, const double&,
+		const double&, const options::pairs&);
 
     std::string print () const;
     std::string print_formula () const;
@@ -72,11 +72,11 @@ namespace individual
     double get_fitness () const { return fitness; }
     double get_adjusted () const { return adjusted; }
 
-    Node & operator[] (const Size &);
-    void mutate (const double &);
-    std::string evaluate (const options::pairs &, const double &penalty = 0,
-			  const bool &print = false);
-    friend void crossover (const double &, Individual &, Individual &);
+    Node&  operator[] (const Size&);
+    void mutate (const double&);
+    std::string evaluate (const options::pairs&, const double& penalty = 0,
+			  const bool& print = false);
+    friend void crossover (const double&, Individual&, Individual&);
   };
 }
 

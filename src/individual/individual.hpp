@@ -14,12 +14,6 @@
 
 namespace individual
 {
-  // Implemented functions for expression.
-  enum class Function;
-
-  // Implemented initial population generation methods.
-  enum class Method;
-
   // Represents a tree's size in terms of internal and leaf nodes.
   struct Size
   {
@@ -27,6 +21,12 @@ namespace individual
     unsigned int leafs;
     Size ();
   };
+
+  // Implemented initial population generation methods.
+  enum class Method;
+
+  // Implemented functions for expression.
+  enum class Function;
 
   // Implements a recursive parse tree representing an expression.
   class Node
@@ -55,7 +55,7 @@ namespace individual
   {
   public:
     Individual ();
-    Individual (const Method, const unsigned int, const double&,
+    Individual (const unsigned int, const double&, const double&,
 		const double&, const options::pairs&);
 
     std::string print () const;

@@ -23,12 +23,15 @@ namespace individual
   using std::string;
   using namespace random_generator;
 
-  enum class Function {nil, constant, input, sqrt, sin, cos, log, exp,
-      add, subtract, divide, multiply, pow, lesser, greater};
+  // Default Size struct constructor.
+  Size::Size (): internals{0}, leafs{0} {}
 
+  // Available methods for tree creation.
   enum class Method {grow, full};
 
-  Size::Size (): internals{0}, leafs{0} {}
+  // List of valid functions for an expression.
+  enum class Function {nil, constant, input, sqrt, sin, cos, log, exp,
+      add, subtract, divide, multiply, pow, lesser, greater};
 
   using F = Function;
   // Vectors of same-arity function enums.
@@ -42,13 +45,6 @@ namespace individual
   vector <F> leafs {F::constant, F::input};
   vector <F> internals {F::sin, F::cos, F::add, F::subtract,
       F::multiply, F::divide, F::lesser, F::greater};
-
-  // Returns bool of whether or not the item is in the set.
-  template <typename I, typename S> bool
-  contains (const I& item, const S& set)
-  {
-    return std::find (set.begin (), set.end (), item) != set.end ();
-  }
 
   // Returns a random function from a given set of functions.
   Function
@@ -64,6 +60,13 @@ namespace individual
   {
     real_dist dist {min, max};
     return dist (rg.engine);
+  }
+
+  // Returns bool of whether or not the item is in the set.
+  template <typename I, typename S> bool
+  contains (const I& item, const S& set)
+  {
+    return std::find (set.begin (), set.end (), item) != set.end ();
   }
 
   // Returns the appropriate arity for a given function.
@@ -341,13 +344,17 @@ namespace individual
   Individual::Individual () {}
 
   /* Create an Individual tree by having a root node (to which the
-     actual construction is delegated). The method and depth are
-     passed by value as their creation elsewhere is temporary. */
-  Individual::Individual (const Method method, const unsigned int depth,
+     actual construction is delegated). The depth is passed by value
+     as its creation elsewhere is temporary. */
+  Individual::Individual (const unsigned int depth, const double& chance,
 			  const double& min, const double& max,
-			  const options::pairs& values)
-    : root {Node {method, depth, min, max}}
+			  const options::pairs& values): fitness{0}, adjusted{0}
   {
+    real_dist dist {0, 1};
+    Method method = (dist (rg.engine) < chance) ? Method::grow : Method::full;
+    root = Node {method, depth, min, max};
+    /*The evaluate method updates the size and both raw and adjusted
+      fitnesses. */
     evaluate(values);
   }
 

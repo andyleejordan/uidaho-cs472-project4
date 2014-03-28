@@ -92,16 +92,12 @@ namespace algorithm
   {
     vector <Individual> population;
     int_dist depth_dist {0, (int) options.max_depth}; // ramped
-    real_dist dist {0, 1}; // half-and-half
     for (unsigned int i = 0; i < options.population_size; ++i)
       {
-	/* The method is either 0 or 1, so casting a bool to the enum
-	   achieves what is needed. The depth is ramped, and so drawn
-	   randomly for each individual. */
-	individual::Method method =
-	  (individual::Method) (dist (rg.engine) < options.grow_chance);
+	/* The depth is ramped, and so drawn randomly for each
+	   individual. */
 	unsigned int depth = depth_dist (rg.engine);
-	population.emplace_back (Individual {method, depth,
+	population.emplace_back (Individual {depth, options.grow_chance,
 	      options.constant_min, options.constant_max, options.values});
       }
     return population;

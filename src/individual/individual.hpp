@@ -38,35 +38,46 @@ namespace individual
     std::string represent () const;
     double evaluate (const double&) const;
     const Size size () const;
-    Node&  visit (const Size&, Size&);
+    Node& visit (const Size&, Size&);
     void mutate_tree (const double&);
+
+  private:
+    Function function;
+    unsigned int arity;
+    double value;
+    std::vector <Node> children;
+
+    void set_constant (const double&, const double&);
+    void mutate_self ();
   };
 
   class Individual
   {
-    Node root;
-    Size size;
-    double fitness = 0;
-    double adjusted = 0;
   public:
-    Individual () {}
+    Individual ();
     Individual (const Method, const unsigned int, const double&,
 		const double&, const options::pairs&);
 
     std::string print () const;
     std::string print_formula () const;
 
-    unsigned int get_internals () const { return size.internals; }
-    unsigned int get_leafs () const { return size.leafs; }
-    unsigned int get_total () const { return size.internals + size.leafs; }
-    double get_fitness () const { return fitness; }
-    double get_adjusted () const { return adjusted; }
+    unsigned int get_internals () const;
+    unsigned int get_leafs () const;
+    unsigned int get_total () const;
+    double get_fitness () const;
+    double get_adjusted () const;
 
     Node&  operator[] (const Size&);
     void mutate (const double&);
     std::string evaluate (const options::pairs&, const double& penalty = 0,
 			  const bool& print = false);
     friend void crossover (const double&, Individual&, Individual&);
+
+  private:
+    Node root;
+    Size size;
+    double fitness;
+    double adjusted;
   };
 }
 

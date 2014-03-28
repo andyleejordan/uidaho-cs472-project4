@@ -54,7 +54,7 @@ namespace individual
   Function
   get_function (const vector <Function>& functions)
   {
-    int_dist dist { 0, (int) functions.size () - 1 }; // closed interval
+    int_dist dist {0, (int) functions.size () - 1}; // closed interval
     return functions[dist (rg.engine)];
   }
 
@@ -62,7 +62,7 @@ namespace individual
   double
   get_constant (const double& min, const double& max)
   {
-    real_dist dist { min, max };
+    real_dist dist {min, max};
     return dist (rg.engine);
   }
 
@@ -81,20 +81,24 @@ namespace individual
     assert (false);
   }
 
+  // Default constructor for "empty" node
+  Node::Node (): function{Function::nil}, arity{0}, value{0} {}
+
   /* Recursively constructs a parse tree using the given method
      (either GROW or FULL). */
-  Node::Node (const Method &method, const unsigned int &max_depth,
-	      const double &constant_min, const double &constant_max)
+  Node::Node (const Method& method, const unsigned int& max_depth,
+	      const double& constant_min, const double& constant_max)
   {
     // Create terminal node if at the max depth or randomly (if growing).
-    real_dist dist { 0, 1 };
+    real_dist dist {0, 1};
     double grow_chance = (double) leafs.size () / leafs.size () + leafs.size ();
-    if (max_depth == 0 or (method == GROW and dist (rg.engine) < grow_chance))
+    if (max_depth == 0
+	or (method == Method::grow and dist (rg.engine) < grow_chance))
       {
 	function = get_function (leafs);
 	// Setup constant function; input is provided on evaluation.
-	if (function == CONSTANT)
-	  k = get_constant (constant_min, constant_max);
+	if (function == Function::constant)
+	  value = get_constant (constant_min, constant_max);
       }
     // Otherwise choose a non-terminal node.
     else
@@ -104,10 +108,10 @@ namespace individual
 	arity = get_arity (function);
 	// Recursively create subtrees.
 	for (unsigned int i = 0; i < arity; ++i)
-	  children.emplace_back (Node { method, max_depth - 1,
-		constant_min, constant_max });
+	  children.emplace_back (Node {method, max_depth - 1,
+		constant_min, constant_max});
       }
-    assert (function != NIL); // do not create null types
+    assert (function != Function::nil); // do not create null types
     assert (children.size () == arity); // ensure arity
   }
 
@@ -191,7 +195,7 @@ namespace individual
 	assert (false); // Never calculate empty node.
       case F::constant:
 	assert (arity == 0);
-	return constant;
+	return value;
       case F::input:
 	assert (arity == 0);
 	return x;
@@ -278,7 +282,7 @@ namespace individual
       else
 	{
 	  Node& temp = child.visit (i, visiting); // Recursive search.
-	  if (temp.function != NIL)
+	  if (temp.function != Function::nil)
 	    return temp;
 	}
     }
@@ -295,10 +299,10 @@ namespace individual
        review the above and possibly change. */
     if (arity == 0)
       {
-	if (function == CONSTANT)
+	if (function == Function::constant)
 	  {
-	    normal_dist dist { 0, 1 };
-	    k *= 1 + dist (rg.engine);
+	    normal_dist dist {0, 1};
+	    value *= 1 + dist (rg.engine);
 	  }
       }
     /* Otherwise mutate to internal function of same arity.  We do
@@ -316,14 +320,14 @@ namespace individual
 	  }
 	assert (function != old_function and arity == old_arity);
       }
-    assert (function != NIL);
+    assert (function != Function::nil);
   }
 
   // Recursively mutate nodes with given probability.
   void
   Node::mutate_tree (const double& chance)
   {
-    real_dist dist { 0, 1 };
+    real_dist dist {0, 1};
     for (Node& child : children)
       {
 	if (dist (rg.engine) < chance)
@@ -332,13 +336,16 @@ namespace individual
       }
   }
 
+  // Default constructor for Individual
+  Individual::Individual () {}
+
   /* Create an Individual tree by having a root node (to which the
      actual construction is delegated). The method and depth are
      passed by value as their creation elsewhere is temporary. */
   Individual::Individual (const Method method, const unsigned int depth,
 			  const double& min, const double& max,
 			  const options::pairs& values)
-    : root { Node { method, depth, min, max } }
+    : root {Node {method, depth, min, max}}
   {
     evaluate(values);
   }
@@ -363,6 +370,38 @@ namespace individual
   Individual::print_formula () const
   {
     return "# Formula: " + root.print () + "\n";
+  }
+
+  // Read-only "getters" for private data
+
+  unsigned int
+  Individual::get_internals () const
+  {
+    return size.internals;
+  }
+
+  unsigned int
+  Individual::get_leafs () const
+  {
+    return size.leafs;
+  }
+
+  unsigned int
+  Individual::get_total () const
+  {
+    return size.internals + size.leafs;
+  }
+
+  double
+  Individual::get_fitness () const
+  {
+    return fitness;
+  }
+
+  double
+  Individual::get_adjusted () const
+  {
+    return adjusted;
   }
 
   /* Evaluate Individual for given values and calculate size.  Update
@@ -435,31 +474,31 @@ namespace individual
   void
   crossover (const double& chance, Individual& a, Individual& b)
   {
-    real_dist probability { 0, 1 };
+    real_dist probability {0, 1};
     Size target_a, target_b;
 
     // Guaranteed to have at least 1 leaf, but may have 0 internals.
     if (a.get_internals () != 0 and probability (rg.engine) < chance)
       {
 	// Choose an internal node.
-	int_dist dist { 0, (int) a.get_internals () - 1 };
+	int_dist dist {0, (int) a.get_internals () - 1};
 	target_a.internals = dist(rg.engine);
       }
     else
       {
 	// Otherwise choose a leaf node.
-	int_dist dist { 0, (int) a.get_leafs () - 1 };
+	int_dist dist {0, (int) a.get_leafs () - 1};
 	target_a.leafs = dist(rg.engine);
       }
     // Totally repeating myself here for "b".
     if (b.get_internals () != 0 and probability (rg.engine) < chance)
       {
-	int_dist dist { 0, (int) b.get_internals () - 1 };
+	int_dist dist {0, (int) b.get_internals () - 1};
 	target_b.internals = dist (rg.engine);
       }
     else
       {
-	int_dist dist { 0, (int) b.get_leafs () - 1 };
+	int_dist dist {0, (int) b.get_leafs () - 1};
 	target_b.leafs = dist (rg.engine);
       }
     std::swap (a[target_a], b[target_b]);

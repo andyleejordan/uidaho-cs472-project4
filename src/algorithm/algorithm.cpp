@@ -61,13 +61,17 @@ namespace algorithm
 
     double total_fitness =
       std::accumulate (population.begin (), population.end (), 0.,
-		       [](const double& a, const Individual& b)->double
-		       const { return a + b.get_adjusted (); });
+		       [](const double& a, const Individual& b)->double const
+		       {
+			 return a + b.get_adjusted ();
+		       });
 
     int total_size =
       std::accumulate(population.begin (), population.end (), 0,
-		      [](const int& a, const Individual& b)->double
-		      const { return a + b.get_total (); });
+		      [](const int& a, const Individual& b)->double const
+		      {
+			return a + b.get_total ();
+		      });
 
     std::ofstream log;
     open_log (log, time, trial, logs_dir);
@@ -87,8 +91,8 @@ namespace algorithm
   new_population (const Options& options)
   {
     vector <Individual> population;
-    int_dist depth_dist { 0, (int) options.max_depth }; // ramped
-    real_dist dist { 0, 1 }; // half-and-half
+    int_dist depth_dist {0, (int) options.max_depth}; // ramped
+    real_dist dist {0, 1}; // half-and-half
     for (unsigned int i = 0; i < options.population_size; ++i)
       {
 	/* The method is either 0 or 1, so casting a bool to the enum
@@ -97,8 +101,8 @@ namespace algorithm
 	individual::Method method =
 	  (individual::Method) (dist (rg.engine) < options.grow_chance);
 	unsigned int depth = depth_dist (rg.engine);
-	population.emplace_back (Individual { method, depth,
-	      options.constant_min, options.constant_max, options.values });
+	population.emplace_back (Individual {method, depth,
+	      options.constant_min, options.constant_max, options.values});
       }
     return population;
   }
@@ -108,7 +112,7 @@ namespace algorithm
   Individual
   selection (const unsigned int& size, const vector <Individual>& population)
   {
-    int_dist dist { 0, (int) population.size() - 1 }; // closed interval
+    int_dist dist {0, (int) population.size() - 1}; // closed interval
     vector <Individual> contestants;
 
     for (unsigned int i = 0; i < size; ++i)
@@ -131,7 +135,7 @@ namespace algorithm
 	Individual mother = selection (options.tournament_size, population);
 	Individual father = selection (options.tournament_size, population);
 	// Crossover with probability.
-	real_dist dist { 0, 1 };
+	real_dist dist {0, 1};
 	if (dist (rg.engine) < options.crossover_chance)
 	  crossover (options.internals_chance, mother, father);
 	// Place mother and father in nodes.
@@ -217,7 +221,7 @@ namespace algorithm
 	// Create replacement population.
 	vector <Individual> offspring = new_offspring (options, population);
 	// Perform elitism replacement of random individuals.
-	int_dist dist { 0, (int) options.population_size - 1 };
+	int_dist dist {0, (int) options.population_size - 1};
 	for (unsigned int e = 0; e < options.elitism_size; ++e)
 	  offspring[dist (rg.engine)] = best;
 	// Replace current population with offspring.

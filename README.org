@@ -12,7 +12,7 @@
 
 #+BEGIN_ABSTRACT
 For the University of Idaho's Evolutionary Computation (CS 472)
-Project \#2 I implemented a Genetic Program in C++ to evolve a random
+Project #2 I implemented a Genetic Program in C++ to evolve a random
 mathematical function fitted via symbolic regression to Terry Soule's
 provided test data.  The function is modeled as a parse tree,
 implemented recursively.  Algorithm details available in the table
@@ -131,32 +131,31 @@ conclusion/discussion.
 
 * Algorithm Information
 #+ATTR_LATEX: :align |l|p{4in}|
-|------------------+--------------------------------------------------------------|
-|                  | <60>                                                         |
-| Algorithm type   | Generational                                                 |
-|------------------+--------------------------------------------------------------|
-| Population size  | 1024                                                         |
-|------------------+--------------------------------------------------------------|
-| Selection method | Tournament of size 3                                         |
-|------------------+--------------------------------------------------------------|
-| Elitism          | Replace random 2 offspring with previous best                |
-|------------------+--------------------------------------------------------------|
-| Crossover method | Subtree with 90 percent chance to choose an internal node    |
-|------------------+--------------------------------------------------------------|
-| Crossover rate   | 80 percent                                                   |
-|------------------+--------------------------------------------------------------|
-| Mutation method  | Per node to same arity with 1 percent probability            |
-|------------------+--------------------------------------------------------------|
+|------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Algorithm type   | Generational                                                                                                                                                 |
+|------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Population size  | 1024                                                                                                                                                         |
+|------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Selection method | Tournament of size 3                                                                                                                                         |
+|------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Elitism          | Replace random 2 offspring with previous best                                                                                                                |
+|------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Crossover method | Subtree with 90 percent chance to choose an internal node                                                                                                    |
+|------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Crossover rate   | 80 percent                                                                                                                                                   |
+|------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Mutation method  | Per node to same arity with 1 percent probability                                                                                                            |
+|------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Operation set    | sine, cosine, addition, subtraction, multiplication, protected division (return 1 if dividing by 0), lesser and greater than (with if/else logical branches) |
-|------------------+--------------------------------------------------------------|
-| Terminal set     | input (x), constant (randomly drawn float from [0, 10])      |
-|------------------+--------------------------------------------------------------|
-| Fitness function | Residual sum of squares with size penalty                    |
-|------------------+--------------------------------------------------------------|
-| Size control     | Size penalty (0.5 * total nodes) in fitness function         |
-|------------------+--------------------------------------------------------------|
+|------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Terminal set     | input (x), constant (randomly drawn float from [0, 10])                                                                                                      |
+|------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Fitness function | Residual sum of squares with size penalty                                                                                                                    |
+|------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Size control     | Size penalty (0.5 * total nodes) in fitness function                                                                                                         |
+|------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
-** Changes Since Project \#2b
+** Changes Since Project #2b
 The initial population generation is now created through the ramped
 half-and-half method, that is, half of the trees are fully generated,
 the other half are generated randomly.  The maximum depth of these
@@ -185,7 +184,7 @@ best two of which are reproduced here.
 
 The graphs are to be found at the end of this report.
 
-** Result \#1
+** Result #1
 
 Elapsed time for this run: 479.597s
 
@@ -206,7 +205,7 @@ because its noise swallows up its periodicity.  The third region is
 less interesting still, but it was modeled pretty well by a straight
 line.
 
-** Result \#2
+** Result #2
 
 Elapsed time for this run: 945.17s.
 

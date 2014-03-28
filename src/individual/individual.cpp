@@ -96,6 +96,7 @@ namespace individual
 	or (method == Method::grow and dist (rg.engine) < grow_chance))
       {
 	function = get_function (leafs);
+	arity = get_arity (function);
 	// Setup constant function; input is provided on evaluation.
 	if (function == Function::constant)
 	  value = get_constant (constant_min, constant_max);

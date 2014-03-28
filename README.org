@@ -119,7 +119,7 @@ the general algorithm:
 - [X] a description of any problems so far
 
 Note that the write-up may be fairly short.
-** TODO Project #2 Genetic Program
+** DONE Project #2 Genetic Program
    DEADLINE: <2014-03-23 Sun>
 
 This is the final part of Project 2. For this project you need to
@@ -128,6 +128,16 @@ template for the summary in Word and pdf (and the latex). Note that
 for this project you do not need to do a lot of writting. An abstract,
 fill in the table summarizing your algorithms, two graphs, and a
 conclusion/discussion.
+
+Given function:
+[
+if (x < -9)
+y = 0.4 * ((20 + x)^{2} + 7 * x)
+else if (x < 10)
+y = 0.5 * x
+else
+ y = x + 5 * sin(0.5 * x)
+] + random(5, -5)
 
 * Algorithm Information
 #+ATTR_LATEX: :align |l|p{4in}|

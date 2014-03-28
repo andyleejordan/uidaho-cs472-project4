@@ -15,32 +15,22 @@
 namespace individual
 {
   // Implemented functions for expression.
-  enum Function
-    {
-      NIL,
-      CONSTANT, INPUT,
-      SQRT, SIN, COS, LOG, EXP,
-      ADD, SUBTRACT, DIVIDE, MULTIPLY, POW,
-      LESSER, GREATER
-    };
+  enum class Function;
 
   // Implemented initial population generation methods.
-  enum Method { GROW, FULL };
+  enum class Method;
 
   // Represents a tree's size in terms of internal and leaf nodes.
-  struct Size { unsigned int internals = 0; unsigned int leafs = 0; };
+  struct Size
+  {
+    unsigned int internals;
+    unsigned int leafs;
+    Size ();
+  };
 
   // Implements a recursive parse tree representing an expression.
   class Node
   {
-    Function function = NIL; // Should never be in an expression.
-    unsigned int arity = 0; // Space for time trade-off.
-    double k = 0; // Excess for internal nodes.
-    std::vector <Node> children;
-
-    void set_constant (const double&, const double&);
-    void mutate_self ();
-
   public:
     Node ();
     Node (const Method&, const unsigned int&, const double&,const double&);

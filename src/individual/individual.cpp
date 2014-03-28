@@ -23,17 +23,25 @@ namespace individual
   using std::string;
   using namespace random_generator;
 
+  enum class Function {nil, constant, input, sqrt, sin, cos, log, exp,
+      add, subtract, divide, multiply, pow, lesser, greater};
+
+  enum class Method {grow, full};
+
+  Size::Size (): internals{0}, leafs{0} {}
+
+  using F = Function;
   // Vectors of same-arity function enums.
-  vector <Function> nullaries { CONSTANT, INPUT };
-  vector <Function> unaries { SQRT, SIN, COS, LOG, EXP };
-  vector <Function> binaries { ADD, SUBTRACT, MULTIPLY, DIVIDE, POW };
-  vector <Function> quadnaries { LESSER, GREATER };
+  vector <F> nullaries {F::constant, F::input};
+  vector <F> unaries {F::sqrt, F::sin, F::cos, F::log, F::exp};
+  vector <F> binaries {F::add, F::subtract, F::multiply, F::divide, F::pow};
+  vector <F> quadnaries {F::lesser, F::greater};
 
   /* Vectors of available function enums.  Should be moved into
      Options struct. */
-  vector <Function> leafs { CONSTANT, INPUT };
-  vector <Function> internals { SIN, COS, ADD, SUBTRACT, MULTIPLY, DIVIDE,
-      LESSER, GREATER };
+  vector <F> leafs {F::constant, F::input};
+  vector <F> internals {F::sin, F::cos, F::add, F::subtract,
+      F::multiply, F::divide, F::lesser, F::greater};
 
   // Returns bool of whether or not the item is in the set.
   template <typename I, typename S> bool
@@ -109,35 +117,35 @@ namespace individual
   {
     switch (function)
       {
-      case NULL:
+      case F::nil:
 	assert (false); // Never represent empty node.
-      case CONSTANT:
-	return std::to_string (k);
-      case INPUT:
+      case F::constant:
+	return std::to_string (value);
+      case F::input:
 	return "x";
-      case SQRT:
+      case F::sqrt:
 	return "sqrt";
-      case SIN:
+      case F::sin:
 	return "sin";
-      case COS:
+      case F::cos:
 	return "cos";
-      case LOG:
+      case F::log:
 	return "log";
-      case EXP:
+      case F::exp:
 	return "exp";
-      case ADD:
+      case F::add:
 	return "+";
-      case SUBTRACT:
+      case F::subtract:
 	return "-";
-      case MULTIPLY:
+      case F::multiply:
 	return "*";
-      case DIVIDE:
+      case F::divide:
 	return "%";
-      case POW:
+      case F::pow:
 	return "^";
-      case LESSER:
+      case F::lesser:
 	return "<";
-      case GREATER:
+      case F::greater:
 	return ">";
       }
     assert (false); // Every node should have been matched.
@@ -179,52 +187,51 @@ namespace individual
     // Calculate the result for the given function.
     switch (function)
       {
-      case NIL:
+      case F::nil:
 	assert (false); // Never calculate empty node.
-      case CONSTANT:
+      case F::constant:
 	assert (arity == 0);
-	return k;
-      case INPUT:
+	return constant;
+      case F::input:
 	assert (arity == 0);
 	return x;
-      case SQRT:
+      case F::sqrt:
 	assert (arity == 1);
 	return std::sqrt (std::abs (a)); // Protected via abs.
-      case SIN:
+      case F::sin:
 	assert (arity == 1);
 	return std::sin (a);
-      case COS:
+      case F::cos:
 	assert (arity == 1);
 	return std::cos (a);
-      case LOG:
+      case F::log:
 	assert (arity == 1);
 	return (a == 0) ? 0 : std::log (std::abs (a)); // Protected via abs.
-      case EXP:
+      case F::exp:
 	assert (arity == 1);
 	return std::exp (a);
-      case ADD:
+      case F::add:
 	assert (arity == 2);
 	return a + b;
-      case SUBTRACT:
+      case F::subtract:
 	assert (arity == 2);
 	return a - b;
-      case MULTIPLY:
+      case F::multiply:
 	assert (arity == 2);
 	return a * b;
-      case DIVIDE:
+      case F::divide:
 	assert (arity == 2);
 	return (b == 0) ? 1 : a / b; // Protected divide by zero: return 1.
-      case POW:
+      case F::pow:
 	assert (arity == 2);
 	return std::pow (std::abs (a), std::abs (b)); // Protected via abs.
-      case LESSER:
+      case F::lesser:
 	assert (arity == 4);
 	return (a < b) ? children[2].evaluate (x) : children[3].evaluate (x);
-      case GREATER:
+      case F::greater:
 	assert (arity == 4);
 	return (a > b) ? children[2].evaluate (x) : children[3].evaluate (x);
       }
-
     assert (false);
   }
 

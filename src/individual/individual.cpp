@@ -24,7 +24,7 @@ namespace individual
   using namespace random_generator;
 
   // Default Size struct constructor.
-  Size::Size (): internals{0}, leafs{0} {}
+  Size::Size (): internals{0}, leaves{0} {}
 
   // Available methods for tree creation.
   enum class Method {grow, full};
@@ -42,7 +42,7 @@ namespace individual
 
   /* Vectors of available function enums.  Should be moved into
      Options struct. */
-  vector <F> leafs {F::constant, F::input};
+  vector <F> leaves {F::constant, F::input};
   vector <F> internals {F::sin, F::cos, F::add, F::subtract,
       F::multiply, F::divide, F::lesser, F::greater};
 
@@ -73,13 +73,13 @@ namespace individual
   unsigned int
   get_arity (const Function& function)
   {
-    if (contains (function, nullaries))
+    if (contains(function, nullaries))
       return 0;
-    else if (contains (function, unaries))
+    else if (contains(function, unaries))
       return 1;
-    else if (contains (function, binaries))
+    else if (contains(function, binaries))
       return 2;
-    else if (contains (function, quadnaries))
+    else if (contains(function, quadnaries))
       return 4;
     assert (false);
   }
@@ -94,11 +94,11 @@ namespace individual
   {
     // Create terminal node if at the max depth or randomly (if growing).
     real_dist dist {0, 1};
-    double grow_chance = (double) leafs.size () / leafs.size () + leafs.size ();
+    double grow_chance = (double) leaves.size () / leaves.size () + leaves.size ();
     if (max_depth == 0
 	or (method == Method::grow and dist (rg.engine) < grow_chance))
       {
-	function = get_function (leafs);
+	function = get_function (leaves);
 	arity = get_arity (function);
 	// Setup constant function; input is provided on evaluation.
 	if (function == Function::constant)
@@ -244,7 +244,7 @@ namespace individual
   }
 
   /* Recursively count children via post-order traversal.  Keep track
-     of internals and leafs via Size struct */
+     of internals and leaves via Size struct */
   const Size
   Node::size () const
   {
@@ -254,11 +254,11 @@ namespace individual
       {
 	Size temp = child.size ();
 	size.internals += temp.internals;
-	size.leafs += temp.leafs;
+	size.leaves += temp.leaves;
       }
 
     if (children.size () == 0)
-      ++size.leafs;
+      ++size.leaves;
     else
       ++size.internals;
 
@@ -276,12 +276,12 @@ namespace individual
     for (Node& child : children) {
       // Increase relevant count.
       if (child.children.size () == 0)
-	++visiting.leafs;
+	++visiting.leaves;
       else
 	++visiting.internals;
 
       // Return node reference if found.
-      if (visiting.internals == i.internals or visiting.leafs == i.leafs)
+      if (visiting.internals == i.internals or visiting.leaves == i.leaves)
 	return child;
       else
 	{
@@ -366,7 +366,7 @@ namespace individual
 
     string info = "# Size " + to_string (get_total ())
       + ", with " + to_string (get_internals ())
-      + " internals, and " + to_string (get_leafs ()) + " leafs.\n"
+      + " internals, and " + to_string (get_leaves ()) + " leaves.\n"
       + "# Raw fitness: " + to_string (get_fitness ())
       + ", and adjusted: " + to_string (get_adjusted ()) + ".\n";
 
@@ -389,15 +389,15 @@ namespace individual
   }
 
   unsigned int
-  Individual::get_leafs () const
+  Individual::get_leaves () const
   {
-    return size.leafs;
+    return size.leaves;
   }
 
   unsigned int
   Individual::get_total () const
   {
-    return size.internals + size.leafs;
+    return size.internals + size.leaves;
   }
 
   double
@@ -467,11 +467,11 @@ namespace individual
   Individual::operator[] (const Size& i)
   {
     assert (i.internals <= get_internals ());
-    assert (i.leafs <= get_leafs ());
+    assert (i.leaves <= get_leaves ());
 
     Size visiting;
     // Return root node if that's what we're seeking.
-    if (i.internals == 0 and i.leafs == 0)
+    if (i.internals == 0 and i.leaves == 0)
       return root;
     else
       return root.visit (i, visiting);
@@ -495,8 +495,8 @@ namespace individual
     else
       {
 	// Otherwise choose a leaf node.
-	int_dist dist {0, (int) a.get_leafs () - 1};
-	target_a.leafs = dist(rg.engine);
+	int_dist dist {0, (int) a.get_leaves () - 1};
+	target_a.leaves = dist(rg.engine);
       }
     // Totally repeating myself here for "b".
     if (b.get_internals () != 0 and probability (rg.engine) < chance)
@@ -506,8 +506,8 @@ namespace individual
       }
     else
       {
-	int_dist dist {0, (int) b.get_leafs () - 1};
-	target_b.leafs = dist (rg.engine);
+	int_dist dist {0, (int) b.get_leaves () - 1};
+	target_b.leaves = dist (rg.engine);
       }
     std::swap (a[target_a], b[target_b]);
   }

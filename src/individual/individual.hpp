@@ -18,7 +18,7 @@ namespace individual
   struct Size
   {
     unsigned int internals;
-    unsigned int leafs;
+    unsigned int leaves;
     Size ();
   };
 
@@ -62,7 +62,7 @@ namespace individual
     std::string print_formula () const;
 
     unsigned int get_internals () const;
-    unsigned int get_leafs () const;
+    unsigned int get_leaves () const;
     unsigned int get_total () const;
     double get_fitness () const;
     double get_adjusted () const;

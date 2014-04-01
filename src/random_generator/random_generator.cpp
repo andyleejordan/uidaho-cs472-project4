@@ -9,11 +9,11 @@
 
 namespace random_generator
 {
-  RandomGenerator::RandomGenerator ()
+  RandomGenerator::RandomGenerator()
   {
-    engine.seed (rd ());
+    engine.seed(rd());
   }
 
   // Singleton RandomGenerator object for shared use.
-  RandomGenerator rg {};
+  RandomGenerator rg{};
 }

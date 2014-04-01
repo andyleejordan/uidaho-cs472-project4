@@ -15,12 +15,12 @@
 namespace algorithm
 {
   bool
-  compare_fitness (const individual::Individual&,
-		   const individual::Individual&);
+  compare_fitness(const individual::Individual&,
+		  const individual::Individual&);
 
   const individual::Individual
-  genetic (const options::Options& options,
-	   std::time_t time = std::time(nullptr), const int& trial = 0);
+  genetic(const options::Options& options,
+	  std::time_t time = std::time(nullptr), const int& trial = 0);
 }
 
 #endif /* _ALGORITHM_H_ */

@@ -18,7 +18,7 @@ namespace random_generator
   {
     std::random_device rd;
   public:
-    RandomGenerator ();
+    RandomGenerator();
     std::mt19937_64 engine;
   };
 

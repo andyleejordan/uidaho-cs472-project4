@@ -94,7 +94,8 @@ namespace individual
   {
     // Create terminal node if at the max depth or randomly (if growing).
     real_dist dist{0, 1};
-    double grow_chance = (double) leaves.size() / leaves.size() + leaves.size();
+    double grow_chance =
+      static_cast<double>(leaves.size()) / (leaves.size() + internals.size());
     if (max_depth == 0
 	or (method == Method::grow and dist(rg.engine) < grow_chance))
       {

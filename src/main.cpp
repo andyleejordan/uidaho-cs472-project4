@@ -21,14 +21,14 @@ main(int argc, char * argv[])
   const options::Options options = options::parse(argc, argv);
 
   // Chrono start, end, and Unix time variables.
-  std::chrono::time_point <std::chrono::system_clock> start, end;
+  std::chrono::time_point<std::chrono::system_clock> start, end;
   std::time_t time = std::time(nullptr);
 
   // Begin timing trials.
   start = std::chrono::system_clock::now();
 
   // Run trials and save best Individual.
-  const std::tuple <int, individual::Individual> best =
+  const std::tuple<int, individual::Individual> best =
     trials::run(options, time);
 
   // End timing trials.

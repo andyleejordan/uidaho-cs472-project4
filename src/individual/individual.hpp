@@ -45,7 +45,7 @@ namespace individual
     Function function;
     unsigned int arity;
     double value;
-    std::vector <Node> children;
+    std::vector<Node> children;
 
     void set_constant(const double&, const double&);
     void mutate_self();

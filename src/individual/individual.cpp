@@ -16,7 +16,6 @@
 #include "../options/options.hpp"
 #include "../random_generator/random_generator.hpp"
 
-
 namespace individual
 {
   using std::vector;
@@ -35,22 +34,22 @@ namespace individual
 
   using F = Function;
   // Vectors of same-arity function enums.
-  vector <F> nullaries {F::constant, F::input};
-  vector <F> unaries {F::sqrt, F::sin, F::cos, F::log, F::exp};
-  vector <F> binaries {F::add, F::subtract, F::multiply, F::divide, F::pow};
-  vector <F> quadnaries {F::lesser, F::greater};
+  vector<F> nullaries {F::constant, F::input};
+  vector<F> unaries {F::sqrt, F::sin, F::cos, F::log, F::exp};
+  vector<F> binaries {F::add, F::subtract, F::multiply, F::divide, F::pow};
+  vector<F> quadnaries {F::lesser, F::greater};
 
   /* Vectors of available function enums.  Should be moved into
      Options struct. */
-  vector <F> leaves {F::constant, F::input};
-  vector <F> internals {F::sin, F::cos, F::add, F::subtract,
+  vector<F> leaves {F::constant, F::input};
+  vector<F> internals {F::sin, F::cos, F::add, F::subtract,
       F::multiply, F::divide, F::lesser, F::greater};
 
   // Returns a random function from a given set of functions.
   Function
   get_function(const vector <Function>& functions)
   {
-    int_dist dist{0, (int) functions.size() - 1}; // closed interval
+    int_dist dist{0, static_cast<int>(functions.size()) - 1}; // closed interval
     return functions[dist(rg.engine)];
   }
 
@@ -109,7 +108,6 @@ namespace individual
     else
       {
 	function = get_function(internals);
-	// Determine node's arity.
 	arity = get_arity(function);
 	// Recursively create subtrees.
 	for (unsigned int i = 0; i < arity; ++i)
@@ -351,6 +349,7 @@ namespace individual
 			 const double& min, const double& max,
 			 const options::pairs& values): fitness{0}, adjusted{0}
   {
+    // 50/50 chance to choose grow or full
     real_dist dist{0, 1};
     Method method = (dist(rg.engine) < chance) ? Method::grow : Method::full;
     root = Node{method, depth, min, max};
@@ -450,8 +449,8 @@ namespace individual
 	      + to_string(error) + "\n";
 	  }
       }
-
-    adjusted = (double) 1 / (1 + fitness - penalty * get_total());
+    // remove penalty when adjusting
+    adjusted = static_cast<double>(1) / (1 + fitness - penalty * get_total());
 
     return calculation;
   }
@@ -490,24 +489,24 @@ namespace individual
     if (a.get_internals() != 0 and probability(rg.engine) < chance)
       {
 	// Choose an internal node.
-	int_dist dist{0, (int) a.get_internals() - 1};
+	int_dist dist{0, static_cast<int>(a.get_internals()) - 1};
 	target_a.internals = dist(rg.engine);
       }
     else
       {
 	// Otherwise choose a leaf node.
-	int_dist dist{0, (int) a.get_leaves() - 1};
+	int_dist dist{0, static_cast<int>(a.get_leaves()) - 1};
 	target_a.leaves = dist(rg.engine);
       }
     // Totally repeating myself here for "b".
     if (b.get_internals() != 0 and probability(rg.engine) < chance)
       {
-	int_dist dist{0, (int) b.get_internals() - 1};
+	int_dist dist{0, static_cast<int>(b.get_internals()) - 1};
 	target_b.internals = dist(rg.engine);
       }
     else
       {
-	int_dist dist{0, (int) b.get_leaves() - 1};
+	int_dist dist{0, static_cast<int>(b.get_leaves()) - 1};
 	target_b.leaves = dist(rg.engine);
       }
     std::swap(a[target_a], b[target_b]);

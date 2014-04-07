@@ -91,7 +91,7 @@ namespace algorithm
   new_population(const Options& options)
   {
     vector<Individual> population;
-    int_dist depth_dist{0, (int) options.max_depth}; // ramped
+    int_dist depth_dist{0, static_cast<int>(options.max_depth)}; // ramped
     for (unsigned int i = 0; i < options.population_size; ++i)
       {
 	/* The depth is ramped, and so drawn randomly for each
@@ -108,7 +108,7 @@ namespace algorithm
   Individual
   selection(const unsigned int& size, const vector<Individual>& population)
   {
-    int_dist dist{0, (int) population.size() - 1}; // closed interval
+    int_dist dist{0, static_cast<int>(population.size()) - 1}; // closed interval
     vector<Individual> contestants;
 
     for (unsigned int i = 0; i < size; ++i)
@@ -122,7 +122,7 @@ namespace algorithm
      re-evaluated children. */
   const vector<Individual>
   get_children(const unsigned long& size,
-	       const vector <Individual>& population, const Options&  options)
+	       const vector<Individual>& population, const Options& options)
   {
     // Select parents for children.
     vector<Individual> nodes;
@@ -217,7 +217,7 @@ namespace algorithm
 	// Create replacement population.
 	vector<Individual> offspring = new_offspring(options, population);
 	// Perform elitism replacement of random individuals.
-	int_dist dist{0, (int) options.population_size - 1};
+	int_dist dist{0, static_cast<int>(options.population_size) - 1};
 	for (unsigned int e = 0; e < options.elitism_size; ++e)
 	  offspring[dist(rg.engine)] = best;
 	// Replace current population with offspring.

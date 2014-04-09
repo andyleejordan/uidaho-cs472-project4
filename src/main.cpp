@@ -15,7 +15,7 @@
 #include "trials/trials.hpp"
 
 int
-main(int argc, char * argv[])
+main(int argc, char* argv[])
 {
   // Retrieve program options.
   const options::Options options = options::parse(argc, argv);

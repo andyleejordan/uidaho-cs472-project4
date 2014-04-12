@@ -14,14 +14,34 @@
 
 namespace options
 {
-  // a vector of(X, Y) pairs of doubles as tuples
-  typedef std::vector<std::tuple<double, double>> pairs;
+  enum class Cell {blank, food, marked};
+
+  // toroidal map as vector of vector of bools
+  class Map
+  {
+  public:
+    Map();
+    Map(const std::string&);
+    void reset(const Map&);
+    void left();
+    void right();
+    bool forward();
+    bool look();
+    std::string print();
+  private:
+    std::vector<std::vector<Cell>> map;
+    void move(unsigned int, unsigned int);
+    unsigned int width;
+    unsigned int height;
+    unsigned int x;
+    unsigned int y;
+  };
 
   // "singleton" struct with configured options for the algorithm
   // setup and returned by parse()
   struct Options
   {
-    pairs values;
+    Map map;
     unsigned int trials;
     unsigned int iterations;
     unsigned int population_size;
@@ -29,8 +49,6 @@ namespace options
     unsigned int tournament_size;
     unsigned int crossover_size;
     unsigned int elitism_size;
-    double constant_min;
-    double constant_max;
     double penalty;
     double grow_chance;
     double mutate_chance;

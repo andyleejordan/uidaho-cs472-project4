@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 
 #include <boost/program_options.hpp>
 
@@ -15,50 +16,89 @@
 
 namespace options
 {
-  /* Reads in columnar X Y data from file to create a vector of pairs.
-     Will exit with EXIT_FAILURE if unable to read or obtains no data. */
-  const pairs
-  get_data(std::string file_name)
+  Map::Map(const std::string& filename): width{0}, height{0}, x{0}, y{0}
   {
     // Try to open the given file.
-    std::ifstream data_file{file_name};
+    std::ifstream data_file{filename};
     if (not data_file.is_open())
       {
-	std::cerr << "Data file " << file_name << " could not be read!"
-		  << std::endl;
+	std::cerr << "File " << filename << " could not be read!\n";
 	std::exit(EXIT_FAILURE);
       }
 
-    // Fill values vector with (x, y) pairs.
-    pairs values;
-    while (not data_file.eof())
+    // Parse file into map structure
+    std::string line;
+    while (data_file >> line)
       {
-	int x;
-	double y;
-	data_file >> x >> y;
-	values.emplace_back(std::make_tuple(x, y));
+	std::vector<Cell> row;
+	for (const char& c : line)
+	  {
+	    if (c != ' ' or c != 'x')
+	      {
+		std::cerr << "File " << filename << " had bad cells!\n";
+		std::exit(EXIT_FAILURE);
+	      }
+	    else
+	      row.emplace_back((c == ' ')
+			       ? Cell{Cell::blank} : Cell{Cell::food});
+	  }
+	if (width == 0) width = row.size(); // Get initial width
+	else if (row.size() != width)
+	  {
+	    // Verify all lines are same width
+	    std::cerr << "File " << filename << " had uneven lines!\n";
+	    std::exit(EXIT_FAILURE);
+	  }
+	else
+	  map.emplace_back(row);
       }
-    if (not values.size())
-      {
-	std::cerr << "Data file " << file_name << " was empty!" << std::endl;
-	std::exit(EXIT_FAILURE);
-      }
-
-    return values;
+    height = map.size();
+    std::cout << "Grid is " << width << " wide and " << height << " high\n."
+	      << print();
   }
+
+  void Map::reset(const Map& blank)
+    {
+      width = blank.width;
+      height = blank.height;
+      map = blank.map;
+      x = blank.x;
+      y = blank.y;
+    }
+
+  std::string Map::print()
+    {
+      std::stringstream out;
+      for (const auto& row : map)
+	{
+	  for (const Cell& cell : row)
+	    {
+	      // Add blank, food, and marked locations
+	      if (cell == Cell::blank) out << ' ';
+	      else if (cell == Cell::food) out << 'x';
+	      else if (cell == Cell::marked) out << '*';
+	      else
+		{
+		  std::cerr << "Map is malformed!\n";
+		  std::exit(EXIT_FAILURE);
+		}
+	    }
+	  // Add newline after each row
+	  out << '\n';
+	}
+      return out.str();
+    }
 
   // Validates options parameters; should instead be unit tests.
   void
   Options::validate() const
   {
-    assert(values.size() > 0);
     assert(trials > 0);
     assert(iterations > 0);
     assert(population_size > 0);
     assert(tournament_size > 0 and tournament_size <= population_size);
     assert(crossover_size == 2);
     assert(elitism_size <= population_size);
-    assert(constant_min < constant_max);
     assert(grow_chance >= 0 and grow_chance <= 1);
     assert(mutate_chance >= 0 and mutate_chance <= 1);
     assert(crossover_chance >= 0 and crossover_chance <= 1);
@@ -74,7 +114,7 @@ namespace options
     using std::string;
     using namespace boost::program_options;
 
-    string test_file;
+    string filename;
     Options options;
 
     positional_options_description positionals;
@@ -89,7 +129,7 @@ namespace options
        default_value("search.cfg"),
        "specify the configuration file")
 
-      ("file,f", value<string>(&test_file)->
+      ("file,f", value<string>(&filename)->
        default_value("test/cs472.dat"),
        "specify the location of the columnized test data \"X Y\"")
 
@@ -124,14 +164,6 @@ namespace options
       ("elitism,e", value<unsigned int>(&options.elitism_size)->
        default_value(2),
        "set the number of elitism replacements to make each iteration")
-
-      ("min", value<double>(&options.constant_min)->
-       default_value(0),
-       "set the minimum value for random constants in an expression")
-
-      ("max", value<double>(&options.constant_max)->
-       default_value(10),
-       "set the maximum value for random constants in an expression")
 
       ("penalty,P", value<double>(&options.penalty)->
        default_value(0.1),
@@ -196,7 +228,7 @@ namespace options
       }
 
     // get values from given test file
-    options.values = get_data(test_file);
+    options.map = Map(filename);
     options.validate();
 
     return options;

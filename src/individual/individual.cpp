@@ -142,70 +142,42 @@ namespace individual
 
   /* Returns a double as the result of a depth-first post-order
      recursive evaluation of a parse tree. */
-  double
-  Node::evaluate(const double& x) const
+  bool
+  Node::evaluate(options::Map& map) const
   {
-    double a, b;
-
-    // Evaluate children a and possibly b.
-    if (arity == 1)
-      a = children[0].evaluate(x);
-    else if (arity == 2 or arity == 4)
-      {
-	a = children[0].evaluate(x);
-	b = children[1].evaluate(x);
-	// Children c and d are evaluated conditionally.
-      }
-
-    // Calculate the result for the given function.
     switch (function)
       {
       case F::nil:
-	assert(false); // Never calculate empty node.
-      case F::constant:
-	assert(arity == 0);
-	return value;
-      case F::input:
-	assert(arity == 0);
-	return x;
-      case F::sqrt:
-	assert(arity == 1);
-	return std::sqrt(std::abs(a)); // Protected via abs.
-      case F::sin:
-	assert(arity == 1);
-	return std::sin(a);
-      case F::cos:
-	assert(arity == 1);
-	return std::cos(a);
-      case F::log:
-	assert(arity == 1);
-	return (a == 0) ? 0 : std::log(std::abs(a)); // Protected via abs.
-      case F::exp:
-	assert(arity == 1);
-	return std::exp(a);
-      case F::add:
-	assert(arity == 2);
-	return a + b;
-      case F::subtract:
-	assert(arity == 2);
-	return a - b;
-      case F::multiply:
-	assert(arity == 2);
-	return a * b;
-      case F::divide:
-	assert(arity == 2);
-	return (b == 0) ? 1 : a / b; // Protected divide by zero: return 1.
-      case F::pow:
-	assert(arity == 2);
-	return std::pow(std::abs(a), std::abs(b)); // Protected via abs.
-      case F::lesser:
-	assert(arity == 4);
-	return (a < b) ? children[2].evaluate(x) : children[3].evaluate(x);
-      case F::greater:
-	assert(arity == 4);
-	return (a > b) ? children[2].evaluate(x) : children[3].evaluate(x);
+	assert(false); // Never evaluate empty node
+
+      case F::left:
+	return map.left(); // Terminal case
+
+      case F::right:
+	return map.right(); // Terminal case
+
+      case F::forward:
+	return map.forward(); // Terminal case
+
+      case F::prog2:
+	if (children[0].evaluate(map)) // Have more ticks, do next tree
+	  return children[1].evaluate(map);
+	else return false; // Max ticks reached, leave tree
+
+      case F::prog3:
+	if (children[0].evaluate(map)) // Have more ticks, do next tree
+
+	  if (children[1].evaluate(map)) // Have more ticks, do next tree
+	    return children[2].evaluate(map);
+	  else return false; // Max ticks reached, leave tree
+	else return false; // Max ticks reached, leave tree
+
+      case F::iffoodahead:
+	return (map.look()) // Do left or right depending on if food ahead
+	  ? children[0].evaluate(map)
+	  : children[1].evaluate(map);
       }
-    assert(false);
+    return false; // Tree is exhausted
   }
 
   /* Recursively count children via post-order traversal.  Keep track
@@ -381,43 +353,28 @@ namespace individual
      Individual's size and fitness accordingly. Return non-empty
      string if printing. */
   string
-  Individual::evaluate(const options::pairs& values, const double& penalty,
+  Individual::evaluate(options::Map map, const double& penalty,
 		       const bool& print)
   {
-    using std::to_string;
-    using std::get;
-
-    string calculation = "# x - y - expected - error\n";
-
     // Update size on evaluation because it's incredibly convenient.
     size = root.size();
 
-    // Reset fitness and apply scaled size penalty.
-    fitness = penalty * get_total();
-
-    // Evalute for given values.
-    for (auto pair : values)
+    while (map.active())
       {
-	double x = std::get<0>(pair);
-	double y = root.evaluate(x);
-	assert(not std::isnan(y) and not std::isinf(y));
-
-	double expected = std::get<1>(pair);
-	double error = std::pow(y - expected, 2);
-	fitness += error;
-
-	if (print) // Concatenate information if printing.
+	if (root.evaluate(map))
 	  {
-	    calculation += to_string(x) + "\t"
-	      + to_string(y) + "\t"
-	      + to_string(expected) + "\t"
-	      + to_string(error) + "\n";
+	    std::cerr << "Map is being weird\n";
+	    std::exit(EXIT_FAILURE);
 	  }
       }
-    // remove penalty when adjusting
-    adjusted = static_cast<double>(1) / (1 + fitness - penalty * get_total());
 
-    return calculation;
+    fitness = map.fitness();
+    adjusted = static_cast<double>(1) / (1 + fitness);
+
+    string evaluation;
+    if (print) evaluation = map.print();
+
+    return evaluation;
   }
 
   // Mutate each node with given probability.

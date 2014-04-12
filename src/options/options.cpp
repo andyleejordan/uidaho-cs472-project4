@@ -18,6 +18,8 @@ namespace options
 {
   Position::Position(): x{0}, y{0}, direction{Direction::east} {}
 
+  Map::Map(): width{0}, height{0}, ticks{0}, score{0}, position{Position{}} {}
+
   Map::Map(const std::string& filename): width{0}, height{0}, ticks{0},
 					 score{0}, position{Position{}}
   {
@@ -66,10 +68,88 @@ namespace options
       return ticks < 600; // TODO: implement options.ticks
     }
 
-  std::string Map::print()
+  bool
+  Map::look() const
+    {
+      Position ahead = position;
+      if (position.direction == Direction::north)
+	ahead.y = (position.y - 1) % height;
+      else if (position.direction == Direction::west)
+	ahead.x = (position.x - 1) % width;
+      else if (position.direction == Direction::south)
+	ahead.y = (position.y + 1) % height;
+      else if (position.direction == Direction::east)
+	ahead.y = (position.x + 1) % width;
+
+      return rows[ahead.y][ahead.x] == Cell::food;
+    }
+
+  bool
+  Map::forward()
+    {
+      // Move forward in specified direction
+      if (position.direction == Direction::north)
+	position.y = (position.y - 1) % height;
+      else if (position.direction == Direction::west)
+	position.x = (position.x - 1) % width;
+      else if (position.direction == Direction::south)
+	position.y = (position.y + 1) % height;
+      else if (position.direction == Direction::east)
+	position.y = (position.x + 1) % width;
+
+      // Increment score if moved onto food
+      if (rows[position.y][position.x] == Cell::food) ++score;
+
+      // Mark location on map as visitied
+      rows[position.y][position.x] = Cell::marked;
+
+      ++ticks;
+      return active();
+    }
+
+  bool
+  Map::left()
+    {
+      if (position.direction == Direction::north)
+	position.direction = Direction::west;
+      else if (position.direction == Direction::west)
+	position.direction = Direction::south;
+      else if (position.direction == Direction::south)
+	position.direction = Direction::east;
+      else if (position.direction == Direction::east)
+	position.direction = Direction::north;
+
+      ++ticks;
+      return active();
+    }
+
+  bool
+  Map::right()
+    {
+      if (position.direction == Direction::north)
+	position.direction = Direction::east;
+      else if (position.direction == Direction::east)
+	position.direction = Direction::south;
+      else if (position.direction == Direction::south)
+	position.direction = Direction::west;
+      else if (position.direction == Direction::west)
+	position.direction = Direction::north;
+
+      ++ticks;
+      return active();
+    }
+
+  unsigned int
+  Map::fitness() const
+    {
+      return score;
+    }
+
+  std::string Map::print() const
     {
       std::stringstream out;
-      for (const auto& row : map)
+      out << "# x is food and * is trail\n";
+      for (const std::vector<Cell>& row : rows)
 	{
 	  for (const Cell& cell : row)
 	    {
@@ -212,7 +292,7 @@ namespace options
     catch (std::exception& e)
       {
 	std::cerr << e.what() << std::endl;
-	exit(EXIT_FAILURE);
+	std::exit(EXIT_FAILURE);
       }
 
     // Print options help and exit with EXIT_SUCCESS when finished.
@@ -224,7 +304,7 @@ namespace options
 		  << "Plot data saved to <plots>/<Unix time>.dat\n"
 		  << "GNUPlot PNG generation script './plot <plots>'\n\n"
 		  << description << std::endl;
-	exit(EXIT_SUCCESS);
+	std::exit(EXIT_SUCCESS);
       }
 
     // get values from given test file

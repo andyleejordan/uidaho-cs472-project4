@@ -230,37 +230,10 @@ namespace individual
     return empty;
   }
 
-  // Single node mutation to different function of same arity.
+  // TODO: implement mutations of individual nodes
   void
   Node::mutate_self()
   {
-    /* Mutate constant to a value in its neighborhood.  Here we do
-       not switch functions (between CONSTANT and INPUT), as it
-       introduces too much volatility into the terminals.  TODO:
-       review the above and possibly change. */
-    if (arity == 0)
-      {
-	if (function == Function::constant)
-	  {
-	    normal_dist dist{0, 1};
-	    value *= 1 + dist(rg.engine);
-	  }
-      }
-    /* Otherwise mutate to internal function of same arity.  We do
-       this by saving the old function and arity, then repeatedly
-       drawing a new random function until the arity matches and it is
-       not the original function. */
-    else
-      {
-	Function old_function = function;
-	unsigned int old_arity = arity;
-	while (function == old_function or arity != old_arity)
-	  {
-	    function = get_function(internals);
-	    arity = get_arity(function);
-	  }
-	assert(function != old_function and arity == old_arity);
-      }
     assert(function != Function::nil);
   }
 

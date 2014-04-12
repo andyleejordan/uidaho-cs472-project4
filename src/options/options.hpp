@@ -16,25 +16,35 @@ namespace options
 {
   enum class Cell {blank, food, marked};
 
+  enum class Direction {north, south, east, west};
+
+  struct Position {
+    unsigned int x;
+    unsigned int y;
+    Direction direction;
+    Position();
+  };
+
   // toroidal map as vector of vector of bools
   class Map
   {
   public:
     Map();
     Map(const std::string&);
-    void reset(const Map&);
-    void left();
-    void right();
+    bool active() const;
+    bool look() const;
     bool forward();
-    bool look();
-    std::string print();
+    bool left();
+    bool right();
+    unsigned int fitness() const;
+    std::string print() const;
   private:
-    std::vector<std::vector<Cell>> map;
-    void move(unsigned int, unsigned int);
+    std::vector<std::vector<Cell>> rows;
     unsigned int width;
     unsigned int height;
-    unsigned int x;
-    unsigned int y;
+    unsigned int ticks;
+    unsigned int score;
+    Position position;
   };
 
   // "singleton" struct with configured options for the algorithm

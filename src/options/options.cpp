@@ -16,7 +16,10 @@
 
 namespace options
 {
-  Map::Map(const std::string& filename): width{0}, height{0}, x{0}, y{0}
+  Position::Position(): x{0}, y{0}, direction{Direction::east} {}
+
+  Map::Map(const std::string& filename): width{0}, height{0}, ticks{0},
+					 score{0}, position{Position{}}
   {
     // Try to open the given file.
     std::ifstream data_file{filename};
@@ -50,20 +53,17 @@ namespace options
 	    std::exit(EXIT_FAILURE);
 	  }
 	else
-	  map.emplace_back(row);
+	  rows.emplace_back(row);
       }
-    height = map.size();
-    std::cout << "Grid is " << width << " wide and " << height << " high\n."
+    height = rows.size();
+    std::cout << "#Grid is " << width << " wide and " << height << " high\n."
 	      << print();
   }
 
-  void Map::reset(const Map& blank)
+  bool
+  Map::active() const
     {
-      width = blank.width;
-      height = blank.height;
-      map = blank.map;
-      x = blank.x;
-      y = blank.y;
+      return ticks < 600; // TODO: implement options.ticks
     }
 
   std::string Map::print()

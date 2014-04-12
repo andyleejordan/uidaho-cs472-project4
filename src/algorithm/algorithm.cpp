@@ -37,13 +37,13 @@ namespace algorithm
   open_log(std::ofstream& log, const std::time_t& time, const int& trial,
 	   const std::string& folder)
   {
-    std::string file_name = folder + std::to_string(time) + "_"
+    std::string filename = folder + std::to_string(time) + "_"
       + std::to_string(trial) + ".dat";
 
-    log.open(file_name, std::ios_base::app);
+    log.open(filename, std::ios_base::app);
     if (not log.is_open())
       {
-	std::cerr << "Log file " << file_name << " could not be opened!\n";
+	std::cerr << "Log file " << filename << " could not be opened!\n";
 	std::exit(EXIT_FAILURE);
       }
   }
@@ -97,8 +97,8 @@ namespace algorithm
 	/* The depth is ramped, and so drawn randomly for each
 	   individual. */
 	unsigned int depth = depth_dist(rg.engine);
-	population.emplace_back(Individual{depth, options.grow_chance,
-	      options.constant_min, options.constant_max, options.values});
+	population.emplace_back(Individual{
+	    depth, options.grow_chance, options.map});
       }
     return population;
   }
@@ -141,7 +141,7 @@ namespace algorithm
     for (Individual& child : nodes)
       {
 	child.mutate(options.mutate_chance); // Mutate children
-	child.evaluate(options.values, options.penalty); // Evaluate children
+	child.evaluate(options.map, options.penalty); // Evaluate children
       }
     return nodes;
   }
@@ -242,7 +242,7 @@ namespace algorithm
     // Log evaluation plot data of best individual.
     std::ofstream plot;
     open_log(plot, time, trial, options.plots_dir);
-    plot << best.evaluate(options.values, options.penalty, true);
+    plot << best.evaluate(options.map, options.penalty, true);
     plot.close();
     return best;
   }

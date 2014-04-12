@@ -33,10 +33,10 @@ namespace individual
   {
   public:
     Node();
-    Node(const Method&, const unsigned int&, const double&,const double&);
+    Node(const Method&, const unsigned int&);
     std::string print() const;
     std::string represent() const;
-    double evaluate(const double&) const;
+    bool evaluate(options::Map&) const;
     const Size size() const;
     Node& visit(const Size&, Size&);
     void mutate_tree(const double&);
@@ -44,10 +44,8 @@ namespace individual
   private:
     Function function;
     unsigned int arity;
-    double value;
     std::vector<Node> children;
 
-    void set_constant(const double&, const double&);
     void mutate_self();
   };
 
@@ -55,8 +53,7 @@ namespace individual
   {
   public:
     Individual();
-    Individual(const unsigned int, const double&, const double&,
-	       const double&, const options::pairs&);
+    Individual(const unsigned int, const double&, options::Map map);
 
     std::string print() const;
     std::string print_formula() const;
@@ -67,16 +64,16 @@ namespace individual
     double get_fitness() const;
     double get_adjusted() const;
 
-    Node&  operator[](const Size&);
+    Node& operator[](const Size&);
     void mutate(const double&);
-    std::string evaluate(const options::pairs&, const double& penalty = 0,
+    std::string evaluate(options::Map, const double& penalty = 0,
 			 const bool& print = false);
     friend void crossover(const double&, Individual&, Individual&);
 
   private:
     Node root;
     Size size;
-    double fitness;
+    int fitness;
     double adjusted;
   };
 }

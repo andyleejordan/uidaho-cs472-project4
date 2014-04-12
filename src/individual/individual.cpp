@@ -29,21 +29,18 @@ namespace individual
   enum class Method {grow, full};
 
   // List of valid functions for an expression.
-  enum class Function {nil, constant, input, sqrt, sin, cos, log, exp,
-      add, subtract, divide, multiply, pow, lesser, greater};
+  enum class Function {nil, prog2, prog3, iffoodahead, left, right, forward};
 
   using F = Function;
   // Vectors of same-arity function enums.
-  vector<F> nullaries {F::constant, F::input};
-  vector<F> unaries {F::sqrt, F::sin, F::cos, F::log, F::exp};
-  vector<F> binaries {F::add, F::subtract, F::multiply, F::divide, F::pow};
-  vector<F> quadnaries {F::lesser, F::greater};
+  vector<F> nullaries {F::left, F::right, F::forward};
+  vector<F> binaries {F::prog2, F::iffoodahead};
+  vector<F> trinaries {F::prog3};
 
   /* Vectors of available function enums.  Should be moved into
      Options struct. */
-  vector<F> leaves {F::constant, F::input};
-  vector<F> internals {F::sin, F::cos, F::add, F::subtract,
-      F::multiply, F::divide, F::lesser, F::greater};
+  vector<F> leaves = nullaries;
+  vector<F> internals {F::prog2, F::prog3, F::iffoodahead};
 
   // Returns a random function from a given set of functions.
   Function
@@ -51,14 +48,6 @@ namespace individual
   {
     int_dist dist{0, static_cast<int>(functions.size()) - 1}; // closed interval
     return functions[dist(rg.engine)];
-  }
-
-  // Returns a random double between min and max.
-  double
-  get_constant(const double& min, const double& max)
-  {
-    real_dist dist{min, max};
-    return dist(rg.engine);
   }
 
   // Returns bool of whether or not the item is in the set.
@@ -74,22 +63,19 @@ namespace individual
   {
     if (contains(function, nullaries))
       return 0;
-    else if (contains(function, unaries))
-      return 1;
     else if (contains(function, binaries))
       return 2;
-    else if (contains(function, quadnaries))
-      return 4;
+    else if (contains(function, trinaries))
+      return 3;
     assert(false);
   }
 
   // Default constructor for "empty" node
-  Node::Node(): function{Function::nil}, arity{0}, value{0} {}
+  Node::Node(): function{Function::nil}, arity{0} {}
 
   /* Recursively constructs a parse tree using the given method
      (either GROW or FULL). */
-  Node::Node(const Method& method, const unsigned int& max_depth,
-	     const double& constant_min, const double& constant_max)
+  Node::Node(const Method& method, const unsigned int& max_depth)
   {
     // Create terminal node if at the max depth or randomly (if growing).
     real_dist dist{0, 1};
@@ -100,9 +86,6 @@ namespace individual
       {
 	function = get_function(leaves);
 	arity = get_arity(function);
-	// Setup constant function; input is provided on evaluation.
-	if (function == Function::constant)
-	  value = get_constant(constant_min, constant_max);
       }
     // Otherwise choose a non-terminal node.
     else
@@ -111,8 +94,7 @@ namespace individual
 	arity = get_arity(function);
 	// Recursively create subtrees.
 	for (unsigned int i = 0; i < arity; ++i)
-	  children.emplace_back(Node{
-	      method, max_depth - 1, constant_min, constant_max});
+	  children.emplace_back(Node{method, max_depth - 1});
       }
     assert(function != Function::nil); // do not create null types
     assert(children.size() == arity); // ensure arity
@@ -126,34 +108,18 @@ namespace individual
       {
       case F::nil:
 	assert(false); // Never represent empty node.
-      case F::constant:
-	return std::to_string(value);
-      case F::input:
-	return "x";
-      case F::sqrt:
-	return "sqrt";
-      case F::sin:
-	return "sin";
-      case F::cos:
-	return "cos";
-      case F::log:
-	return "log";
-      case F::exp:
-	return "exp";
-      case F::add:
-	return "+";
-      case F::subtract:
-	return "-";
-      case F::multiply:
-	return "*";
-      case F::divide:
-	return "%";
-      case F::pow:
-	return "^";
-      case F::lesser:
-	return "<";
-      case F::greater:
-	return ">";
+      case F::prog2:
+	return "prog2";
+      case F::prog3:
+	return "prog3";
+      case F::iffoodahead:
+	return "if-food-ahead";
+      case F::left:
+	return "left";
+      case F::right:
+	return "right";
+      case F::forward:
+	return "forward";
       }
     assert(false); // Every node should have been matched.
   }
@@ -346,16 +312,15 @@ namespace individual
      actual construction is delegated). The depth is passed by value
      as its creation elsewhere is temporary. */
   Individual::Individual(const unsigned int depth, const double& chance,
-			 const double& min, const double& max,
-			 const options::pairs& values): fitness{0}, adjusted{0}
+			 options::Map map): fitness{0}, adjusted{0}
   {
     // 50/50 chance to choose grow or full
     real_dist dist{0, 1};
     Method method = (dist(rg.engine) < chance) ? Method::grow : Method::full;
-    root = Node{method, depth, min, max};
-    /*The evaluate method updates the size and both raw and adjusted
-      fitnesses. */
-    evaluate(values);
+    root = Node{method, depth};
+    /* The evaluate method updates the size and both raw and adjusted
+       fitnesses. */
+    evaluate(map);
   }
 
   // Return string representation of a tree's size and fitness.

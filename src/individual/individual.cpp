@@ -233,6 +233,25 @@ namespace individual
   void
   Node::mutate_self()
   {
+    if (arity == 0)
+      {
+	const Function old = function;
+	while (function == old)
+	  function = get_function(leaves);
+      }
+    else
+      {
+	const Function old = function;
+	while (function == old)
+	  function = get_function(internals);
+	arity = get_arity(function);
+	// Fix arity mismatches caused by mutation
+	if (arity == 2 and children.size() == 3)
+	  children.pop_back();
+	else if (arity == 3 and children.size() == 2)
+	  children.emplace_back(Node{Method::full, 0});
+      }
+    assert(arity == children.size());
     assert(function != Function::nil);
   }
 

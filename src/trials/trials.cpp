@@ -17,31 +17,41 @@
 
 namespace trials
 {
+  using individual::Individual;
+
+  // Push results
+  void
+  push_results(const unsigned long trials, const options::Options& options,
+	       const std::time_t& time, unsigned int& trial,
+	       std::vector<Individual>& candidates)
+  {
+    std::vector<std::future<const Individual>> results;
+    // Spawn blocks number of async threads.
+    for (unsigned long i = 0; i < trials; ++i)
+      results.emplace_back(std::async(std::launch::async,
+				      algorithm::genetic, options, time,
+				      ++trial));
+    // Gather future results.
+    for (std::future<const Individual>& result : results)
+      candidates.emplace_back(result.get());
+  }
+
   // Spawn trials number of threads in blocks.
   const std::tuple<int, individual::Individual>
   run(const options::Options& options, const std::time_t& time)
   {
-    using individual::Individual;
 
     const unsigned long hardware_threads = std::thread::hardware_concurrency();
     const unsigned long blocks = (hardware_threads != 0) ? hardware_threads : 2;
-    assert(options.trials % blocks == 0);
 
     unsigned int trial = 0;
     std::vector<Individual> candidates;
     // Spawn trials in chunks of size blocks.
     for (unsigned long t = 0; t < options.trials / blocks; ++t)
-      {
-	std::vector<std::future<const Individual>> results;
-	// Spawn blocks number of async threads.
-	for (unsigned long i = 0; i < blocks; ++i)
-	  results.emplace_back(std::async(std::launch::async,
-					  algorithm::genetic, options, time,
-					  ++trial));
-	// Gather future results.
-	for (std::future<const Individual>& result : results)
-	  candidates.emplace_back(result.get());
-      }
+      push_results(blocks, options, time, trial, candidates);
+    // Spawn remaining trials.
+    push_results(options.trials % blocks, options, time, trial, candidates);
+    // Retrieve best element.
     std::vector<Individual>::iterator best
       = std::min_element(candidates.begin(), candidates.end(),
 			 algorithm::compare_fitness);

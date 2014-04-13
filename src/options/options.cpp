@@ -18,10 +18,12 @@ namespace options
 {
   Position::Position(): x{0}, y{0}, direction{Direction::east} {}
 
-  Map::Map(): width{0}, height{0}, ticks{0}, score{0}, position{Position{}} {}
+  Map::Map(): width{0}, height{0}, ticks{0}, score{0}, pieces{0},
+	      position{Position{}} {}
 
-  Map::Map(const std::string& filename): width{0}, height{0}, ticks{0},
-					 score{0}, position{Position{}}
+  Map::Map(const std::string& filename): width{0}, height{0},
+					 ticks{0}, score{0}, pieces{0},
+					 position{Position{}}
   {
     // Try to open the given file.
     std::ifstream data_file{filename};
@@ -45,8 +47,11 @@ namespace options
 		std::exit(EXIT_FAILURE);
 	      }
 	    else if (c != '\n')
-	      row.emplace_back((c == 'x')
-			       ? Cell{Cell::food} : Cell{Cell::blank});
+	      {
+		Cell cell = (c == 'x') ? Cell{Cell::food} : Cell{Cell::blank};
+		row.emplace_back(cell);
+		if (cell == Cell::food) ++pieces;
+	      }
 	  }
 	if (width == 0) width = row.size(); // Get initial width
 	else if (row.size() != width)
@@ -60,8 +65,6 @@ namespace options
 	rows.emplace_back(row);
       }
     height = rows.size();
-    std::cout << "# Grid is " << width << " wide and " << height << " high.\n"
-	      << print();
   }
 
   bool
@@ -145,6 +148,12 @@ namespace options
   Map::fitness() const
     {
       return score;
+    }
+
+  unsigned int
+  Map::max() const
+    {
+      return pieces;
     }
 
   std::string Map::print() const

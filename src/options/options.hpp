@@ -37,6 +37,7 @@ namespace options
     bool left();
     bool right();
     unsigned int fitness() const;
+    unsigned int max() const;
     std::string print() const;
   private:
     std::vector<std::vector<Cell>> rows;
@@ -44,6 +45,7 @@ namespace options
     unsigned int height;
     unsigned int ticks;
     unsigned int score;
+    unsigned int pieces;
     Position position;
   };
 

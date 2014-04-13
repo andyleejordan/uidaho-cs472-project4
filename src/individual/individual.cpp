@@ -342,7 +342,7 @@ namespace individual
       }
 
     fitness = map.fitness();
-    adjusted = static_cast<double>(1) / (1 + fitness);
+    adjusted = static_cast<double>(fitness) / map.max();
 
     string evaluation;
     if (print) evaluation = map.print();

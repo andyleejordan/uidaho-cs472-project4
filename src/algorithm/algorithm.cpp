@@ -118,34 +118,6 @@ namespace algorithm
 			     compare_fitness);
   }
 
-  /* Return size number of selected, recombined, mutated, and
-     re-evaluated children. */
-  const vector<Individual>
-  get_children(const unsigned long& size,
-	       const vector<Individual>& population, const Options& options)
-  {
-    // Select parents for children.
-    vector<Individual> nodes;
-    while (nodes.size() != size)
-      {
-	Individual mother = selection(options.tournament_size, population);
-	Individual father = selection(options.tournament_size, population);
-	// Crossover with probability.
-	real_dist dist{0, 1};
-	if (dist(rg.engine) < options.crossover_chance)
-	  crossover(options.internals_chance, mother, father);
-	// Place mother and father in nodes.
-	nodes.emplace_back(mother);
-	nodes.emplace_back(father);
-      }
-    for (Individual& child : nodes)
-      {
-	child.mutate(options.mutate_chance); // Mutate children
-	child.evaluate(options.map, options.penalty); // Evaluate children
-      }
-    return nodes;
-  }
-
   /* Return new offspring population reassembled from parallel calls to
      get_children () delegate. */
   vector<Individual>
@@ -153,25 +125,29 @@ namespace algorithm
   {
     vector<Individual> offspring;
     offspring.reserve(population.size());
-
-    // Determine proper number of threads and subsequent block size.
-    const unsigned long hardware_threads = std::thread::hardware_concurrency();
-    const unsigned long num_threads
-      = hardware_threads != 0 ? hardware_threads : 2;
-    assert(num_threads == 1 or population.size() % num_threads == 0);
-    const unsigned long block_size = population.size() / num_threads;
-
-    vector<std::future<const vector<Individual>>> results;
-    // Spawn threads.
-    for (unsigned long i = 0; i < num_threads; ++i)
-      results.emplace_back(std::async(std::launch::async, get_children,
-				      block_size, std::ref(population),
-				      options));
-    // Gather results and reassemble.  TODO: Find O(1) solution to this.
-    for (std::future<const vector<Individual>>& result : results)
+    // Select parents for children.
+    while (offspring.size() != population.size())
       {
-	const vector<Individual> nodes = result.get();
-	offspring.insert(offspring.end(), nodes.begin(), nodes.end());
+	offspring.emplace_back(selection(options.tournament_size, population));
+      }
+    // Binary crossover with probability.
+    if (options.crossover_size == 2)
+      {
+	real_dist dist{0, 1};
+	for (unsigned int i = 0; i < offspring.size(); i += 2)
+	  {
+	    if (dist(rg.engine) < options.crossover_chance)
+	      {
+		crossover(options.internals_chance,
+			  offspring[i], offspring[i + 1]);
+	      }
+	  }
+      }
+    // Mutate and evaluate children.
+    for (Individual& child : offspring)
+      {
+	child.mutate(options.mutate_chance); // Mutate children
+	child.evaluate(options.map, options.penalty); // Evaluate children
       }
     assert(offspring.size() == population.size());
     return offspring;

@@ -333,13 +333,7 @@ namespace individual
     size = root.size();
 
     while (map.active())
-      {
-	if (root.evaluate(map))
-	  {
-	    std::cerr << "Map is being weird\n";
-	    std::exit(EXIT_FAILURE);
-	  }
-      }
+      root.evaluate(map);
 
     fitness = map.fitness();
     adjusted = static_cast<double>(fitness) / map.max();

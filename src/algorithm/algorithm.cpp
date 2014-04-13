@@ -29,7 +29,7 @@ namespace algorithm
   compare_fitness(const Individual& a, const Individual& b)
   {
     return std::isnormal(a.get_fitness())
-      ? (a.get_fitness() < b.get_fitness()) : false;
+      ? (a.get_fitness() > b.get_fitness()) : false;
   }
 
   // Opens the appropriate log file for given time, trial, and folder.

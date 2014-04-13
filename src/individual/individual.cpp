@@ -355,6 +355,7 @@ namespace individual
 
     fitness = map.fitness();
     adjusted = static_cast<double>(fitness) / map.max();
+    if (not print) fitness -= penalty * get_total();
 
     string evaluation;
     if (print) evaluation = map.print();

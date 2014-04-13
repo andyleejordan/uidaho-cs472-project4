@@ -38,27 +38,29 @@ namespace options
 	std::vector<Cell> row;
 	for (const char& c : line)
 	  {
-	    if (c != ' ' or c != 'x')
+	    if (c != '.' and c != 'x' and c != '\n')
 	      {
-		std::cerr << "File " << filename << " had bad cells!\n";
+		std::cerr << "File " << filename << " had bad cells!\n"
+			  << "They were: " << c << std::endl;
 		std::exit(EXIT_FAILURE);
 	      }
-	    else
-	      row.emplace_back((c == ' ')
-			       ? Cell{Cell::blank} : Cell{Cell::food});
+	    else if (c != '\n')
+	      row.emplace_back((c == 'x')
+			       ? Cell{Cell::food} : Cell{Cell::blank});
 	  }
 	if (width == 0) width = row.size(); // Get initial width
 	else if (row.size() != width)
 	  {
 	    // Verify all lines are same width
-	    std::cerr << "File " << filename << " had uneven lines!\n";
+	    std::cerr << "File " << filename << " had uneven lines!\n"
+		      << "The width is: " << width
+		      << " and the line was " << row.size() << std::endl;
 	    std::exit(EXIT_FAILURE);
 	  }
-	else
-	  rows.emplace_back(row);
+	rows.emplace_back(row);
       }
     height = rows.size();
-    std::cout << "#Grid is " << width << " wide and " << height << " high\n."
+    std::cout << "# Grid is " << width << " wide and " << height << " high.\n"
 	      << print();
   }
 
@@ -154,7 +156,7 @@ namespace options
 	  for (const Cell& cell : row)
 	    {
 	      // Add blank, food, and marked locations
-	      if (cell == Cell::blank) out << ' ';
+	      if (cell == Cell::blank) out << '.';
 	      else if (cell == Cell::food) out << 'x';
 	      else if (cell == Cell::marked) out << '*';
 	      else
@@ -210,7 +212,7 @@ namespace options
        "specify the configuration file")
 
       ("file,f", value<string>(&filename)->
-       default_value("test/cs472.dat"),
+       default_value("test/santa-fe-trail.dat"),
        "specify the location of the columnized test data \"X Y\"")
 
       ("trials,t", value<unsigned int>(&options.trials)->

@@ -159,7 +159,7 @@ namespace options
   std::string Map::print() const
     {
       std::stringstream out;
-      out << "# x is food and * is trail\n";
+      out << "# 'x' is food and 'o' is ant trail\n";
       for (const std::vector<Cell>& row : rows)
 	{
 	  for (const Cell& cell : row)
@@ -167,7 +167,7 @@ namespace options
 	      // Add blank, food, and marked locations
 	      if (cell == Cell::blank) out << '.';
 	      else if (cell == Cell::food) out << 'x';
-	      else if (cell == Cell::marked) out << '*';
+	      else if (cell == Cell::marked) out << 'o';
 	      else
 		{
 		  std::cerr << "Map is malformed!\n";

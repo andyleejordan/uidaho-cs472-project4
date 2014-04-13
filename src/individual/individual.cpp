@@ -109,9 +109,9 @@ namespace individual
       case F::nil:
 	assert(false); // Never represent empty node.
       case F::prog2:
-	return "prog2";
+	return "prog-2";
       case F::prog3:
-	return "prog3";
+	return "prog-3";
       case F::iffoodahead:
 	return "if-food-ahead";
       case F::left:

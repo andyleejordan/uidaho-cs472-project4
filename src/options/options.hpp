@@ -30,7 +30,7 @@ namespace options
   {
   public:
     Map();
-    Map(const std::string&);
+    Map(std::string, unsigned int);
     bool active() const;
     bool look() const;
     bool forward();
@@ -44,6 +44,7 @@ namespace options
     unsigned int width;
     unsigned int height;
     unsigned int ticks;
+    unsigned int max_ticks;
     unsigned int score;
     unsigned int pieces;
     Position position;

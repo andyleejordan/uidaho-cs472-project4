@@ -18,12 +18,12 @@ namespace options
 {
   Position::Position(): x{0}, y{0}, direction{Direction::east} {}
 
-  Map::Map(): width{0}, height{0}, ticks{0}, score{0}, pieces{0},
+  Map::Map(): width{0}, height{0}, ticks{0}, max_ticks{0}, score{0}, pieces{0},
 	      position{Position{}} {}
 
-  Map::Map(const std::string& filename): width{0}, height{0},
-					 ticks{0}, score{0}, pieces{0},
-					 position{Position{}}
+  Map::Map(std::string filename, unsigned int ticks):
+    width{0}, height{0}, ticks{0}, max_ticks{ticks}, score{0}, pieces{0},
+    position{Position{}}
   {
     // Try to open the given file.
     std::ifstream data_file{filename};
@@ -70,7 +70,7 @@ namespace options
   bool
   Map::active() const
     {
-      return ticks < 600; // TODO: implement options.ticks
+      return ticks < max_ticks;
     }
 
   bool
@@ -206,6 +206,7 @@ namespace options
     using namespace boost::program_options;
 
     string filename;
+    unsigned int ticks;
     Options options;
 
     positional_options_description positionals;
@@ -255,6 +256,10 @@ namespace options
       ("elitism,e", value<unsigned int>(&options.elitism_size)->
        default_value(2),
        "set the number of elitism replacements to make each iteration")
+
+      ("ticks", value<unsigned int>(&ticks)->
+       default_value(600),
+       "set the number of moves the any may move")
 
       ("penalty,P", value<double>(&options.penalty)->
        default_value(0.1),
@@ -319,7 +324,7 @@ namespace options
       }
 
     // get values from given test file
-    options.map = Map(filename);
+    options.map = Map(filename, ticks);
     options.validate();
 
     return options;

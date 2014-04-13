@@ -166,7 +166,6 @@ namespace individual
 
       case F::prog3:
 	if (children[0].evaluate(map)) // Have more ticks, do next tree
-
 	  if (children[1].evaluate(map)) // Have more ticks, do next tree
 	    return children[2].evaluate(map);
 	  else return false; // Max ticks reached, leave tree
@@ -177,7 +176,7 @@ namespace individual
 	  ? children[0].evaluate(map)
 	  : children[1].evaluate(map);
       }
-    return false; // Tree is exhausted
+    assert(false); // Every node should be handled
   }
 
   /* Recursively count children via post-order traversal.  Keep track

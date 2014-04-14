@@ -33,7 +33,7 @@ main(int argc, char* argv[])
 
   // End timing trials.
   end = std::chrono::system_clock::now();
-  std::chrono::duration <double> elapsed_seconds = end - start;
+  std::chrono::duration<double> elapsed_seconds = end - start;
 
   // Print total time info and which trial was best.
   std::cout << "Total elapsed time: " << elapsed_seconds.count() << "s\n"

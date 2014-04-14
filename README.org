@@ -137,19 +137,19 @@ else
  y = x + 5 * sin(0.5 * x)
 ] + random(5, -5)
 
-** TODO Project #3 Project #3 Santa Fe Trail
-   DEADLINE: <2014-04-11 Fri>
+** DONE Project #3 Project #3 Santa Fe Trail
+   DEADLINE: <2014-04-14 Mon>
 
 For this project you need to create a genetic program for the Santa Fe
 Trail problem. You will probably want to work from (a copy of) the
 code for Project 2. If so you will need to make the following changes:
 
-- [ ] Change the non-terminal/operator set to at least: prog2, prog3,
+- [X] Change the non-terminal/operator set to at least: prog2, prog3,
   and iffoodahead
-- [ ] Change the terminal/leaf set to at least: left, forward,
+- [X] Change the terminal/leaf set to at least: left, forward,
   right. (You may add additional non-termials or terminals if you
   want.)
-- [ ] Change the evaluate function at both the individual and node levels.
+- [X] Change the evaluate function at both the individual and node levels.
 
 For the write-up you may use the same template as for Project 2, but
 instead of a figure showing the best evolved function (Figure 2 in the

@@ -44,7 +44,7 @@ namespace individual
 
   // Returns a random function from a given set of functions.
   Function
-  get_function(const vector <Function>& functions)
+  get_function(const vector<Function>& functions)
   {
     int_dist dist{0, static_cast<int>(functions.size()) - 1}; // closed interval
     return functions[dist(rg.engine)];
@@ -77,7 +77,7 @@ namespace individual
      (either GROW or FULL). */
   Node::Node(const Method& method, const unsigned int& max_depth)
   {
-    // Create terminal node if at the max depth or randomly (if growing).
+    // Create leaf node if at the max depth or randomly (if growing).
     real_dist dist{0, 1};
     float grow_chance =
       static_cast<float>(leaves.size()) / (leaves.size() + internals.size());
@@ -85,9 +85,9 @@ namespace individual
 	or (method == Method::grow and dist(rg.engine) < grow_chance))
       {
 	function = get_function(leaves);
-	arity = get_arity(function);
+	arity = 0; // get_arity(function); leaves are always zero
       }
-    // Otherwise choose a non-terminal node.
+    // Otherwise choose an internal node.
     else
       {
 	function = get_function(internals);
@@ -150,8 +150,6 @@ namespace individual
 
     switch (function)
       {
-      case F::nil:
-	assert(false); // Never evaluate empty node
       case F::left:
 	map.left(); // Terminal case
 	break;
@@ -161,17 +159,19 @@ namespace individual
       case F::forward:
 	map.forward(); // Terminal case
 	break;
-      case F::prog2: // Falls through
-      case F::prog3:
-	for (const Node& child : children)
-	  child.evaluate(map);
-	break;
       case F::iffoodahead:
 	if (map.look()) // Do left or right depending on if food ahead
 	  children[0].evaluate(map);
 	else
 	  children[1].evaluate(map);
 	break;
+      case F::prog2: // Falls through
+      case F::prog3:
+	for (const Node& child : children)
+	  child.evaluate(map);
+	break;
+      case F::nil:
+	assert(false); // Never evaluate empty node
       }
   }
 
@@ -225,7 +225,6 @@ namespace individual
     return empty;
   }
 
-  // TODO: implement mutations of individual nodes
   void
   Node::mutate_self()
   {

@@ -93,6 +93,7 @@ namespace individual
 	function = get_function(internals);
 	arity = get_arity(function);
 	// Recursively create subtrees.
+	children.reserve(arity);
 	for (unsigned int i = 0; i < arity; ++i)
 	  children.emplace_back(Node{method, max_depth - 1});
       }

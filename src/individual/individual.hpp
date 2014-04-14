@@ -39,7 +39,7 @@ namespace individual
     void evaluate(options::Map&) const;
     const Size size() const;
     Node& visit(const Size&, Size&);
-    void mutate_tree(const double&);
+    void mutate_tree(const float&);
 
   private:
     Function function;
@@ -53,7 +53,7 @@ namespace individual
   {
   public:
     Individual();
-    Individual(const unsigned int, const double&, options::Map map);
+    Individual(const unsigned int, const float&, options::Map map);
 
     std::string print() const;
     std::string print_formula() const;
@@ -61,22 +61,22 @@ namespace individual
     unsigned int get_internals() const;
     unsigned int get_leaves() const;
     unsigned int get_total() const;
-    int get_fitness() const;
-    int get_score() const;
-    double get_adjusted() const;
+    unsigned int get_score() const;
+    float get_fitness() const;
+    float get_adjusted() const;
 
     Node& operator[](const Size&);
-    void mutate(const double&);
-    std::string evaluate(options::Map, const double& penalty = 0,
+    void mutate(const float&);
+    std::string evaluate(options::Map, const float& penalty = 0,
 			 const bool& print = false);
-    friend void crossover(const double&, Individual&, Individual&);
+    friend void crossover(const float&, Individual&, Individual&);
 
   private:
     Node root;
     Size size;
-    int fitness;
-    int score;
-    double adjusted;
+    unsigned int score;
+    float fitness;
+    float adjusted;
   };
 }
 

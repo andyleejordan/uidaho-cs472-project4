@@ -282,23 +282,23 @@ namespace options
        default_value(600),
        "set the number of moves the any may move")
 
-      ("penalty,P", value<double>(&options.penalty)->
+      ("penalty,P", value<float>(&options.penalty)->
        default_value(0.1),
        "set the constant scalar of the size penalty for fitness")
 
-      ("grow,g", value<double>(&options.grow_chance)->
+      ("grow,g", value<float>(&options.grow_chance)->
        default_value(0.5),
        "set the probability that an initial tree will be made by the grow method")
 
-      ("mutate,m", value<double>(&options.mutate_chance)->
+      ("mutate,m", value<float>(&options.mutate_chance)->
        default_value(0.01),
        "set the probability that a single node will mutate")
 
-      ("crossover_chance", value<double>(&options.crossover_chance)->
+      ("crossover_chance", value<float>(&options.crossover_chance)->
        default_value(0.8),
        "set the probability that a selected pair of invididuals will undergo crossover")
 
-      ("internals,I", value<double>(&options.internals_chance)->
+      ("internals,I", value<float>(&options.internals_chance)->
        default_value(0.9),
        "set the probability that a crossover target node will be an internal node")
 

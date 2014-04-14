@@ -79,8 +79,8 @@ namespace individual
   {
     // Create terminal node if at the max depth or randomly (if growing).
     real_dist dist{0, 1};
-    double grow_chance =
-      static_cast<double>(leaves.size()) / (leaves.size() + internals.size());
+    float grow_chance =
+      static_cast<float>(leaves.size()) / (leaves.size() + internals.size());
     if (max_depth == 0
 	or (method == Method::grow and dist(rg.engine) < grow_chance))
       {
@@ -140,8 +140,8 @@ namespace individual
     return formula + ")";
   }
 
-  /* Returns a double as the result of a depth-first post-order
-     recursive evaluation of a parse tree. */
+  /* Evaluates an ant over a given map using a depth-first post-order
+     recursive continuous evaluation of a decision tree. */
   void
   Node::evaluate(options::Map& map) const
   {
@@ -259,7 +259,7 @@ namespace individual
 
   // Recursively mutate nodes with given probability.
   void
-  Node::mutate_tree(const double& chance)
+  Node::mutate_tree(const float& chance)
   {
     real_dist dist{0, 1};
     for (Node& child : children)
@@ -276,7 +276,7 @@ namespace individual
   /* Create an Individual tree by having a root node (to which the
      actual construction is delegated). The depth is passed by value
      as its creation elsewhere is temporary. */
-  Individual::Individual(const unsigned int depth, const double& chance,
+  Individual::Individual(const unsigned int depth, const float& chance,
 			 options::Map map): fitness{0}, adjusted{0}
   {
     // 50/50 chance to choose grow or full
@@ -330,19 +330,19 @@ namespace individual
     return size.internals + size.leaves;
   }
 
-  int
-  Individual::get_fitness() const
-  {
-    return fitness;
-  }
-
-  int
+  unsigned int
   Individual::get_score() const
   {
     return score;
   }
 
-  double
+  float
+  Individual::get_fitness() const
+  {
+    return fitness;
+  }
+
+  float
   Individual::get_adjusted() const
   {
     return adjusted;
@@ -352,7 +352,7 @@ namespace individual
      Individual's size and fitness accordingly. Return non-empty
      string if printing. */
   string
-  Individual::evaluate(options::Map map, const double& penalty,
+  Individual::evaluate(options::Map map, const float& penalty,
 		       const bool& print)
   {
     // Update size on evaluation because it's incredibly convenient.
@@ -363,7 +363,7 @@ namespace individual
 
     score = map.fitness();
     // Adjusted fitness does not have size penalty.
-    adjusted = static_cast<double>(score) / map.max();
+    adjusted = static_cast<float>(score) / map.max();
     // Apply size penalty if not printing.
     fitness = score - penalty * get_total();
 
@@ -375,7 +375,7 @@ namespace individual
 
   // Mutate each node with given probability.
   void
-  Individual::mutate(const double& chance)
+  Individual::mutate(const float& chance)
   {
     root.mutate_tree(chance);
   }
@@ -398,7 +398,7 @@ namespace individual
   /* Swap two random subtrees between Individuals "a" and "b",
      selecting an internal node with chance probability.  TODO: DRY */
   void
-  crossover(const double& chance, Individual& a, Individual& b)
+  crossover(const float& chance, Individual& a, Individual& b)
   {
     real_dist probability{0, 1};
     Size target_a, target_b;

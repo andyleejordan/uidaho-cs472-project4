@@ -59,16 +59,16 @@ namespace algorithm
     if (verbosity == 0)
       return;
 
-    double total_fitness =
+    float total_fitness =
       std::accumulate(population.begin(), population.end(), 0.,
-		      [](const double& a, const Individual& b)->double const
+		      [](const float& a, const Individual& b)->float const
 		      {
 			return a + b.get_adjusted();
 		      });
 
     int total_size =
       std::accumulate(population.begin(), population.end(), 0,
-		      [](const int& a, const Individual& b)->double const
+		      [](const unsigned int& a, const Individual& b)->unsigned int const
 		      {
 			return a + b.get_total();
 		      });

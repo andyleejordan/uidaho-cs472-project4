@@ -62,11 +62,11 @@ namespace options
     unsigned int tournament_size;
     unsigned int crossover_size;
     unsigned int elitism_size;
-    double penalty;
-    double grow_chance;
-    double mutate_chance;
-    double crossover_chance;
-    double internals_chance;
+    float penalty;
+    float grow_chance;
+    float mutate_chance;
+    float crossover_chance;
+    float internals_chance;
     std::string logs_dir;
     std::string plots_dir;
     unsigned int verbosity;

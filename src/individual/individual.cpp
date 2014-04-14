@@ -295,8 +295,8 @@ namespace individual
     string info = "# Size " + to_string(get_total())
       + ", with " + to_string(get_internals())
       + " internals, and " + to_string(get_leaves()) + " leaves.\n"
-      + "# Raw fitness: " + to_string(get_fitness())
-      + ", and adjusted: " + to_string(get_adjusted()) + ".\n";
+      + "# Raw fitness: " + to_string(score)
+      + ", and adjusted: " + to_string(adjusted) + ".\n";
 
     return info;
   }
@@ -328,10 +328,16 @@ namespace individual
     return size.internals + size.leaves;
   }
 
-  double
+  int
   Individual::get_fitness() const
   {
     return fitness;
+  }
+
+  int
+  Individual::get_score() const
+  {
+    return score;
   }
 
   double
@@ -353,9 +359,11 @@ namespace individual
     while (map.active())
       root.evaluate(map);
 
-    fitness = map.fitness();
-    adjusted = static_cast<double>(fitness) / map.max();
-    if (not print) fitness -= penalty * get_total();
+    score = map.fitness();
+    // Adjusted fitness does not have size penalty.
+    adjusted = static_cast<double>(score) / map.max();
+    // Apply size penalty if not printing.
+    fitness = score - penalty * get_total();
 
     string evaluation;
     if (print) evaluation = map.print();

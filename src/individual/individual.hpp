@@ -61,7 +61,8 @@ namespace individual
     unsigned int get_internals() const;
     unsigned int get_leaves() const;
     unsigned int get_total() const;
-    double get_fitness() const;
+    int get_fitness() const;
+    int get_score() const;
     double get_adjusted() const;
 
     Node& operator[](const Size&);
@@ -74,6 +75,7 @@ namespace individual
     Node root;
     Size size;
     int fitness;
+    int score;
     double adjusted;
   };
 }

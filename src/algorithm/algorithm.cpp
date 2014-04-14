@@ -76,7 +76,7 @@ namespace algorithm
     std::ofstream log;
     open_log(log, time, trial, logs_dir);
     log << iteration << "\t"
-	<< best.get_fitness() << "\t"
+	<< best.get_score() << "\t"
 	<< best.get_adjusted() << "\t"
 	<< total_fitness / population.size() << "\t"
 	<< best.get_total() << "\t"

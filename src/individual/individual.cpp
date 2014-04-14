@@ -249,7 +249,13 @@ namespace individual
 	if (arity == 2 and children.size() == 3)
 	  children.pop_back();
 	else if (arity == 3 and children.size() == 2)
-	  children.emplace_back(Node{Method::full, 0});
+	  {
+	    int_dist depth_dist{0, 4};
+	    real_dist dist{0, 1};
+	    Method method = (dist(rg.engine) < 0.5)
+	      ? Method::grow : Method::full;
+	    children.emplace_back(Node{method, depth_dist(rg.engine)});
+	  }
       }
     assert(arity == children.size());
     assert(function != Function::nil);

@@ -12,13 +12,11 @@
 
 #+BEGIN_ABSTRACT
 For the University of Idaho's Evolutionary Computation (CS 472)
-Project #2 I implemented a Genetic Program in C++ to evolve a random
-mathematical function fitted via symbolic regression to Terry Soule's
-provided test data.  The function is modeled as a parse tree,
-implemented recursively.  Algorithm details available in the table
-below.  This implementation can achieve varying degrees of fitness
-depending on the parameters it is run with, especially the maximum
-number of iterations.  The code can be found at: =https://github.com/andschwa/uidaho-cs472-project2=
+Project #3 I implemented a Santa Fe Trail program in C++ to evolve a
+random decision tree for an "ant" to obtain as much food as possible.
+Algorithm details available in the table below.  This implementation
+achieves fitnesses (food eaten, out of 90) up to 78.  The code can be
+found at: =https://github.com/andschwa/uidaho-cs472-project3=
 #+END_ABSTRACT
 
 * Build :noexport:

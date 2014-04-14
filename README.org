@@ -170,23 +170,67 @@ figure will do.
 |------------------+-----------------------------------------------------------|
 | Crossover method | Subtree with 90 percent chance to choose an internal node |
 |------------------+-----------------------------------------------------------|
-| Crossover rate   | 80 percent (I think this should be lower)                 |
+| Crossover rate   | 80 percent                                                |
 |------------------+-----------------------------------------------------------|
-| Mutation method  | See GitHub issue #6                                       |
+| Mutation method  | 2 percent chance per node to mutate                       |
 |------------------+-----------------------------------------------------------|
-| Operation set    | prog2, prog3, if-food-ahead                               |
+| Operation set    | prog-2, prog-3, if-food-ahead                             |
 |------------------+-----------------------------------------------------------|
 | Terminal set     | left, right, forward                                      |
 |------------------+-----------------------------------------------------------|
 | Fitness function | Number of food pieces eaten                               |
 |------------------+-----------------------------------------------------------|
-| Size control     | Undecided                                                 |
+| Size control     | Size penalty of 0.1 * total applied to fitness            |
 |------------------+-----------------------------------------------------------|
 
 ** Details
 
-** Notes
+Not much has changed since Project #2.  The genetic program was
+revamped to imitate "ants" crawling along the Santa Fe Trail, with the
+goal of finding and eating food.  The genetic algorithm, population
+size, selection method, elitism, crossover method, and crossover rate
+are the same as previous.
 
-* Discussion
+To do this, a map class was implemented which handled the details of
+having a 32 by 32 toroidial grid of blank, food, and marked locations.
+This map had a position struct for the (x, y) coordinate pair and
+direction of the ant, along with the width and height of the grid, and
+the current tick count, maximum ticks, score, and maximum score (that
+is, available food).  Its primary interface was =left()=, =right()=,
+=forward()= and =look()= functions; the first three increment the tick
+count, where =left()= and =right()= change the ant's direction,
+=forward()= moves the ant forward and consumes food (incrementing the
+score need be), and =look()= returns a boolean value used by the
+=if-food-ahead= function.  The individual's evaluate function receives
+a =Map= object by value (a copy of the original), and passes that by
+reference to the root node's evaluate function in a =while= loop
+conditioned on the ant being =active()= (that is, still has ticks
+left).  Inside the evaluation method, when the maximum number of steps
+is reached, it returns.  In this way, the ant's "decision" tree can be
+continusouly evaluted while updating the map with the corresponding
+movements, with =prog-2=, =prog-3=, and =if-food-ahead= working as
+expected (causing more than one move per evalution of the tree).
 
+The mutation sequence is run on every new individual in the offspring
+generation.  With a two percent chance per node, it mutates a leaf
+node into another leaf node, and an internal node into another
+internal node.  When an internal node of arity three (=prog-3=) is
+mutated into one of arity two (=prog-2= and =if-food-ahead=), the last
+child node is popped from its vector to correct the arity.
+Conversely, when a node of arity two is mutated into one of arity
+three, a new node is created.  This node is made with an equal chance
+to be "grown" or "fully" generated.  Its maximum depth is randomly
+chosen from between zero and four.  This depth range was chosen with
+the consideration that the trees popped in the previous correction may
+have been quite large and thus should be compensated for, but I
+additionally did not want to introduce unwanted code growth.
+
+The fitness of the ant is the number of food pieces it can eat on the
+on the Santa Fe Trail subject to the constraint of 600 ticks, where a
+tick is either turning left or right, or moving forward.  As such,
+this became a maximization algorithm.  To control code growth, a size
+penalty of ten percent of the total tree size is substracted from this
+fitness when used in comparisons.
+
+* Results
 * Conclusion

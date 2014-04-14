@@ -54,7 +54,7 @@ namespace trials
     // Retrieve best element.
     std::vector<Individual>::iterator best
       = std::min_element(candidates.begin(), candidates.end(),
-			 algorithm::compare_fitness);
+			 algorithm::compare_fitness());
     /* Get which trial was best.  Filenames are not zero-indexed so
        increase by one. */
     int distance = std::distance(candidates.begin(), best) + 1;

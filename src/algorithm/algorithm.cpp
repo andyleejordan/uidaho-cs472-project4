@@ -26,7 +26,7 @@ namespace algorithm
 
   // Returns true if "a" is closer to 0 than "b" and is also normal.
   bool
-  compare_fitness(const Individual& a, const Individual& b)
+  compare_fitness::operator()(const Individual& a, const Individual& b)
   {
     return std::isnormal(a.get_fitness())
       ? (a.get_fitness() > b.get_fitness()) : false;
@@ -115,7 +115,7 @@ namespace algorithm
       contestants.emplace_back(population[dist(rg.engine)]);
 
     return *std::min_element(contestants.begin(), contestants.end(),
-			     compare_fitness);
+			     compare_fitness());
   }
 
   /* Return new offspring population reassembled from parallel calls to
@@ -185,7 +185,7 @@ namespace algorithm
       {
 	// Find best Individual of current population.
 	best = *std::min_element(population.begin(), population.end(),
-				 compare_fitness);
+				 compare_fitness());
 	// Launch background logging thread.
 	auto log_thread = std::async(std::launch::async, log_info,
 				     options.verbosity, options.logs_dir, time,

@@ -14,9 +14,12 @@
 
 namespace algorithm
 {
-  bool
-  compare_fitness(const individual::Individual&,
-		  const individual::Individual&);
+  struct compare_fitness
+  {
+    bool
+    operator()(const individual::Individual&,
+	       const individual::Individual&);
+  };
 
   const individual::Individual
   genetic(const options::Options& options,

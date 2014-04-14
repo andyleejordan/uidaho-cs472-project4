@@ -38,6 +38,7 @@ namespace options
     while (data_file >> line)
       {
 	std::vector<Cell> row;
+	if (width != 0) row.reserve(width);
 	for (const char& c : line)
 	  {
 	    if (c != '.' and c != 'x' and c != '\n')

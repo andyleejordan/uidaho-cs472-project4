@@ -252,9 +252,10 @@ namespace individual
 	  {
 	    int_dist depth_dist{0, 4};
 	    real_dist dist{0, 1};
+	    unsigned int depth = depth_dist(rg.engine);
 	    Method method = (dist(rg.engine) < 0.5)
 	      ? Method::grow : Method::full;
-	    children.emplace_back(Node{method, depth_dist(rg.engine)});
+	    children.emplace_back(Node{method, depth});
 	  }
       }
     assert(arity == children.size());

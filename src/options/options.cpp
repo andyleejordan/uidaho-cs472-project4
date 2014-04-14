@@ -70,116 +70,139 @@ namespace options
 
   bool
   Map::active() const
-    {
-      return ticks < max_ticks;
-    }
+  {
+    return ticks < max_ticks;
+  }
 
   bool
   Map::look() const
-    {
-      Position ahead = position;
-      if (position.direction == Direction::north)
+  {
+    Position ahead = position;
+    switch (position.direction)
+      {
+      case Direction::north:
 	ahead.y = (position.y - 1) % height;
-      else if (position.direction == Direction::west)
+	break;
+      case Direction::west:
 	ahead.x = (position.x - 1) % width;
-      else if (position.direction == Direction::south)
+	break;
+      case Direction::south:
 	ahead.y = (position.y + 1) % height;
-      else if (position.direction == Direction::east)
+	break;
+      case Direction::east:
 	ahead.y = (position.x + 1) % width;
-
-      return rows[ahead.y][ahead.x] == Cell::food;
-    }
+	break;
+      }
+    return rows[ahead.y][ahead.x] == Cell::food;
+  }
 
   bool
   Map::forward()
-    {
-      // Move forward in specified direction
-      if (position.direction == Direction::north)
+  {
+    switch (position.direction)
+      {
+      case Direction::north:
 	position.y = (position.y - 1) % height;
-      else if (position.direction == Direction::west)
+	break;
+      case Direction::west:
 	position.x = (position.x - 1) % width;
-      else if (position.direction == Direction::south)
+	break;
+      case Direction::south:
 	position.y = (position.y + 1) % height;
-      else if (position.direction == Direction::east)
+	break;
+      case Direction::east:
 	position.y = (position.x + 1) % width;
+	break;
+      }
+    // Increment score if moved onto food
+    if (rows[position.y][position.x] == Cell::food) ++score;
 
-      // Increment score if moved onto food
-      if (rows[position.y][position.x] == Cell::food) ++score;
+    // Mark location on map as visitied
+    rows[position.y][position.x] = Cell::marked;
 
-      // Mark location on map as visitied
-      rows[position.y][position.x] = Cell::marked;
-
-      ++ticks;
-      return active();
-    }
+    ++ticks;
+    return active();
+  }
 
   bool
   Map::left()
-    {
-      if (position.direction == Direction::north)
+  {
+    switch (position.direction)
+      {
+      case Direction::north:
 	position.direction = Direction::west;
-      else if (position.direction == Direction::west)
+	break;
+      case Direction::west:
 	position.direction = Direction::south;
-      else if (position.direction == Direction::south)
+	break;
+      case Direction::south:
 	position.direction = Direction::east;
-      else if (position.direction == Direction::east)
+	break;
+      case Direction::east:
 	position.direction = Direction::north;
-
-      ++ticks;
-      return active();
-    }
+	break;
+      }
+    ++ticks;
+    return active();
+  }
 
   bool
   Map::right()
-    {
-      if (position.direction == Direction::north)
+  {
+    switch (position.direction)
+      {
+      case Direction::north:
 	position.direction = Direction::east;
-      else if (position.direction == Direction::east)
+	break;
+      case Direction::east:
 	position.direction = Direction::south;
-      else if (position.direction == Direction::south)
+	break;
+      case Direction::south:
 	position.direction = Direction::west;
-      else if (position.direction == Direction::west)
+	break;
+      case Direction::west:
 	position.direction = Direction::north;
-
-      ++ticks;
-      return active();
-    }
+	break;
+      }
+    ++ticks;
+    return active();
+  }
 
   unsigned int
   Map::fitness() const
-    {
-      return score;
-    }
+  {
+    return score;
+  }
 
   unsigned int
   Map::max() const
-    {
-      return pieces;
-    }
+  {
+    return pieces;
+  }
 
   std::string Map::print() const
-    {
-      std::stringstream out;
-      out << "# 'x' is food and 'o' is ant trail\n";
-      for (const std::vector<Cell>& row : rows)
-	{
-	  for (const Cell& cell : row)
-	    {
-	      // Add blank, food, and marked locations
-	      if (cell == Cell::blank) out << '.';
-	      else if (cell == Cell::food) out << 'x';
-	      else if (cell == Cell::marked) out << 'o';
-	      else
-		{
-		  std::cerr << "Map is malformed!\n";
-		  std::exit(EXIT_FAILURE);
-		}
-	    }
-	  // Add newline after each row
-	  out << '\n';
-	}
-      return out.str();
-    }
+  {
+    std::stringstream out;
+    out << "# 'x' is food and 'o' is ant trail\n";
+    for (const std::vector<Cell>& row : rows)
+      {
+	for (const Cell& cell : row)
+	  {
+	    // Add blank, food, and marked locations
+	    if (cell == Cell::blank) out << '.';
+	    else if (cell == Cell::food) out << 'x';
+	    else if (cell == Cell::marked) out << 'o';
+	    else
+	      {
+		std::cerr << "Map is malformed!\n";
+		std::exit(EXIT_FAILURE);
+	      }
+	  }
+	// Add newline after each row
+	out << '\n';
+      }
+    return out.str();
+  }
 
   // Validates options parameters; should instead be unit tests.
   void

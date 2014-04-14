@@ -33,9 +33,9 @@ namespace options
     Map(std::string, unsigned int);
     bool active() const;
     bool look() const;
-    bool forward();
-    bool left();
-    bool right();
+    void forward();
+    void left();
+    void right();
     unsigned int fitness() const;
     unsigned int max() const;
     std::string print() const;

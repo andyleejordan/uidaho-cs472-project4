@@ -36,7 +36,7 @@ namespace individual
     Node(const Method&, const unsigned int&);
     std::string print() const;
     std::string represent() const;
-    bool evaluate(options::Map&) const;
+    void evaluate(options::Map&) const;
     const Size size() const;
     Node& visit(const Size&, Size&);
     void mutate_tree(const double&);

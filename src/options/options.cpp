@@ -96,7 +96,7 @@ namespace options
     return rows[ahead.y][ahead.x] == Cell::food;
   }
 
-  bool
+  void
   Map::forward()
   {
     switch (position.direction)
@@ -121,10 +121,9 @@ namespace options
     rows[position.y][position.x] = Cell::marked;
 
     ++ticks;
-    return active();
   }
 
-  bool
+  void
   Map::left()
   {
     switch (position.direction)
@@ -143,10 +142,9 @@ namespace options
 	break;
       }
     ++ticks;
-    return active();
   }
 
-  bool
+  void
   Map::right()
   {
     switch (position.direction)
@@ -165,7 +163,6 @@ namespace options
 	break;
       }
     ++ticks;
-    return active();
   }
 
   unsigned int

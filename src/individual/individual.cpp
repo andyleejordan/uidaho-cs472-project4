@@ -142,41 +142,36 @@ namespace individual
 
   /* Returns a double as the result of a depth-first post-order
      recursive evaluation of a parse tree. */
-  bool
+  void
   Node::evaluate(options::Map& map) const
   {
+    if (not map.active()) return;
+
     switch (function)
       {
       case F::nil:
 	assert(false); // Never evaluate empty node
-
       case F::left:
-	return map.left(); // Terminal case
-
+	map.left(); // Terminal case
+	break;
       case F::right:
-	return map.right(); // Terminal case
-
+	map.right(); // Terminal case
+	break;
       case F::forward:
-	return map.forward(); // Terminal case
-
-      case F::prog2:
-	if (children[0].evaluate(map)) // Have more ticks, do next tree
-	  return children[1].evaluate(map);
-	else return false; // Max ticks reached, leave tree
-
+	map.forward(); // Terminal case
+	break;
+      case F::prog2: // Falls through
       case F::prog3:
-	if (children[0].evaluate(map)) // Have more ticks, do next tree
-	  if (children[1].evaluate(map)) // Have more ticks, do next tree
-	    return children[2].evaluate(map);
-	  else return false; // Max ticks reached, leave tree
-	else return false; // Max ticks reached, leave tree
-
+	for (const Node& child : children)
+	  child.evaluate(map);
+	break;
       case F::iffoodahead:
-	return (map.look()) // Do left or right depending on if food ahead
-	  ? children[0].evaluate(map)
-	  : children[1].evaluate(map);
+	if (map.look()) // Do left or right depending on if food ahead
+	  children[0].evaluate(map);
+	else
+	  children[1].evaluate(map);
+	break;
       }
-    assert(false); // Every node should be handled
   }
 
   /* Recursively count children via post-order traversal.  Keep track

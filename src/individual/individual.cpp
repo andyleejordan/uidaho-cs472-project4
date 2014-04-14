@@ -130,7 +130,7 @@ namespace individual
   string
   Node::print() const
   {
-    if (children.size() == 0)
+    if (children.empty())
       return represent();
 
     string formula = "(" + represent();
@@ -189,7 +189,7 @@ namespace individual
 	size.leaves += temp.leaves;
       }
 
-    if (children.size() == 0)
+    if (children.empty())
       ++size.leaves;
     else
       ++size.internals;
@@ -207,7 +207,7 @@ namespace individual
   {
     for (Node& child : children) {
       // Increase relevant count.
-      if (child.children.size() == 0)
+      if (child.children.empty())
 	++visiting.leaves;
       else
 	++visiting.internals;

@@ -101,6 +101,18 @@ namespace individual
     assert(children.size() == arity); // ensure arity
   }
 
+  Node create(const unsigned int& max_depth, const float& chance)
+  {
+    int_dist depth_dist{0, static_cast<int>(max_depth)};
+    unsigned int depth = depth_dist(rg.engine);
+
+    real_dist method_dist{0, 1};
+    Method method = (method_dist(rg.engine) < chance)
+      ? Method::grow : Method::full;
+
+    return Node{method, depth};
+  }
+
   // Returns a string visually representing a particular node.
   string
   Node::represent() const
@@ -244,14 +256,7 @@ namespace individual
 	if (arity == 2 and children.size() == 3)
 	  children.pop_back();
 	else if (arity == 3 and children.size() == 2)
-	  {
-	    int_dist depth_dist{0, 4};
-	    real_dist dist{0, 1};
-	    unsigned int depth = depth_dist(rg.engine);
-	    Method method = (dist(rg.engine) < 0.5)
-	      ? Method::grow : Method::full;
-	    children.emplace_back(Node{method, depth});
-	  }
+	  children.emplace_back(create(4, 0.5));
       }
     assert(arity == children.size());
     assert(function != Function::nil);
@@ -279,10 +284,7 @@ namespace individual
   Individual::Individual(const unsigned int depth, const float& chance,
 			 options::Map map): fitness{0}, adjusted{0}
   {
-    // 50/50 chance to choose grow or full
-    real_dist dist{0, 1};
-    Method method = (dist(rg.engine) < chance) ? Method::grow : Method::full;
-    root = Node{method, depth};
+    root = create(depth, chance);
     /* The evaluate method updates the size and both raw and adjusted
        fitnesses. */
     evaluate(map);

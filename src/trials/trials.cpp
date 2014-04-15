@@ -46,15 +46,22 @@ namespace trials
 
     unsigned int trial = 0;
     std::vector<Individual> candidates;
+
     // Spawn trials in chunks of size blocks.
     for (unsigned long t = 0; t < options.trials / blocks; ++t)
       push_results(blocks, options, time, trial, candidates);
+
     // Spawn remaining trials.
     push_results(options.trials % blocks, options, time, trial, candidates);
+
     // Retrieve best element.
     std::vector<Individual>::iterator best
       = std::min_element(candidates.begin(), candidates.end(),
-			 algorithm::compare_fitness());
+			 [](const Individual& a, const Individual&b)->bool
+			 {
+			   return a.get_score() > b.get_score();
+			 });
+
     /* Get which trial was best.  Filenames are not zero-indexed so
        increase by one. */
     int distance = std::distance(candidates.begin(), best) + 1;

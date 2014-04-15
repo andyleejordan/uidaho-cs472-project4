@@ -25,12 +25,6 @@ namespace individual
   // Default Size struct constructor.
   Size::Size(): internals{0}, leaves{0}, depth{0} {}
 
-  // Available methods for tree creation.
-  enum class Method {grow, full};
-
-  // List of valid functions for an expression.
-  enum class Function {nil, prog2, prog3, iffoodahead, left, right, forward};
-
   using F = Function;
   // Vectors of same-arity function enums.
   vector<F> nullaries {F::left, F::right, F::forward};

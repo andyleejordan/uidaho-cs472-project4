@@ -23,11 +23,11 @@ namespace individual
     Size();
   };
 
-  // Implemented initial population generation methods.
-  enum class Method;
+  // Available methods for tree creation.
+  enum class Method {grow, full};
 
-  // Implemented functions for expression.
-  enum class Function;
+  // List of valid functions for an expression.
+  enum class Function {nil, prog2, prog3, iffoodahead, left, right, forward};
 
   // Implements a recursive parse tree representing an expression.
   class Node

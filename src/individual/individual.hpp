@@ -19,6 +19,7 @@ namespace individual
   {
     unsigned int internals;
     unsigned int leaves;
+    unsigned int depth;
     Size();
   };
 
@@ -61,6 +62,7 @@ namespace individual
     unsigned int get_internals() const;
     unsigned int get_leaves() const;
     unsigned int get_total() const;
+    unsigned int get_depth() const;
     unsigned int get_score() const;
     float get_fitness() const;
     float get_adjusted() const;

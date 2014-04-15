@@ -23,7 +23,7 @@ namespace individual
   using namespace random_generator;
 
   // Default Size struct constructor.
-  Size::Size(): internals{0}, leaves{0} {}
+  Size::Size(): internals{0}, leaves{0}, depth{0} {}
 
   // Available methods for tree creation.
   enum class Method {grow, full};
@@ -187,25 +187,30 @@ namespace individual
       }
   }
 
-  /* Recursively count children via post-order traversal.  Keep track
-     of internals and leaves via Size struct */
+  /* Recursively count children and find maximum depth of tree via
+     post-order traversal.  Keep track of internals, leaves, and depth
+     via Size struct */
   const Size
   Node::size() const
   {
     Size size;
 
-    for (const Node& child : children)
-      {
-	Size temp = child.size();
-	size.internals += temp.internals;
-	size.leaves += temp.leaves;
-      }
-
     if (children.empty())
       ++size.leaves;
     else
-      ++size.internals;
-
+      {
+	vector<unsigned int> depths;
+	depths.reserve(arity);
+	for (const Node& child : children)
+	  {
+	    Size temp = child.size();
+	    size.internals += temp.internals;
+	    size.leaves += temp.leaves;
+	    depths.emplace_back(temp.depth);
+	  }
+	size.depth = 1 + *std::max_element(depths.begin(), depths.end());
+	++size.internals;
+      }
     return size;
   }
 
@@ -330,6 +335,12 @@ namespace individual
   Individual::get_total() const
   {
     return size.internals + size.leaves;
+  }
+
+  unsigned int
+  Individual::get_depth() const
+  {
+    return size.depth;
   }
 
   unsigned int

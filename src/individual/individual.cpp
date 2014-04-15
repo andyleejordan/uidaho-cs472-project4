@@ -103,12 +103,12 @@ namespace individual
 
   Node create(const unsigned int& max_depth, const float& chance)
   {
-    int_dist depth_dist{0, static_cast<int>(max_depth)};
-    unsigned int depth = depth_dist(rg.engine);
-
     real_dist method_dist{0, 1};
     Method method = (method_dist(rg.engine) < chance)
       ? Method::grow : Method::full;
+
+    int_dist depth_dist{0, static_cast<int>(max_depth)};
+    unsigned int depth = depth_dist(rg.engine);
 
     return Node{method, depth};
   }

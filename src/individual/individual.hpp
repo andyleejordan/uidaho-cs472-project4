@@ -71,6 +71,7 @@ namespace individual
     float get_adjusted() const;
 
     Node& operator[](const Size&);
+    Node& at(const Size&);
     void mutate();
     std::string evaluate(options::Map, const float& penalty = 0,
 			 const bool& print = false);

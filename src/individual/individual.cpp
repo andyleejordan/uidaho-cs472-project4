@@ -358,38 +358,38 @@ namespace individual
   {
     int_dist op_dist{0, static_cast<int>(operators.size()) - 1}; // closed interval
     const Operator op = operators[op_dist(rg.engine)];
-    /* Accessing the array operator of Individual to get the target
-       node (p) is a little wonky syntax-wise, the shortest version is
-       (*this)[p]. */
+
     Size p = get_node(Type::internal);
-    if ((*this)[p].children.empty()) return; // p may have been root
+    if (at(p).children.empty()) return; // p may have been root
+
     int_dist c_dist{0, static_cast<int>((*this)[p].children.size()) - 1};
     const unsigned int c = c_dist(rg.engine);
-    assert(c <= 3);
+    assert(c <= at(p).arity);
+
     switch (op)
       {
       case O::shrink:
 	{
 	  // Replace c with a leaf node
-	  (*this)[p].children[c] = std::move(create());
+	  at(p).children[c] = std::move(create(0));
 	  break;
 	}
       case O::hoist:
 	{
 	  // Make c the new root
-	  std::swap((*this)[p].children[c], root);
+	  std::swap(root, at(p).children[c]);
 	  break;
 	}
       case O::subtree:
 	{
 	  // Replace c with new subtree to depth 6
-	  (*this)[p].children[c] = std::move(create(6));
+	  at(p).children[c] = std::move(create(6));
 	  break;
 	}
       case O::replacement:
 	{
 	  // Replace c with node of same type (internal/leaf)
-	  (*this)[p].children[c].mutate();
+	  at(p).children[c].mutate();
 	  break;
 	}
       }
@@ -408,6 +408,12 @@ namespace individual
       return root;
     else
       return root.visit(i, visiting);
+  }
+
+  Node&
+  Individual::at(const Size& i)
+  {
+    return operator[](i);
   }
 
   Size

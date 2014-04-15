@@ -403,38 +403,46 @@ namespace individual
       return root.visit(i, visiting);
   }
 
-  /* Swap two random subtrees between Individuals "a" and "b",
-     selecting an internal node with chance probability.  TODO: DRY */
-  void
-  crossover(const float& chance, Individual& a, Individual& b)
   {
-    real_dist probability{0, 1};
-    Size target_a, target_b;
 
+    else
+      {
+      }
+
+  Size
+  Individual::get_node(const Type& type)
+  {
+    Size target;
     // Guaranteed to have at least 1 leaf, but may have 0 internals.
-    if (a.get_internals() != 0 and probability(rg.engine) < chance)
+    if (type == Type::internal and get_internals() != 0)
       {
 	// Choose an internal node.
-	int_dist dist{0, static_cast<int>(a.get_internals()) - 1};
-	target_a.internals = dist(rg.engine);
+	int_dist dist{0, static_cast<int>(get_internals()) - 1};
+	target.internals = dist(rg.engine);
       }
     else
       {
 	// Otherwise choose a leaf node.
-	int_dist dist{0, static_cast<int>(a.get_leaves()) - 1};
-	target_a.leaves = dist(rg.engine);
+	int_dist dist{0, static_cast<int>(get_leaves()) - 1};
+	target.leaves = dist(rg.engine);
       }
-    // Totally repeating myself here for "b".
-    if (b.get_internals() != 0 and probability(rg.engine) < chance)
-      {
-	int_dist dist{0, static_cast<int>(b.get_internals()) - 1};
-	target_b.internals = dist(rg.engine);
-      }
-    else
-      {
-	int_dist dist{0, static_cast<int>(b.get_leaves()) - 1};
-	target_b.leaves = dist(rg.engine);
-      }
-    std::swap(a[target_a], b[target_b]);
+    return target;
+  }
+
+  /* Swap two random subtrees between Individuals "a" and "b",
+     selecting an internal node with chance probability. */
+  void
+  crossover(const float& chance, Individual& a, Individual& b)
+  {
+    real_dist probability{0, 1};
+
+    Individual::Type type_a = (probability(rg.engine) < chance)
+      ? Individual::Type::internal : Individual::Type::leaf;
+
+    Individual::Type type_b = (probability(rg.engine) < chance)
+      ? Individual::Type::internal : Individual::Type::leaf;
+
+    std::swap(a[a.get_node(type_a)], b[b.get_node(type_b)]);
+  }
   }
 }

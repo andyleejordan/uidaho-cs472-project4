@@ -79,6 +79,9 @@ namespace individual
     unsigned int score;
     float fitness;
     float adjusted;
+
+    enum class Type {leaf, internal};
+    Size get_node(const Type&);
   };
 }
 

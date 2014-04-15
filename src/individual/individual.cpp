@@ -234,8 +234,6 @@ namespace individual
       }
     return empty;
   }
-    return empty;
-  }
 
   void
   Node::mutate()
@@ -398,12 +396,6 @@ namespace individual
     else
       return root.visit(i, visiting);
   }
-
-  {
-
-    else
-      {
-      }
 
   Size
   Individual::get_node(const Type& type)

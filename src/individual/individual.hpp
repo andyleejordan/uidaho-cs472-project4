@@ -23,32 +23,35 @@ namespace individual
     Size();
   };
 
-  // Implemented initial population generation methods.
-  enum class Method;
+  // Available methods for tree creation.
+  enum class Method {grow, full};
 
-  // Implemented functions for expression.
-  enum class Function;
+  // List of valid functions for an expression.
+  enum class Function {nil, prog2, prog3, iffoodahead, left, right, forward};
 
   // Implements a recursive parse tree representing an expression.
   class Node
   {
+    friend class Individual;
+
   public:
     Node();
     Node(const Method&, const unsigned int&);
+
+  protected:
     std::string print() const;
     std::string represent() const;
     void evaluate(options::Map&) const;
     const Size size() const;
     Node& visit(const Size&, Size&);
-    void mutate_tree(const float&);
-
-  private:
+    void mutate();
+    std::vector<Node> children;
     Function function;
     unsigned int arity;
-    std::vector<Node> children;
-
-    void mutate_self();
   };
+
+  // Implemented genetic operators for Individuals
+  enum class Operator {shrink, hoist, subtree, replacement};
 
   class Individual
   {
@@ -68,7 +71,8 @@ namespace individual
     float get_adjusted() const;
 
     Node& operator[](const Size&);
-    void mutate(const float&);
+    Node& at(const Size&);
+    void mutate();
     std::string evaluate(options::Map, const float& penalty = 0,
 			 const bool& print = false);
     friend void crossover(const float&, Individual&, Individual&);
@@ -79,6 +83,9 @@ namespace individual
     unsigned int score;
     float fitness;
     float adjusted;
+
+    enum class Type {leaf, internal};
+    Size get_node(const Type&);
   };
 }
 

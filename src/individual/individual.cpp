@@ -25,12 +25,6 @@ namespace individual
   // Default Size struct constructor.
   Size::Size(): internals{0}, leaves{0}, depth{0} {}
 
-  // Available methods for tree creation.
-  enum class Method {grow, full};
-
-  // List of valid functions for an expression.
-  enum class Function {nil, prog2, prog3, iffoodahead, left, right, forward};
-
   using F = Function;
   // Vectors of same-arity function enums.
   vector<F> nullaries {F::left, F::right, F::forward};
@@ -85,7 +79,7 @@ namespace individual
 	or (method == Method::grow and dist(rg.engine) < grow_chance))
       {
 	function = get_function(leaves);
-	arity = 0; // get_arity(function); leaves are always zero
+	arity = 0; // leaves are always zero
       }
     // Otherwise choose an internal node.
     else
@@ -101,7 +95,7 @@ namespace individual
     assert(children.size() == arity); // ensure arity
   }
 
-  Node create(const unsigned int& max_depth, const float& chance)
+  Node create(const unsigned int& max_depth = 0, const float& chance = 0.5)
   {
     real_dist method_dist{0, 1};
     Method method = (method_dist(rg.engine) < chance)
@@ -163,27 +157,37 @@ namespace individual
     switch (function)
       {
       case F::left:
-	map.left(); // Terminal case
-	break;
+	{
+	  map.left(); // Terminal case
+	  break;
+	}
       case F::right:
-	map.right(); // Terminal case
-	break;
+	{
+	  map.right(); // Terminal case
+	  break;
+	}
       case F::forward:
 	map.forward(); // Terminal case
 	break;
       case F::iffoodahead:
-	if (map.look()) // Do left or right depending on if food ahead
-	  children[0].evaluate(map);
-	else
-	  children[1].evaluate(map);
-	break;
+	{
+	  if (map.look()) // Do left or right depending on if food ahead
+	    children[0].evaluate(map);
+	  else
+	    children[1].evaluate(map);
+	  break;
+	}
       case F::prog2: // Falls through
       case F::prog3:
-	for (const Node& child : children)
-	  child.evaluate(map);
-	break;
+	{
+	  for (const Node& child : children)
+	    child.evaluate(map);
+	  break;
+	}
       case F::nil:
-	assert(false); // Never evaluate empty node
+	{
+	  assert(false); // Never evaluate empty node
+	}
       }
   }
 
@@ -222,28 +226,27 @@ namespace individual
   Node&
   Node::visit(const Size& i, Size& visiting)
   {
-    for (Node& child : children) {
-      // Increase relevant count.
-      if (child.children.empty())
-	++visiting.leaves;
-      else
-	++visiting.internals;
+    for (Node& child : children)
+      {
+	// Increase relevant count.
+	if (child.children.empty())
+	  ++visiting.leaves;
+	else
+	  ++visiting.internals;
 
-      // Return node reference if found.
-      if (visiting.internals == i.internals or visiting.leaves == i.leaves)
-	return child;
-      else
-	{
-	  Node& temp = child.visit(i, visiting); // Recursive search.
-	  if (temp.function != Function::nil)
-	    return temp;
-	}
-    }
+	// Return node reference if found.
+	if (visiting.internals == i.internals or visiting.leaves == i.leaves)
+	  return child;
+
+	Node& temp = child.visit(i, visiting); // Recursive search.
+	if (temp.function != Function::nil)
+	  return temp;
+      }
     return empty;
   }
 
   void
-  Node::mutate_self()
+  Node::mutate()
   {
     if (arity == 0)
       {
@@ -251,33 +254,34 @@ namespace individual
 	while (function == old)
 	  function = get_function(leaves);
       }
-    else
+    else if (arity == 2 or arity == 3)
       {
 	const Function old = function;
 	while (function == old)
 	  function = get_function(internals);
 	arity = get_arity(function);
-	// Fix arity mismatches caused by mutation
-	if (arity == 2 and children.size() == 3)
-	  children.pop_back();
-	else if (arity == 3 and children.size() == 2)
-	  children.emplace_back(create(4, 0.5));
+      }
+    else
+      {
+	std::cerr << "Arity shouldn't be: " << arity << std::endl;
+	assert(false);
+      }
+
+    // Fix arity mismatches caused by mutation
+    while (children.size() > arity)
+      children.pop_back();
+
+    while (children.size() < arity)
+      children.emplace_back(create(4));
+
+    if (arity != children.size())
+      {
+	std::cerr << "Arity was: " << arity
+		  << ", with children: " << children.size()
+		  << std::endl;
       }
     assert(arity == children.size());
     assert(function != Function::nil);
-  }
-
-  // Recursively mutate nodes with given probability.
-  void
-  Node::mutate_tree(const float& chance)
-  {
-    real_dist dist{0, 1};
-    for (Node& child : children)
-      {
-	if (dist(rg.engine) < chance)
-	  child.mutate_self();
-	child.mutate_tree(chance);
-      }
   }
 
   // Default constructor for Individual
@@ -316,6 +320,136 @@ namespace individual
   Individual::print_formula() const
   {
     return "# Formula: " + root.print() + "\n";
+  }
+
+  /* Evaluate Individual for given values and calculate size.  Update
+     Individual's size and fitness accordingly. Return non-empty
+     string if printing. */
+  string
+  Individual::evaluate(options::Map map, const float& penalty,
+		       const bool& print)
+  {
+    // Update size on evaluation because it's incredibly convenient.
+    size = root.size();
+
+    while (map.active())
+      root.evaluate(map);
+
+    score = map.fitness();
+    // Adjusted fitness does not have size penalty.
+    adjusted = static_cast<float>(score) / map.max();
+    // Apply size penalty if not printing.
+    fitness = score - penalty * get_total();
+
+    string evaluation;
+    if (print) evaluation = map.print();
+
+    return evaluation;
+  }
+
+  using O = Operator;
+  // Vectors of same-arity function enums.
+  vector<O> operators {O::shrink, O::hoist, O::subtree, O::replacement};
+
+
+  // Mutate each node with given probability.
+  void
+  Individual::mutate()
+  {
+    int_dist op_dist{0, static_cast<int>(operators.size()) - 1}; // closed interval
+    const Operator op = operators[op_dist(rg.engine)];
+
+    Size p = get_node(Type::internal);
+    if (at(p).children.empty()) return; // p may have been root
+
+    int_dist c_dist{0, static_cast<int>((*this)[p].children.size()) - 1};
+    const unsigned int c = c_dist(rg.engine);
+    assert(c <= at(p).arity);
+
+    switch (op)
+      {
+      case O::shrink:
+	{
+	  // Replace c with a leaf node
+	  at(p).children[c] = std::move(create(0));
+	  break;
+	}
+      case O::hoist:
+	{
+	  // Make c the new root
+	  std::swap(root, at(p).children[c]);
+	  break;
+	}
+      case O::subtree:
+	{
+	  // Replace c with new subtree to depth 6
+	  at(p).children[c] = std::move(create(6));
+	  break;
+	}
+      case O::replacement:
+	{
+	  // Replace c with node of same type (internal/leaf)
+	  at(p).children[c].mutate();
+	  break;
+	}
+      }
+  }
+
+  // Safely return reference to desired node.
+  Node&
+  Individual::operator[](const Size& i)
+  {
+    assert(i.internals <= get_internals());
+    assert(i.leaves <= get_leaves());
+
+    Size visiting;
+    // Return root node if that's what we're seeking.
+    if (i.internals == 0 and i.leaves == 0)
+      return root;
+    else
+      return root.visit(i, visiting);
+  }
+
+  Node&
+  Individual::at(const Size& i)
+  {
+    return operator[](i);
+  }
+
+  Size
+  Individual::get_node(const Type& type)
+  {
+    Size target;
+    // Guaranteed to have at least 1 leaf, but may have 0 internals.
+    if (type == Type::internal and get_internals() != 0)
+      {
+	// Choose an internal node.
+	int_dist dist{0, static_cast<int>(get_internals()) - 1};
+	target.internals = dist(rg.engine);
+      }
+    else
+      {
+	// Otherwise choose a leaf node.
+	int_dist dist{0, static_cast<int>(get_leaves()) - 1};
+	target.leaves = dist(rg.engine);
+      }
+    return target;
+  }
+
+  /* Swap two random subtrees between Individuals "a" and "b",
+     selecting an internal node with chance probability. */
+  void
+  crossover(const float& chance, Individual& a, Individual& b)
+  {
+    real_dist probability{0, 1};
+
+    Individual::Type type_a = (probability(rg.engine) < chance)
+      ? Individual::Type::internal : Individual::Type::leaf;
+
+    Individual::Type type_b = (probability(rg.engine) < chance)
+      ? Individual::Type::internal : Individual::Type::leaf;
+
+    std::swap(a[a.get_node(type_a)], b[b.get_node(type_b)]);
   }
 
   // Read-only "getters" for private data
@@ -360,87 +494,5 @@ namespace individual
   Individual::get_adjusted() const
   {
     return adjusted;
-  }
-
-  /* Evaluate Individual for given values and calculate size.  Update
-     Individual's size and fitness accordingly. Return non-empty
-     string if printing. */
-  string
-  Individual::evaluate(options::Map map, const float& penalty,
-		       const bool& print)
-  {
-    // Update size on evaluation because it's incredibly convenient.
-    size = root.size();
-
-    while (map.active())
-      root.evaluate(map);
-
-    score = map.fitness();
-    // Adjusted fitness does not have size penalty.
-    adjusted = static_cast<float>(score) / map.max();
-    // Apply size penalty if not printing.
-    fitness = score - penalty * get_total();
-
-    string evaluation;
-    if (print) evaluation = map.print();
-
-    return evaluation;
-  }
-
-  // Mutate each node with given probability.
-  void
-  Individual::mutate(const float& chance)
-  {
-    root.mutate_tree(chance);
-  }
-
-  // Safely return reference to desired node.
-  Node&
-  Individual::operator[](const Size& i)
-  {
-    assert(i.internals <= get_internals());
-    assert(i.leaves <= get_leaves());
-
-    Size visiting;
-    // Return root node if that's what we're seeking.
-    if (i.internals == 0 and i.leaves == 0)
-      return root;
-    else
-      return root.visit(i, visiting);
-  }
-
-  /* Swap two random subtrees between Individuals "a" and "b",
-     selecting an internal node with chance probability.  TODO: DRY */
-  void
-  crossover(const float& chance, Individual& a, Individual& b)
-  {
-    real_dist probability{0, 1};
-    Size target_a, target_b;
-
-    // Guaranteed to have at least 1 leaf, but may have 0 internals.
-    if (a.get_internals() != 0 and probability(rg.engine) < chance)
-      {
-	// Choose an internal node.
-	int_dist dist{0, static_cast<int>(a.get_internals()) - 1};
-	target_a.internals = dist(rg.engine);
-      }
-    else
-      {
-	// Otherwise choose a leaf node.
-	int_dist dist{0, static_cast<int>(a.get_leaves()) - 1};
-	target_a.leaves = dist(rg.engine);
-      }
-    // Totally repeating myself here for "b".
-    if (b.get_internals() != 0 and probability(rg.engine) < chance)
-      {
-	int_dist dist{0, static_cast<int>(b.get_internals()) - 1};
-	target_b.internals = dist(rg.engine);
-      }
-    else
-      {
-	int_dist dist{0, static_cast<int>(b.get_leaves()) - 1};
-	target_b.leaves = dist(rg.engine);
-      }
-    std::swap(a[target_a], b[target_b]);
   }
 }

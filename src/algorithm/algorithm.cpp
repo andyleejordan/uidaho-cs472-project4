@@ -160,7 +160,11 @@ namespace algorithm
     // Mutate and evaluate children.
     for (Individual& child : offspring)
       {
-	child.mutate(options.mutate_chance); // Mutate children
+	real_dist dist{0, 1};
+	// Mutate children conditionally
+	if (dist(rg.engine) < options.mutate_chance)
+	  child.mutate();
+	// Evaluate all children
 	child.evaluate(options.map, options.penalty); // Evaluate children
       }
     assert(offspring.size() == population.size());

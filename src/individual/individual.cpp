@@ -370,23 +370,26 @@ namespace individual
       {
       case O::shrink:
 	{
-	  (*this)[p].children.at(c) = std::move(create());
+	  // Replace c with a leaf node
+	  (*this)[p].children[c] = std::move(create());
 	  break;
 	}
       case O::hoist:
 	{
-	  root = std::move((*this)[p].children.at(c));
+	  // Make c the new root
+	  std::swap((*this)[p].children[c], root);
 	  break;
 	}
       case O::subtree:
 	{
-	  // (*this)[p].children.pop_back();
-	  (*this)[p].children.at(c) = std::move(create(4));
+	  // Replace c with new subtree to depth 6
+	  (*this)[p].children[c] = std::move(create(6));
 	  break;
 	}
       case O::replacement:
 	{
-	  (*this)[p].children.at(c).mutate();
+	  // Replace c with node of same type (internal/leaf)
+	  (*this)[p].children[c].mutate();
 	  break;
 	}
       }

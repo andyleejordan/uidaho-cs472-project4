@@ -50,6 +50,9 @@ namespace individual
     unsigned int arity;
   };
 
+  // Implemented genetic operators for Individuals
+  enum class Operator {shrink, hoist, subtree, replacement};
+
   class Individual
   {
   public:
@@ -68,7 +71,7 @@ namespace individual
     float get_adjusted() const;
 
     Node& operator[](const Size&);
-    void mutate(const float&);
+    void mutate();
     std::string evaluate(options::Map, const float& penalty = 0,
 			 const bool& print = false);
     friend void crossover(const float&, Individual&, Individual&);

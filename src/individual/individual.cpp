@@ -238,7 +238,7 @@ namespace individual
   }
 
   void
-  Node::mutate_self()
+  Node::mutate()
   {
     if (arity == 0)
       {
@@ -262,17 +262,21 @@ namespace individual
     assert(function != Function::nil);
   }
 
-  // Recursively mutate nodes with given probability.
-  void
-  Node::mutate_tree(const float& chance)
-  {
-    real_dist dist{0, 1};
-    for (Node& child : children)
+    // Fix arity mismatches caused by mutation
+    while (children.size() > arity)
+      children.pop_back();
+
+    while (children.size() < arity)
+      children.emplace_back(create(4));
+
+    if (arity != children.size())
       {
-	if (dist(rg.engine) < chance)
-	  child.mutate_self();
-	child.mutate_tree(chance);
+	std::cerr << "Arity was: " << arity
+		  << ", with children: " << children.size()
+		  << std::endl;
       }
+    assert(arity == children.size());
+    assert(function != Function::nil);
   }
 
   // Default constructor for Individual
@@ -338,11 +342,49 @@ namespace individual
     return evaluation;
   }
 
+  using O = Operator;
+  // Vectors of same-arity function enums.
+  vector<O> operators {O::shrink, O::hoist, O::subtree, O::replacement};
+
+
   // Mutate each node with given probability.
   void
-  Individual::mutate(const float& chance)
+  Individual::mutate()
   {
-    root.mutate_tree(chance);
+    int_dist op_dist{0, static_cast<int>(operators.size()) - 1}; // closed interval
+    const Operator op = operators.at(op_dist(rg.engine));
+    /* Accessing the array operator of Individual to get the target
+       node (p) is a little wonky syntax-wise, the shortest version is
+       (*this)[p]. */
+    Size p = get_node(Type::internal);
+    if ((*this)[p].children.empty()) return; // p may have been root
+    int_dist c_dist{0, static_cast<int>((*this)[p].children.size()) - 1};
+    const unsigned int c = c_dist(rg.engine);
+    assert(c <= 3);
+    switch (op)
+      {
+      case O::shrink:
+	{
+	  (*this)[p].children.at(c) = std::move(create());
+	  break;
+	}
+      case O::hoist:
+	{
+	  root = std::move((*this)[p].children.at(c));
+	  break;
+	}
+      case O::subtree:
+	{
+	  // (*this)[p].children.pop_back();
+	  (*this)[p].children.at(c) = std::move(create(4));
+	  break;
+	}
+      case O::replacement:
+	{
+	  (*this)[p].children.at(c).mutate();
+	  break;
+	}
+      }
   }
 
   // Safely return reference to desired node.

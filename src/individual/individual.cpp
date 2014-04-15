@@ -41,7 +41,7 @@ namespace individual
   get_function(const vector<Function>& functions)
   {
     int_dist dist{0, static_cast<int>(functions.size()) - 1}; // closed interval
-    return functions[dist(rg.engine)];
+    return functions.at(dist(rg.engine));
   }
 
   // Returns bool of whether or not the item is in the set.
@@ -79,7 +79,7 @@ namespace individual
 	or (method == Method::grow and dist(rg.engine) < grow_chance))
       {
 	function = get_function(leaves);
-	arity = 0; // get_arity(function); leaves are always zero
+	arity = 0; // leaves are always zero
       }
     // Otherwise choose an internal node.
     else
@@ -167,9 +167,9 @@ namespace individual
 	break;
       case F::iffoodahead:
 	if (map.look()) // Do left or right depending on if food ahead
-	  children[0].evaluate(map);
+	  children.at(0).evaluate(map);
 	else
-	  children[1].evaluate(map);
+	  children.at(1).evaluate(map);
 	break;
       case F::prog2: // Falls through
       case F::prog3:

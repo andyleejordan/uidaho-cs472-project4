@@ -246,21 +246,18 @@ namespace individual
 	while (function == old)
 	  function = get_function(leaves);
       }
-    else
+    else if (arity == 2 or arity == 3)
       {
 	const Function old = function;
 	while (function == old)
 	  function = get_function(internals);
 	arity = get_arity(function);
-	// Fix arity mismatches caused by mutation
-	if (arity == 2 and children.size() == 3)
-	  children.pop_back();
-	else if (arity == 3 and children.size() == 2)
-	  children.emplace_back(create(4, 0.5));
       }
-    assert(arity == children.size());
-    assert(function != Function::nil);
-  }
+    else
+      {
+	std::cerr << "Arity shouldn't be: " << arity << std::endl;
+	assert(false);
+      }
 
     // Fix arity mismatches caused by mutation
     while (children.size() > arity)

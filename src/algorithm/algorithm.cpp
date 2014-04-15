@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <cassert>
 #include <ctime>
+#include <iomanip>
 #include <iostream>
 #include <fstream>
 #include <future>
@@ -53,7 +54,7 @@ namespace algorithm
   void
   log_info(const unsigned int verbosity, const std::string& logs_dir,
 	   const std::time_t& time, const int& trial, const int& iteration,
-	   const Individual& best, const vector <Individual>& population)
+	   const Individual& best, const vector<Individual>& population)
   {
     // Don't log if verbosity is zero, but still allow calls to this function.
     if (verbosity == 0)
@@ -66,21 +67,31 @@ namespace algorithm
 			return a + b.get_adjusted();
 		      });
 
-    int total_size =
+    unsigned int total_size =
       std::accumulate(population.begin(), population.end(), 0,
 		      [](const unsigned int& a, const Individual& b)->unsigned int const
 		      {
 			return a + b.get_total();
 		      });
 
+    unsigned int total_depth =
+      std::accumulate(population.begin(), population.end(), 0,
+		      [](const unsigned int& a, const Individual& b)->unsigned int const
+		      {
+			return a + b.get_depth();
+		      });
+
     std::ofstream log;
     open_log(log, time, trial, logs_dir);
-    log << iteration << "\t"
+    log << std::setprecision(4)
+	<< iteration << "\t"
 	<< best.get_score() << "\t"
 	<< best.get_adjusted() << "\t"
 	<< total_fitness / population.size() << "\t"
 	<< best.get_total() << "\t"
-	<< total_size / population.size() << "\n";
+	<< total_size / population.size()
+	<< best.get_depth() << "\t"
+	<< total_depth / population.size() << "\n";
     log.close();
   }
 
@@ -168,8 +179,13 @@ namespace algorithm
 	    << "# initial depth: " << options.max_depth
 	    << ", iterations: " << options.iterations
 	    << ", population size: " << options.population_size
-	    << ", tournament size: " << options.tournament_size << "\n"
-	    << "# raw fitness - best (adjusted) fitness - average (adjusted) fitness - size of best - average size\n";
+	    << ", tournament size: " << options.tournament_size
+	    << ", elitism size: " << options.elitism_size
+	    << ", fitness penalty: " << options.penalty << " * total size"
+	    << ", crossover chance: " << options.crossover_chance
+	    << ", mutate chance: " << options.mutate_chance
+	    << ", grow chance: " << options.grow_chance << "\n"
+	    << "# score - best a. fitness - average a. fitness - best size - average size - best depth - average depth\n";
 	log.close();
       }
     // Begin timing algorithm.

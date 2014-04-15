@@ -95,7 +95,7 @@ namespace individual
     assert(children.size() == arity); // ensure arity
   }
 
-  Node create(const unsigned int& max_depth, const float& chance)
+  Node create(const unsigned int& max_depth = 0, const float& chance = 0.5)
   {
     real_dist method_dist{0, 1};
     Method method = (method_dist(rg.engine) < chance)
@@ -216,23 +216,24 @@ namespace individual
   Node&
   Node::visit(const Size& i, Size& visiting)
   {
-    for (Node& child : children) {
-      // Increase relevant count.
-      if (child.children.empty())
-	++visiting.leaves;
-      else
-	++visiting.internals;
+    for (Node& child : children)
+      {
+	// Increase relevant count.
+	if (child.children.empty())
+	  ++visiting.leaves;
+	else
+	  ++visiting.internals;
 
-      // Return node reference if found.
-      if (visiting.internals == i.internals or visiting.leaves == i.leaves)
-	return child;
-      else
-	{
-	  Node& temp = child.visit(i, visiting); // Recursive search.
-	  if (temp.function != Function::nil)
-	    return temp;
-	}
-    }
+	// Return node reference if found.
+	if (visiting.internals == i.internals or visiting.leaves == i.leaves)
+	  return child;
+
+	Node& temp = child.visit(i, visiting); // Recursive search.
+	if (temp.function != Function::nil)
+	  return temp;
+      }
+    return empty;
+  }
     return empty;
   }
 

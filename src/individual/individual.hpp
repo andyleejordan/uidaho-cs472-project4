@@ -32,22 +32,22 @@ namespace individual
   // Implements a recursive parse tree representing an expression.
   class Node
   {
+    friend class Individual;
+
   public:
     Node();
     Node(const Method&, const unsigned int&);
+
+  protected:
     std::string print() const;
     std::string represent() const;
     void evaluate(options::Map&) const;
     const Size size() const;
     Node& visit(const Size&, Size&);
-    void mutate_tree(const float&);
-
-  private:
+    void mutate();
+    std::vector<Node> children;
     Function function;
     unsigned int arity;
-    std::vector<Node> children;
-
-    void mutate_self();
   };
 
   class Individual

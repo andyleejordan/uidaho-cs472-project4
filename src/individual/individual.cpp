@@ -312,50 +312,6 @@ namespace individual
     return "# Formula: " + root.print() + "\n";
   }
 
-  // Read-only "getters" for private data
-
-  unsigned int
-  Individual::get_internals() const
-  {
-    return size.internals;
-  }
-
-  unsigned int
-  Individual::get_leaves() const
-  {
-    return size.leaves;
-  }
-
-  unsigned int
-  Individual::get_total() const
-  {
-    return size.internals + size.leaves;
-  }
-
-  unsigned int
-  Individual::get_depth() const
-  {
-    return size.depth;
-  }
-
-  unsigned int
-  Individual::get_score() const
-  {
-    return score;
-  }
-
-  float
-  Individual::get_fitness() const
-  {
-    return fitness;
-  }
-
-  float
-  Individual::get_adjusted() const
-  {
-    return adjusted;
-  }
-
   /* Evaluate Individual for given values and calculate size.  Update
      Individual's size and fitness accordingly. Return non-empty
      string if printing. */
@@ -444,5 +400,48 @@ namespace individual
 
     std::swap(a[a.get_node(type_a)], b[b.get_node(type_b)]);
   }
+
+  // Read-only "getters" for private data
+
+  unsigned int
+  Individual::get_internals() const
+  {
+    return size.internals;
+  }
+
+  unsigned int
+  Individual::get_leaves() const
+  {
+    return size.leaves;
+  }
+
+  unsigned int
+  Individual::get_total() const
+  {
+    return size.internals + size.leaves;
+  }
+
+  unsigned int
+  Individual::get_depth() const
+  {
+    return size.depth;
+  }
+
+  unsigned int
+  Individual::get_score() const
+  {
+    return score;
+  }
+
+  float
+  Individual::get_fitness() const
+  {
+    return fitness;
+  }
+
+  float
+  Individual::get_adjusted() const
+  {
+    return adjusted;
   }
 }

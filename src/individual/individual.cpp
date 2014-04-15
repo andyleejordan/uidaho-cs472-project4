@@ -41,7 +41,7 @@ namespace individual
   get_function(const vector<Function>& functions)
   {
     int_dist dist{0, static_cast<int>(functions.size()) - 1}; // closed interval
-    return functions.at(dist(rg.engine));
+    return functions[dist(rg.engine)];
   }
 
   // Returns bool of whether or not the item is in the set.
@@ -157,27 +157,37 @@ namespace individual
     switch (function)
       {
       case F::left:
-	map.left(); // Terminal case
-	break;
+	{
+	  map.left(); // Terminal case
+	  break;
+	}
       case F::right:
-	map.right(); // Terminal case
-	break;
+	{
+	  map.right(); // Terminal case
+	  break;
+	}
       case F::forward:
 	map.forward(); // Terminal case
 	break;
       case F::iffoodahead:
-	if (map.look()) // Do left or right depending on if food ahead
-	  children.at(0).evaluate(map);
-	else
-	  children.at(1).evaluate(map);
-	break;
+	{
+	  if (map.look()) // Do left or right depending on if food ahead
+	    children[0].evaluate(map);
+	  else
+	    children[1].evaluate(map);
+	  break;
+	}
       case F::prog2: // Falls through
       case F::prog3:
-	for (const Node& child : children)
-	  child.evaluate(map);
-	break;
+	{
+	  for (const Node& child : children)
+	    child.evaluate(map);
+	  break;
+	}
       case F::nil:
-	assert(false); // Never evaluate empty node
+	{
+	  assert(false); // Never evaluate empty node
+	}
       }
   }
 
@@ -347,7 +357,7 @@ namespace individual
   Individual::mutate()
   {
     int_dist op_dist{0, static_cast<int>(operators.size()) - 1}; // closed interval
-    const Operator op = operators.at(op_dist(rg.engine));
+    const Operator op = operators[op_dist(rg.engine)];
     /* Accessing the array operator of Individual to get the target
        node (p) is a little wonky syntax-wise, the shortest version is
        (*this)[p]. */

@@ -301,11 +301,12 @@ namespace individual
   {
     using std::to_string;
 
-    string info = "# Size " + to_string(get_total())
-      + ", with " + to_string(get_internals())
-      + " internals, and " + to_string(get_leaves()) + " leaves.\n"
-      + "# Raw fitness: " + to_string(score)
-      + ", and adjusted: " + to_string(adjusted) + ".\n";
+    string info = "# Size " + to_string(get_total()) + ", with "
+      + to_string(get_internals()) + " internals, "
+      + to_string(get_leaves()) + " leaves, and depth of "
+      + to_string(get_depth()) + ".\n"
+      + "# Score: " + to_string(score)
+      + ", and adjusted fitness: " + to_string(adjusted) + ".\n";
 
     return info;
   }

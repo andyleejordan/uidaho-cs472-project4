@@ -24,6 +24,7 @@ namespace algorithm
   using individual::Individual;
   using options::Options;
   using namespace random_generator;
+  const unsigned int width = 10;
 
   // Returns true if "a" is closer to 0 than "b" and is also normal.
   bool
@@ -82,16 +83,18 @@ namespace algorithm
 		      });
 
     std::ofstream log;
+    using std::setw;
     open_log(log, time, trial, logs_dir);
-    log << std::setprecision(4)
-	<< iteration << "\t"
-	<< best.get_score() << "\t"
-	<< best.get_adjusted() << "\t"
-	<< total_fitness / population.size() << "\t"
-	<< best.get_total() << "\t"
-	<< total_size / population.size()
-	<< best.get_depth() << "\t"
-	<< total_depth / population.size() << "\n";
+    log << std::setprecision(4) << std::left
+	<< setw(width) << iteration
+	<< setw(width) << best.get_score()
+	<< setw(width) << best.get_adjusted()
+	<< setw(width) << total_fitness / population.size()
+	<< setw(width) << best.get_total()
+	<< setw(width) << static_cast<float>(total_size) / population.size()
+	<< setw(width) << best.get_depth()
+	<< setw(width) << static_cast<float>(total_depth) / population.size()
+	<< std::endl;
     log.close();
   }
 
@@ -173,6 +176,7 @@ namespace algorithm
     std::ofstream log;
     if (options.verbosity > 0)
       {
+	using std::setw;
 	open_log(log, time, trial, options.logs_dir);
 	log << "# running a Genetic Program @ "
 	    << std::ctime(&time)
@@ -184,8 +188,17 @@ namespace algorithm
 	    << ", fitness penalty: " << options.penalty << " * total size"
 	    << ", crossover chance: " << options.crossover_chance
 	    << ", mutate chance: " << options.mutate_chance
-	    << ", grow chance: " << options.grow_chance << "\n"
-	    << "# score - best a. fitness - average a. fitness - best size - average size - best depth - average depth\n";
+	    << ", grow chance: " << options.grow_chance
+	    << std::left
+	    << setw(width) << "\n# gen"
+	    << setw(width) << "score"
+	    << setw(width) << "best fit"
+	    << setw(width) << "avg fit"
+	    << setw(width) << "best size"
+	    << setw(width) << "avg size"
+	    << setw(width) << "best dep"
+	    << setw(width) << "avg dep"
+	    << std::endl;
 	log.close();
       }
     // Begin timing algorithm.
@@ -227,8 +240,8 @@ namespace algorithm
       {
 	open_log(log, time, trial, options.logs_dir);
 	log << best.print() << best.print_formula()
-	    << "# finished computation @ " << std::ctime(&end_time)
-	    << "# elapsed time: " << elapsed_seconds.count() << "s\n";
+	    << "# Finished computation @ " << std::ctime(&end_time)
+	    << "# Elapsed time: " << elapsed_seconds.count() << "s\n";
 	log.close();
       }
     // Log evaluation plot data of best individual.

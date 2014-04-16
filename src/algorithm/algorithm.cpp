@@ -55,7 +55,7 @@ namespace algorithm
   /* Return best candidate from size number of contestants randomly
      drawn from population. */
   Individual
-  selection(const unsigned int& size, const vector<Individual>& population)
+  selection(unsigned int size, const vector<Individual>& population)
   {
     int_dist dist{0, static_cast<int>(population.size()) - 1}; // closed interval
     vector<Individual> contestants;
@@ -67,10 +67,9 @@ namespace algorithm
 			     compare_fitness());
   }
 
-  /* Return new offspring population reassembled from parallel calls to
-     get_children () delegate. */
+  /* Return new offspring population. */
   vector<Individual>
-  new_offspring(const Options& options, const vector<Individual>& population)
+  new_offspring(const vector<Individual>& population, const Options& options)
   {
     vector<Individual> offspring;
     offspring.reserve(population.size());
@@ -84,21 +83,15 @@ namespace algorithm
       {
 	real_dist dist{0, 1};
 	for (unsigned int i = 0; i < offspring.size(); i += 2)
-	  {
-	    if (dist(rg.engine) < options.crossover_chance)
-	      {
-		crossover(options.internals_chance,
-			  offspring[i], offspring[i + 1]);
-	      }
-	  }
+	  if (dist(rg.engine) < options.crossover_chance)
+	    crossover(options.internals_chance, offspring[i], offspring[i + 1]);
       }
     // Mutate and evaluate children.
     for (Individual& child : offspring)
       {
+	// Mutate children conditionally.
 	real_dist dist{0, 1};
-	// Mutate children conditionally
-	if (dist(rg.engine) < options.mutate_chance)
-	  child.mutate();
+	if (dist(rg.engine) < options.mutate_chance) child.mutate();
 	// Evaluate all children
 	child.evaluate(options.map, options.penalty); // Evaluate children
       }
@@ -127,21 +120,25 @@ namespace algorithm
     Individual best;
 
     // Run algorithm to termination.
-    for (unsigned int i = 0; i < options.iterations; ++i)
+    for (unsigned int i(0); i < options.iterations; ++i)
       {
 	// Find best Individual of current population.
 	best = *std::min_element(population.begin(), population.end(),
 				 compare_fitness());
+
 	// Launch background logging thread.
 	auto log_thread = std::async(std::launch::async, logging::log_info,
 				     options.verbosity, options.logs_dir, time,
 				     trial, i, best, population);
+
 	// Create replacement population.
-	vector<Individual> offspring = new_offspring(options, population);
+	vector<Individual> offspring = new_offspring(population, options);
+
 	// Perform elitism replacement of random individuals.
 	int_dist dist{0, static_cast<int>(options.population_size) - 1};
-	for (unsigned int e = 0; e < options.elitism_size; ++e)
+	for (unsigned int e(0); e < options.elitism_size; ++e)
 	  offspring[dist(rg.engine)] = best;
+
 	// Replace current population with offspring.
 	population = offspring;
 	// Sync with background logging thread.

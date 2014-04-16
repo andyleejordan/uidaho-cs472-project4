@@ -27,6 +27,8 @@ namespace trials
   {
     // Spawn blocks number of async threads.
     std::vector<std::future<const Individual>> results;
+    results.reserve(trials);
+
     auto async = [&time, &trial, &options]() mutable
       { return std::async(std::launch::async,
 			  algorithm::genetic, time, ++trial, options); };

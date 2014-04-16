@@ -40,6 +40,7 @@ namespace algorithm
   new_population(const Options& options)
   {
     vector<Individual> population;
+    population.reserve(options.population_size);
 
     int_dist depth_dist{0, static_cast<int>(options.max_depth)}; // ramped depth
 
@@ -59,6 +60,7 @@ namespace algorithm
   {
     int_dist dist{0, static_cast<int>(population.size()) - 1}; // closed interval
     vector<Individual> group;
+    group.reserve(size);
 
     auto pick = [&dist, &population]() mutable { return population[dist(rg.engine)]; };
     std::generate_n(std::back_inserter(group), size, pick);
@@ -72,6 +74,8 @@ namespace algorithm
   {
     // Select parents for children.
     vector<Individual> offspring;
+    offspring.reserve(population.size());
+
     auto select = [&options, &population]
       { return selection(options.tournament_size, population); };
     std::generate_n(std::back_inserter(offspring), population.size(), select);

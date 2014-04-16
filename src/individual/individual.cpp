@@ -69,13 +69,13 @@ namespace individual
 
   /* Recursively constructs a parse tree using the given method
      (either GROW or FULL). */
-  Node::Node(const Method method, const unsigned int max_depth)
+  Node::Node(const Method method, const unsigned int depth)
   {
     // Create leaf node if at the max depth or randomly (if growing).
     real_dist dist{0, 1};
     float grow_chance =
       static_cast<float>(leaves.size()) / (leaves.size() + internals.size());
-    if (max_depth == 0
+    if (depth == 0
 	or (method == Method::grow and dist(rg.engine) < grow_chance))
       {
 	function = get_function(leaves);
@@ -88,21 +88,26 @@ namespace individual
 	arity = get_arity(function);
 	// Recursively create subtrees.
 	children.reserve(arity);
-	auto make_node = [method, max_depth]
-	  { return Node{method, max_depth - 1}; };
+	auto make_node = [method, depth]
+	  { return Node{method, depth - 1}; };
 	std::generate_n(std::back_inserter(children), arity, make_node);
       }
     assert(function != Function::nil); // do not create null types
     assert(children.size() == arity); // ensure arity
   }
 
-  Node create(const unsigned int max_depth = 0, const float chance = 0.5)
+  /* Return a grown node using a random method and depth from provided
+     range.  The min_depth and max_depth are casted to int in the
+     arguments to eliminate need for static_cast<int> in the
+     depth_dist. */
+  Node create(const int min_depth = 0, const int max_depth = 0,
+	      const float chance = 0.5)
   {
     real_dist method_dist{0, 1};
     Method method = (method_dist(rg.engine) < chance)
       ? Method::grow : Method::full;
 
-    int_dist depth_dist{0, static_cast<int>(max_depth)};
+    int_dist depth_dist{min_depth, max_depth};
     unsigned int depth = depth_dist(rg.engine);
 
     return Node{method, depth};
@@ -241,7 +246,8 @@ namespace individual
   }
 
   void
-  Node::mutate()
+  Node::mutate(const unsigned int min, const unsigned int max,
+	       const float chance)
   {
     if (arity == 0)
       {
@@ -267,7 +273,7 @@ namespace individual
       children.pop_back();
 
     while (children.size() < arity)
-      children.emplace_back(create(4));
+      children.emplace_back(create(min, max, chance));
 
     if (arity != children.size())
       {
@@ -285,14 +291,13 @@ namespace individual
   /* Create an Individual tree by having a root node (to which the
      actual construction is delegated). The depth is passed by value
      as its creation elsewhere is temporary. */
-  Individual::Individual(const unsigned int depth, const float chance,
-			 options::Map map)
-    : fitness{0}, adjusted{0}
+  Individual::Individual(const options::Options& options)
+    : root(create(options.min_depth, options.max_depth, options.grow_chance)),
+      score(0), fitness(0), adjusted(0)
   {
-    root = create(depth, chance);
-    /* The evaluate method updates the size and both raw and adjusted
-       fitnesses. */
-    evaluate(map);
+    /* The evaluate method updates the size, fitness, adjusted
+       fitness, and score. */
+    evaluate(options.map);
   }
 
   // Return string representation of a tree's size and fitness.
@@ -351,7 +356,8 @@ namespace individual
 
   // Mutate each node with given probability.
   void
-  Individual::mutate()
+  Individual::mutate(const unsigned int min, const unsigned int max,
+		     const float chance)
   {
     int_dist op_dist{0, static_cast<int>(operators.size()) - 1}; // closed interval
     const Operator op = operators[op_dist(rg.engine)];
@@ -367,7 +373,7 @@ namespace individual
       {
       case O::shrink:
 	// Replace c with a leaf node
-	at(p).children[c] = std::move(create(0)); break;
+	at(p).children[c] = std::move(create(0, 0)); break;
 
       case O::hoist:
 	// Make c the new root
@@ -375,11 +381,11 @@ namespace individual
 
       case O::subtree:
 	// Replace c with new subtree to depth 6
-	at(p).children[c] = std::move(create(6)); break;
+	at(p).children[c] = std::move(create(min, max, chance)); break;
 
       case O::replacement:
 	// Replace c with node of same type (internal/leaf)
-	at(p).children[c].mutate(); break;
+	at(p).children[c].mutate(min, max, chance); break;
       }
   }
 

@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 
-namespace options { class Map; }
+namespace options { struct Options; class Map; }
 
 namespace individual
 {
@@ -45,7 +45,7 @@ namespace individual
     void evaluate(options::Map&) const;
     const Size size() const;
     Node& visit(const Size&, Size&);
-    void mutate();
+    void mutate(const unsigned int, const unsigned int, const float);
     std::vector<Node> children;
     Function function;
     unsigned int arity;
@@ -58,7 +58,7 @@ namespace individual
   {
   public:
     Individual();
-    Individual(const unsigned int, const float, options::Map map);
+    Individual(const options::Options&);
 
     std::string print() const;
     std::string print_formula() const;
@@ -73,7 +73,7 @@ namespace individual
 
     Node& operator[](const Size&);
     Node& at(const Size&);
-    void mutate();
+    void mutate(const unsigned int, const unsigned int, const float);
     std::string evaluate(options::Map, const float penalty = 0,
 			 const bool print = false);
     friend void crossover(const float, Individual&, Individual&);

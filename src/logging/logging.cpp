@@ -38,13 +38,14 @@ namespace logging
       }
   }
 
-  void start_log(std::ofstream& log, const std::time_t& time, const options::Options& options)
+  void start_log(std::ofstream& log, const std::time_t& time,
+		 const options::Options& options)
   {
     using std::setw;
     log << "# running a Genetic Program @ "
 	<< std::ctime(&time)
 	<< "# initial depth: " << options.max_depth
-	<< ", iterations: " << options.iterations
+	<< ", generations: " << options.generations
 	<< ", population size: " << options.population_size
 	<< ", tournament size: " << options.tournament_size
 	<< ", elitism size: " << options.elitism_size
@@ -69,7 +70,7 @@ namespace logging
      fitness and size plus adjusted best fitness). */
   void
   log_info(const unsigned int verbosity, const std::string& logs_dir,
-	   const std::time_t& time, const int& trial, const int& iteration,
+	   const std::time_t& time, const int& trial, const int& generation,
 	   const Individual& best, const std::vector<Individual>& population)
   {
     // Don't log if verbosity is zero, but still allow calls to this function.
@@ -79,29 +80,23 @@ namespace logging
     float total_fitness =
       std::accumulate(population.begin(), population.end(), 0.,
 		      [](const float a, const Individual& b)
-		      {
-			return a + b.get_adjusted();
-		      });
+		      { return a + b.get_adjusted(); });
 
     unsigned int total_size =
       std::accumulate(population.begin(), population.end(), 0,
 		      [](const unsigned int a, const Individual& b)
-		      {
-			return a + b.get_total();
-		      });
+		      { return a + b.get_total(); });
 
     unsigned int total_depth =
       std::accumulate(population.begin(), population.end(), 0,
 		      [](const unsigned int a, const Individual& b)
-		      {
-			return a + b.get_depth();
-		      });
+		      { return a + b.get_depth(); });
 
     std::ofstream log;
     using std::setw;
     open_log(log, time, trial, logs_dir);
     log << std::setprecision(4) << std::left
-	<< setw(width) << iteration
+	<< setw(width) << generation
 	<< setw(width) << best.get_score()
 	<< setw(width) << best.get_adjusted()
 	<< setw(width) << total_fitness / population.size()

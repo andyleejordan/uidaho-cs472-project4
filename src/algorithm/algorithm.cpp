@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cmath>
 #include <ctime>
 #include <fstream>
 #include <future>

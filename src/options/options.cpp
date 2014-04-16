@@ -41,13 +41,13 @@ namespace options
 	if (width != 0) row.reserve(width);
 	for (const char& c : line)
 	  {
-	    if (c != '.' and c != 'x' and c != '\n')
+	    if (c != '.' and c != 'x')
 	      {
 		std::cerr << "File " << filename << " had bad cells!\n"
 			  << "They were: " << c << std::endl;
 		std::exit(EXIT_FAILURE);
 	      }
-	    else if (c != '\n')
+	    else
 	      {
 		Cell cell = (c == 'x') ? Cell{Cell::food} : Cell{Cell::blank};
 		row.emplace_back(cell);
@@ -55,9 +55,9 @@ namespace options
 	      }
 	  }
 	if (width == 0) width = row.size(); // Get initial width
+	// Verify all lines are same width
 	else if (row.size() != width)
 	  {
-	    // Verify all lines are same width
 	    std::cerr << "File " << filename << " had uneven lines!\n"
 		      << "The width is: " << width
 		      << " and the line was " << row.size() << std::endl;
@@ -81,17 +81,13 @@ namespace options
     switch (position.direction)
       {
       case Direction::north:
-	ahead.y = (position.y - 1) % height;
-	break;
+	ahead.y = (position.y - 1) % height; break;
       case Direction::west:
-	ahead.x = (position.x - 1) % width;
-	break;
+	ahead.x = (position.x - 1) % width; break;
       case Direction::south:
-	ahead.y = (position.y + 1) % height;
-	break;
+	ahead.y = (position.y + 1) % height; break;
       case Direction::east:
-	ahead.y = (position.x + 1) % width;
-	break;
+	ahead.y = (position.x + 1) % width; break;
       }
     return rows[ahead.y][ahead.x] == Cell::food;
   }
@@ -102,17 +98,13 @@ namespace options
     switch (position.direction)
       {
       case Direction::north:
-	position.y = (position.y - 1) % height;
-	break;
+	position.y = (position.y - 1) % height; break;
       case Direction::west:
-	position.x = (position.x - 1) % width;
-	break;
+	position.x = (position.x - 1) % width; break;
       case Direction::south:
-	position.y = (position.y + 1) % height;
-	break;
+	position.y = (position.y + 1) % height; break;
       case Direction::east:
-	position.y = (position.x + 1) % width;
-	break;
+	position.y = (position.x + 1) % width; break;
       }
     // Increment score if moved onto food
     if (rows[position.y][position.x] == Cell::food) ++score;
@@ -129,17 +121,13 @@ namespace options
     switch (position.direction)
       {
       case Direction::north:
-	position.direction = Direction::west;
-	break;
+	position.direction = Direction::west; break;
       case Direction::west:
-	position.direction = Direction::south;
-	break;
+	position.direction = Direction::south; break;
       case Direction::south:
-	position.direction = Direction::east;
-	break;
+	position.direction = Direction::east; break;
       case Direction::east:
-	position.direction = Direction::north;
-	break;
+	position.direction = Direction::north; break;
       }
     ++ticks;
   }
@@ -150,17 +138,13 @@ namespace options
     switch (position.direction)
       {
       case Direction::north:
-	position.direction = Direction::east;
-	break;
+	position.direction = Direction::east; break;
       case Direction::east:
-	position.direction = Direction::south;
-	break;
+	position.direction = Direction::south; break;
       case Direction::south:
-	position.direction = Direction::west;
-	break;
+	position.direction = Direction::west; break;
       case Direction::west:
-	position.direction = Direction::north;
-	break;
+	position.direction = Direction::north; break;
       }
     ++ticks;
   }

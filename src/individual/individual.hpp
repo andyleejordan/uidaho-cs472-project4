@@ -10,7 +10,8 @@
 
 #include <string>
 #include <vector>
-#include "../options/options.hpp"
+
+namespace options { class Map; }
 
 namespace individual
 {

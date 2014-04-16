@@ -9,8 +9,9 @@
 
 #include <ctime>
 
-#include "../individual/individual.hpp"
-#include "../options/options.hpp"
+// Forward declarations
+namespace options { struct Options; }
+namespace individual { class Individual; }
 
 namespace algorithm
 {

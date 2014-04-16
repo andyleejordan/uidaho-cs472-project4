@@ -10,8 +10,9 @@
 #include <ctime>
 #include <tuple>
 
-#include "../individual/individual.hpp"
-#include "../options/options.hpp"
+// Forward declaration
+namespace individual { class Individual; }
+namespace options { struct Options; }
 
 namespace trials
 {

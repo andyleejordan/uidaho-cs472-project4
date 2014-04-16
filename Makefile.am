@@ -3,6 +3,7 @@ search_SOURCES = \
 	src/main.cpp \
 	src/algorithm/algorithm.cpp \
 	src/individual/individual.cpp \
+	src/logging/logging.cpp \
 	src/options/options.cpp \
 	src/random_generator/random_generator.cpp \
 	src/trials/trials.cpp

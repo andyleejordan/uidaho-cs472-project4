@@ -18,7 +18,8 @@ namespace options
 
   enum class Direction {north, south, east, west};
 
-  struct Position {
+  struct Position
+  {
     unsigned int x;
     unsigned int y;
     Direction direction;

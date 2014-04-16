@@ -21,8 +21,8 @@ namespace trials
 
   // Push results
   void
-  push_results(const unsigned long trials, const options::Options& options,
-	       const std::time_t& time, unsigned int& trial,
+  push_results(const options::Options& options, const std::time_t& time,
+	       unsigned int& trial, const unsigned int trials,
 	       std::vector<Individual>& candidates)
   {
     std::vector<std::future<const Individual>> results;
@@ -49,10 +49,10 @@ namespace trials
 
     // Spawn trials in chunks of size blocks.
     for (unsigned long t = 0; t < options.trials / blocks; ++t)
-      push_results(blocks, options, time, trial, candidates);
+      push_results(options, time, trial, blocks, candidates);
 
     // Spawn remaining trials.
-    push_results(options.trials % blocks, options, time, trial, candidates);
+    push_results(options, time, trial, options.trials % blocks, candidates);
 
     // Retrieve best element.
     std::vector<Individual>::iterator best

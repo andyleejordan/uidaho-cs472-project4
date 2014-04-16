@@ -15,6 +15,7 @@ namespace individual { class Individual; }
 
 namespace algorithm
 {
+  // Functor to compare two individuals by fitness
   struct compare_fitness
   {
     bool

@@ -25,11 +25,12 @@ namespace trials
 	       unsigned int& trial, const unsigned int trials,
 	       std::vector<Individual>& candidates)
   {
-    std::vector<std::future<const Individual>> results;
     // Spawn blocks number of async threads.
-    for (unsigned long i = 0; i < trials; ++i)
-      results.emplace_back(std::async(std::launch::async, algorithm::genetic,
-				      time, ++trial, options));
+    std::vector<std::future<const Individual>> results;
+    auto async = [&time, &trial, &options]() mutable
+      { return std::async(std::launch::async,
+			  algorithm::genetic, time, ++trial, options); };
+    std::generate_n(std::back_inserter(results), trials, async);
     // Gather future results.
     for (std::future<const Individual>& result : results)
       candidates.emplace_back(result.get());
@@ -39,7 +40,6 @@ namespace trials
   const std::tuple<int, individual::Individual>
   run(const options::Options& options, const std::time_t& time)
   {
-
     const unsigned long hardware_threads = std::thread::hardware_concurrency();
     const unsigned long blocks = (hardware_threads != 0) ? hardware_threads : 2;
 
@@ -54,12 +54,10 @@ namespace trials
     push_results(options, time, trial, options.trials % blocks, candidates);
 
     // Retrieve best element.
+    auto compare = [](const Individual& a, const Individual&b)
+      { return a.get_score() > b.get_score(); };
     std::vector<Individual>::iterator best
-      = std::min_element(candidates.begin(), candidates.end(),
-			 [](const Individual& a, const Individual&b)->bool
-			 {
-			   return a.get_score() > b.get_score();
-			 });
+      = std::min_element(candidates.begin(), candidates.end(), compare);
 
     /* Get which trial was best.  Filenames are not zero-indexed so
        increase by one. */

@@ -40,15 +40,15 @@ namespace algorithm
   new_population(const Options& options)
   {
     vector<Individual> population;
-    int_dist depth_dist{0, static_cast<int>(options.max_depth)}; // ramped
-    for (unsigned int i = 0; i < options.population_size; ++i)
-      {
-	/* The depth is ramped, and so drawn randomly for each
-	   individual. */
-	unsigned int depth = depth_dist(rg.engine);
-	population.emplace_back(Individual{
-	    depth, options.grow_chance, options.map});
-      }
+
+    int_dist depth_dist{0, static_cast<int>(options.max_depth)}; // ramped depth
+
+    auto create = [&depth_dist, &options]() mutable
+      { const unsigned int depth = depth_dist(rg.engine);
+	return Individual{depth, options.grow_chance, options.map}; };
+
+    std::generate_n(std::back_inserter(population), options.population_size, create);
+
     return population;
   }
 
@@ -58,26 +58,24 @@ namespace algorithm
   selection(unsigned int size, const vector<Individual>& population)
   {
     int_dist dist{0, static_cast<int>(population.size()) - 1}; // closed interval
-    vector<Individual> contestants;
+    vector<Individual> group;
 
-    for (unsigned int i = 0; i < size; ++i)
-      contestants.emplace_back(population[dist(rg.engine)]);
+    auto pick = [&dist, &population]() mutable { return population[dist(rg.engine)]; };
+    std::generate_n(std::back_inserter(group), size, pick);
 
-    return *std::min_element(contestants.begin(), contestants.end(),
-			     compare_fitness());
+    return *std::min_element(group.begin(), group.end(), compare_fitness());
   }
 
   /* Return new offspring population. */
   vector<Individual>
   new_offspring(const vector<Individual>& population, const Options& options)
   {
-    vector<Individual> offspring;
-    offspring.reserve(population.size());
     // Select parents for children.
-    while (offspring.size() != population.size())
-      {
-	offspring.emplace_back(selection(options.tournament_size, population));
-      }
+    vector<Individual> offspring;
+    auto select = [&options, &population]
+      { return selection(options.tournament_size, population); };
+    std::generate_n(std::back_inserter(offspring), population.size(), select);
+
     // Binary crossover with probability.
     if (options.crossover_size == 2)
       {
@@ -95,7 +93,6 @@ namespace algorithm
 	// Evaluate all children
 	child.evaluate(options.map, options.penalty); // Evaluate children
       }
-    assert(offspring.size() == population.size());
     return offspring;
   }
 

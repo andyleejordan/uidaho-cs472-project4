@@ -88,8 +88,9 @@ namespace individual
 	arity = get_arity(function);
 	// Recursively create subtrees.
 	children.reserve(arity);
-	for (unsigned int i = 0; i < arity; ++i)
-	  children.emplace_back(Node{method, max_depth - 1});
+	auto make_node = [method, max_depth]
+	  { return Node{method, max_depth - 1}; };
+	std::generate_n(std::back_inserter(children), arity, make_node);
       }
     assert(function != Function::nil); // do not create null types
     assert(children.size() == arity); // ensure arity

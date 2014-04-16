@@ -140,7 +140,8 @@ namespace algorithm
 	  offspring[dist(rg.engine)] = best;
 
 	// Replace current population with offspring.
-	population = offspring;
+	population = std::move(offspring);
+
 	// Sync with background logging thread.
 	log_thread.wait();
       }

@@ -14,12 +14,15 @@ namespace random_generator
   typedef std::uniform_int_distribution<> int_dist;
   typedef std::normal_distribution<> normal_dist;
 
+  // "Singleton" class for an engine initialized with device
   class RandomGenerator
   {
-    std::random_device rd;
   public:
     RandomGenerator();
     std::mt19937_64 engine;
+
+  private:
+    std::random_device rd;
   };
 
   extern RandomGenerator rg;

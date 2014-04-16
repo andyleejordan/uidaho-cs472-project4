@@ -42,12 +42,7 @@ namespace algorithm
     vector<Individual> population;
     population.reserve(options.population_size);
 
-    int_dist depth_dist{0, static_cast<int>(options.max_depth)}; // ramped depth
-
-    auto create = [&depth_dist, &options]() mutable
-      { const unsigned int depth = depth_dist(rg.engine);
-	return Individual{depth, options.grow_chance, options.map}; };
-
+    auto create = [&options]() { return Individual{options}; };
     std::generate_n(std::back_inserter(population), options.population_size, create);
 
     return population;
@@ -93,7 +88,8 @@ namespace algorithm
       {
 	// Mutate children conditionally.
 	real_dist dist{0, 1};
-	if (dist(rg.engine) < options.mutate_chance) child.mutate();
+	if (dist(rg.engine) < options.mutate_chance)
+	  child.mutate(options.min_depth, options.max_depth, options.grow_chance);
 	// Evaluate all children
 	child.evaluate(options.map, options.penalty); // Evaluate children
       }
@@ -121,7 +117,7 @@ namespace algorithm
     Individual best;
 
     // Run algorithm to termination.
-    for (unsigned int i(0); i < options.iterations; ++i)
+    for (unsigned int g(0); g < options.generations; ++g)
       {
 	// Find best Individual of current population.
 	best = *std::min_element(population.begin(), population.end(),
@@ -130,7 +126,7 @@ namespace algorithm
 	// Launch background logging thread.
 	auto log_thread = std::async(std::launch::async, logging::log_info,
 				     options.verbosity, options.logs_dir, time,
-				     trial, i, best, population);
+				     trial, g, best, population);
 
 	// Create replacement population.
 	vector<Individual> offspring = new_offspring(population, options);

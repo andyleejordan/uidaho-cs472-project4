@@ -18,13 +18,11 @@ namespace algorithm
   struct compare_fitness
   {
     bool
-    operator()(const individual::Individual&,
-	       const individual::Individual&);
+    operator()(const individual::Individual&, const individual::Individual&);
   };
 
   const individual::Individual
-  genetic(const options::Options& options,
-	  std::time_t time = std::time(nullptr), const int& trial = 0);
+  genetic(unsigned int, const std::time_t&, const options::Options& options);
 }
 
 #endif /* _ALGORITHM_H_ */

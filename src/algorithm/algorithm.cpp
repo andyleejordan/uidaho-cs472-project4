@@ -108,7 +108,7 @@ namespace algorithm
   /* The actual genetic algorithm applied which (hopefully) produces a
      well-fit expression for a given dataset. */
   const individual::Individual
-  genetic(const Options& options, const std::time_t time, const int& trial)
+  genetic(unsigned int trial, const std::time_t& time, const Options& options)
   {
     // Start logging
     std::ofstream log;

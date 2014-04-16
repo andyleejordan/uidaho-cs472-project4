@@ -28,9 +28,8 @@ namespace trials
     std::vector<std::future<const Individual>> results;
     // Spawn blocks number of async threads.
     for (unsigned long i = 0; i < trials; ++i)
-      results.emplace_back(std::async(std::launch::async,
-				      algorithm::genetic, options, time,
-				      ++trial));
+      results.emplace_back(std::async(std::launch::async, algorithm::genetic,
+				      time, ++trial, options));
     // Gather future results.
     for (std::future<const Individual>& result : results)
       candidates.emplace_back(result.get());

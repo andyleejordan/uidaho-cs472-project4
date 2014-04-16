@@ -157,18 +157,11 @@ namespace individual
     switch (function)
       {
       case F::left:
-	{
-	  map.left(); // Terminal case
-	  break;
-	}
+	  map.left(); break; // Terminal case
       case F::right:
-	{
-	  map.right(); // Terminal case
-	  break;
-	}
+	  map.right(); break; // Terminal case
       case F::forward:
-	map.forward(); // Terminal case
-	break;
+	map.forward(); break; // Terminal case
       case F::iffoodahead:
 	{
 	  if (map.look()) // Do left or right depending on if food ahead
@@ -185,9 +178,7 @@ namespace individual
 	  break;
 	}
       case F::nil:
-	{
 	  assert(false); // Never evaluate empty node
-	}
       }
   }
 
@@ -362,7 +353,7 @@ namespace individual
     Size p = get_node(Type::internal);
     if (at(p).children.empty()) return; // p may have been root
 
-    int_dist c_dist{0, static_cast<int>((*this)[p].children.size()) - 1};
+    int_dist c_dist{0, static_cast<int>(at(p).children.size()) - 1}; // closed interval
     const unsigned int c = c_dist(rg.engine);
     assert(c <= at(p).arity);
 

@@ -1,4 +1,4 @@
-/* options.cpp - CS 472 Project #2: Genetic Programming
+/* options.cpp - CS 472 Project #3: Genetic Programming
  * Copyright 2014 Andrew Schwartzmeyer
  *
  * Source file for options namespace

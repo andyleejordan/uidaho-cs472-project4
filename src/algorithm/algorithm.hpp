@@ -1,4 +1,4 @@
-/* algorithm.hpp - CS 472 Project #2: Genetic Programming
+/* algorithm.hpp - CS 472 Project #3: Genetic Programming
  * Copyright 2014 Andrew Schwartzmeyer
  *
  * Header file for algorithm namespace

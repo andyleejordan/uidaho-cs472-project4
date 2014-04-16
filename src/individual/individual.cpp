@@ -1,4 +1,4 @@
-/* indivudal.cpp - CS 472 Project #2: Genetic Programming
+/* indivudal.cpp - CS 472 Project #3: Genetic Programming
  * Copyright 2014 Andrew Schwartzmeyer
  *
  * Source file for individual namespace

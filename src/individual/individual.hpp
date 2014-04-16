@@ -1,4 +1,4 @@
-/* individual.hpp - CS 472 Project #2: Genetic Programming
+/* individual.hpp - CS 472 Project #3: Genetic Programming
  * Copyright 2014 Andrew Schwartzmeyer
  *
  * Header file for interface of an individual representing a

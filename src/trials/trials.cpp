@@ -1,4 +1,4 @@
-/* trials.cpp - CS 472 Project #2: Genetic Programming
+/* trials.cpp - CS 472 Project #3: Genetic Programming
  * Copyright 2014 Andrew Schwartzmeyer
  *
  * Source file for the trials namespace

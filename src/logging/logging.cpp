@@ -78,21 +78,21 @@ namespace logging
 
     float total_fitness =
       std::accumulate(population.begin(), population.end(), 0.,
-		      [](const float& a, const Individual& b)->float const
+		      [](const float a, const Individual& b)
 		      {
 			return a + b.get_adjusted();
 		      });
 
     unsigned int total_size =
       std::accumulate(population.begin(), population.end(), 0,
-		      [](const unsigned int& a, const Individual& b)->unsigned int const
+		      [](const unsigned int a, const Individual& b)
 		      {
 			return a + b.get_total();
 		      });
 
     unsigned int total_depth =
       std::accumulate(population.begin(), population.end(), 0,
-		      [](const unsigned int& a, const Individual& b)->unsigned int const
+		      [](const unsigned int a, const Individual& b)
 		      {
 			return a + b.get_depth();
 		      });

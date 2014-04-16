@@ -190,11 +190,12 @@ namespace options
   Options::validate() const
   {
     assert(trials > 0);
-    assert(iterations > 0);
+    assert(generations > 0);
     assert(population_size > 0);
     assert(tournament_size > 0 and tournament_size <= population_size);
-    assert(crossover_size == 2);
+    assert(crossover_size == 2 or crossover_size == 0);
     assert(elitism_size <= population_size);
+    assert(penalty >= 0 and penalty <= 1);
     assert(grow_chance >= 0 and grow_chance <= 1);
     assert(mutate_chance >= 0 and mutate_chance <= 1);
     assert(crossover_chance >= 0 and crossover_chance <= 1);
@@ -234,8 +235,8 @@ namespace options
        default_value(4),
        "set the number of trials to run")
 
-      ("iterations,i",
-       value<unsigned int>(&options.iterations)->
+      ("generations,g",
+       value<unsigned int>(&options.generations)->
        default_value(128),
        "set the number of iterations for which to run each trial")
 
@@ -244,45 +245,53 @@ namespace options
        default_value(128),
        "set the size of each population")
 
-      ("depth,d", value<unsigned int>(&options.max_depth)->
+      ("min-depth", value<unsigned int>(&options.min_depth)->
+       default_value(1),
+       "set the minimum depth for initial populations")
+
+      ("max-depth,d", value<unsigned int>(&options.max_depth)->
        default_value(4),
        "set the maximum depth for initial populations")
 
-      ("tournament,T",
+      ("depth-limit,l", value<unsigned int>(&options.depth_limit)->
+       default_value(14),
+       "set the depth limit for individuals")
+
+      ("tournament-size,T",
        value<unsigned int>(&options.tournament_size)->
        default_value(3),
        "set the tournment size to adjust selection pressure")
 
-      ("crossover,C",
+      ("crossover-size",
        value<unsigned int>(&options.crossover_size)->
        default_value(2),
        "set the crossover size(binary in current implementation)")
 
-      ("elitism,e", value<unsigned int>(&options.elitism_size)->
+      ("elitism-size,E", value<unsigned int>(&options.elitism_size)->
        default_value(2),
        "set the number of elitism replacements to make each iteration")
 
       ("ticks", value<unsigned int>(&ticks)->
        default_value(600),
-       "set the number of moves the any may move")
+       "set the number of moves the ant may move")
 
       ("penalty,P", value<float>(&options.penalty)->
-       default_value(0.1),
+       default_value(0),
        "set the constant scalar of the size penalty for fitness")
 
-      ("grow,g", value<float>(&options.grow_chance)->
+      ("grow-chance", value<float>(&options.grow_chance)->
        default_value(0.5),
        "set the probability that an initial tree will be made by the grow method")
 
-      ("mutate,m", value<float>(&options.mutate_chance)->
-       default_value(0.01),
+      ("mutate-chance,M", value<float>(&options.mutate_chance)->
+       default_value(0.05),
        "set the probability that a single node will mutate")
 
-      ("crossover_chance", value<float>(&options.crossover_chance)->
+      ("crossover-chance,C", value<float>(&options.crossover_chance)->
        default_value(0.8),
-       "set the probability that a selected pair of invididuals will undergo crossover")
+       "set the probability that crossover will be performed")
 
-      ("internals,I", value<float>(&options.internals_chance)->
+      ("internals", value<float>(&options.internals_chance)->
        default_value(0.9),
        "set the probability that a crossover target node will be an internal node")
 
@@ -320,10 +329,10 @@ namespace options
     if (variables_map.count("help"))
       {
 	std::cout << "Genetic Program implemented in C++ by Andrew Schwartzmeyer\n"
-		  << "Code located at https://github.com/andschwa/uidaho-cs472-project2\n\n"
-		  << "Logs saved to <logs>/<Unix time>.dat\n"
-		  << "Plot data saved to <plots>/<Unix time>.dat\n"
-		  << "GNUPlot PNG generation script './plot <plots>'\n\n"
+		  << "Code located at https://github.com/andschwa/uidaho-cs472-project3\n\n"
+		  << "Logs saved to <" << options.logs_dir << ">/<Unix time>.dat\n"
+		  << "Ant maps saved to <" << options.plots_dir << ">/<Unix time>.dat\n"
+		  << "GNUPlot PNG generation scripts in <tools>'\n\n"
 		  << description << std::endl;
 	std::exit(EXIT_SUCCESS);
       }

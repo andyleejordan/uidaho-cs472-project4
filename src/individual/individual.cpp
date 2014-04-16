@@ -53,7 +53,7 @@ namespace individual
 
   // Returns the appropriate arity for a given function.
   unsigned int
-  get_arity(const Function& function)
+  get_arity(const Function function)
   {
     if (contains(function, nullaries))
       return 0;
@@ -69,7 +69,7 @@ namespace individual
 
   /* Recursively constructs a parse tree using the given method
      (either GROW or FULL). */
-  Node::Node(const Method& method, const unsigned int& max_depth)
+  Node::Node(const Method method, const unsigned int max_depth)
   {
     // Create leaf node if at the max depth or randomly (if growing).
     real_dist dist{0, 1};
@@ -95,7 +95,7 @@ namespace individual
     assert(children.size() == arity); // ensure arity
   }
 
-  Node create(const unsigned int& max_depth = 0, const float& chance = 0.5)
+  Node create(const unsigned int max_depth = 0, const float chance = 0.5)
   {
     real_dist method_dist{0, 1};
     Method method = (method_dist(rg.engine) < chance)
@@ -290,8 +290,9 @@ namespace individual
   /* Create an Individual tree by having a root node (to which the
      actual construction is delegated). The depth is passed by value
      as its creation elsewhere is temporary. */
-  Individual::Individual(const unsigned int depth, const float& chance,
-			 options::Map map): fitness{0}, adjusted{0}
+  Individual::Individual(const unsigned int depth, const float chance,
+			 options::Map map)
+    : fitness{0}, adjusted{0}
   {
     root = create(depth, chance);
     /* The evaluate method updates the size and both raw and adjusted
@@ -326,8 +327,7 @@ namespace individual
      Individual's size and fitness accordingly. Return non-empty
      string if printing. */
   string
-  Individual::evaluate(options::Map map, const float& penalty,
-		       const bool& print)
+  Individual::evaluate(options::Map map, const float penalty, const bool print)
   {
     // Update size on evaluation because it's incredibly convenient.
     size = root.size();
@@ -417,7 +417,7 @@ namespace individual
   }
 
   Size
-  Individual::get_node(const Type& type)
+  Individual::get_node(const Type type) const
   {
     Size target;
     // Guaranteed to have at least 1 leaf, but may have 0 internals.
@@ -439,7 +439,7 @@ namespace individual
   /* Swap two random subtrees between Individuals "a" and "b",
      selecting an internal node with chance probability. */
   void
-  crossover(const float& chance, Individual& a, Individual& b)
+  crossover(const float chance, Individual& a, Individual& b)
   {
     real_dist probability{0, 1};
 

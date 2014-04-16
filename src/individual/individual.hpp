@@ -37,7 +37,7 @@ namespace individual
 
   public:
     Node();
-    Node(const Method&, const unsigned int&);
+    Node(const Method, const unsigned int);
 
   protected:
     std::string print() const;
@@ -58,7 +58,7 @@ namespace individual
   {
   public:
     Individual();
-    Individual(const unsigned int, const float&, options::Map map);
+    Individual(const unsigned int, const float, options::Map map);
 
     std::string print() const;
     std::string print_formula() const;
@@ -74,9 +74,9 @@ namespace individual
     Node& operator[](const Size&);
     Node& at(const Size&);
     void mutate();
-    std::string evaluate(options::Map, const float& penalty = 0,
-			 const bool& print = false);
-    friend void crossover(const float&, Individual&, Individual&);
+    std::string evaluate(options::Map, const float penalty = 0,
+			 const bool print = false);
+    friend void crossover(const float, Individual&, Individual&);
 
   private:
     Node root;
@@ -86,7 +86,7 @@ namespace individual
     float adjusted;
 
     enum class Type {leaf, internal};
-    Size get_node(const Type&);
+    Size get_node(const Type) const;
   };
 }
 

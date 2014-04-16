@@ -157,11 +157,14 @@ namespace individual
     switch (function)
       {
       case F::left:
-	  map.left(); break; // Terminal case
+	map.left(); break; // Terminal case
+
       case F::right:
-	  map.right(); break; // Terminal case
+	map.right(); break; // Terminal case
+
       case F::forward:
 	map.forward(); break; // Terminal case
+
       case F::iffoodahead:
 	{
 	  if (map.look()) // Do left or right depending on if food ahead
@@ -178,7 +181,7 @@ namespace individual
 	  break;
 	}
       case F::nil:
-	  assert(false); // Never evaluate empty node
+	assert(false); // Never evaluate empty node
       }
   }
 
@@ -323,13 +326,15 @@ namespace individual
     // Update size on evaluation because it's incredibly convenient.
     size = root.size();
 
+    // Run ant across map and retrieve fitness.
     while (map.active())
       root.evaluate(map);
-
     score = map.fitness();
+
     // Adjusted fitness does not have size penalty.
     adjusted = static_cast<float>(score) / map.max();
-    // Apply size penalty if not printing.
+
+    // Apply size penalty.
     fitness = score - penalty * get_total();
 
     string evaluation;
@@ -360,29 +365,20 @@ namespace individual
     switch (op)
       {
       case O::shrink:
-	{
-	  // Replace c with a leaf node
-	  at(p).children[c] = std::move(create(0));
-	  break;
-	}
+	// Replace c with a leaf node
+	at(p).children[c] = std::move(create(0)); break;
+
       case O::hoist:
-	{
-	  // Make c the new root
-	  std::swap(root, at(p).children[c]);
-	  break;
-	}
+	// Make c the new root
+	std::swap(root, at(p).children[c]); break;
+
       case O::subtree:
-	{
-	  // Replace c with new subtree to depth 6
-	  at(p).children[c] = std::move(create(6));
-	  break;
-	}
+	// Replace c with new subtree to depth 6
+	at(p).children[c] = std::move(create(6)); break;
+
       case O::replacement:
-	{
-	  // Replace c with node of same type (internal/leaf)
-	  at(p).children[c].mutate();
-	  break;
-	}
+	// Replace c with node of same type (internal/leaf)
+	at(p).children[c].mutate(); break;
       }
   }
 

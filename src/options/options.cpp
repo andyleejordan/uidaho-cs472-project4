@@ -267,6 +267,11 @@ namespace options
        default_value(320),
        "set the population size of fitter group")
 
+      ("brood-count,B",
+       value<unsigned int>(&options.brood_count)->
+       default_value(4),
+       "set the brood count for crossover")
+
       ("crossover-size",
        value<unsigned int>(&options.crossover_size)->
        default_value(2),

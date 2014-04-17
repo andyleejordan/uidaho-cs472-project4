@@ -68,7 +68,30 @@ namespace algorithm
     real_dist dist{0, 1};
     for (auto iter = begin(offspring); iter != end(offspring); advance(iter, 2))
       if (dist(rg.engine) < opts.crossover_chance)
-	crossover(opts.internals_chance, *iter, *next(iter));
+	{
+	  /* Copy the pair, crossover N times, evaluate with
+	     ticks=100, replace with best two. */
+	  vector<Individual> brood;
+	  brood.reserve(opts.brood_count * opts.crossover_size);
+	  // Create N copies of the pair
+	  for (unsigned int i(0); i < opts.brood_count; ++i)
+	    {
+	      brood.push_back(*iter);
+	      brood.push_back(*next(iter));
+	    }
+	  // Crossover each pair of pups
+	  for (auto pup = begin(brood); pup != end(brood); advance(pup, 2))
+	    crossover(opts.internals_chance, *pup, *next(pup));
+	  // Evaluate pups with fewer ticks
+	  options::Map map = opts.map;
+	  map.max_ticks = 60;
+	  for (auto& pup : brood)
+	    pup.evaluate(map, opts.penalty);
+	  sort(begin(brood), end(brood), compare_fitness());
+	  // Replace parents with best pair of brood
+	  *iter = *begin(brood);
+	  *next(iter) = *next(begin(brood));
+	}
   }
 
   /* Return new offspring population.  The pop is not passed const as

@@ -40,12 +40,13 @@ namespace options
     unsigned int fitness() const;
     unsigned int max() const;
     std::string print() const;
+    unsigned int max_ticks;
+
   private:
     std::vector<std::vector<Cell>> rows;
     unsigned int width;
     unsigned int height;
     unsigned int ticks;
-    unsigned int max_ticks;
     unsigned int score;
     unsigned int pieces;
     Position position;
@@ -64,6 +65,7 @@ namespace options
     unsigned int depth_limit;
     unsigned int tourney_size;
     unsigned int fitter_size;
+    unsigned int brood_count;
     unsigned int crossover_size;
     unsigned int elitism_size;
     float penalty;

@@ -270,7 +270,7 @@ namespace options
       ("crossover-size",
        value<unsigned int>(&options.crossover_size)->
        default_value(2),
-       "set the crossover size(binary in current implementation)")
+       "set the crossover size (2 for binary; 0 to disable)")
 
       ("elitism-size,E", value<unsigned int>(&options.elitism_size)->
        default_value(3),

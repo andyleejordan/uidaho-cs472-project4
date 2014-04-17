@@ -24,8 +24,8 @@ namespace logging
 
   // Opens the appropriate log file for given time, trial, and folder.
   void
-  open_log(std::ofstream& log, const std::time_t& time, const int& trial,
-	   const std::string& folder)
+  open_log(std::ofstream& log, const std::time_t& time,
+	   const unsigned int trial, const std::string& folder)
   {
     std::string filename = folder + std::to_string(time) + "_"
       + std::to_string(trial) + ".dat";
@@ -70,8 +70,9 @@ namespace logging
      fitness and size plus adjusted best fitness). */
   void
   log_info(const unsigned int verbosity, const std::string& logs_dir,
-	   const std::time_t& time, const int& trial, const int& generation,
-	   const Individual& best, const std::vector<Individual>& population)
+	   const std::time_t& time, const unsigned int trial,
+	   const unsigned int generation, const Individual& best,
+	   const std::vector<Individual>& population)
   {
     // Don't log if verbosity is zero, but still allow calls to this function.
     if (verbosity == 0)

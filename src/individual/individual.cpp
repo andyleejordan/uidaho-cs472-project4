@@ -69,14 +69,14 @@ namespace individual
 
   /* Recursively constructs a parse tree using the given method
      (either GROW or FULL). */
-  Node::Node(const Method method, const unsigned int depth)
+  Node::Node(const Method method, const int max_depth, const int depth)
   {
     // Create leaf node if at the max depth or randomly (if growing).
     real_dist dist{0, 1};
-    float grow_chance =
+    float chance =
       static_cast<float>(leaves.size()) / (leaves.size() + internals.size());
-    if (depth == 0
-	or (method == Method::grow and dist(rg.engine) < grow_chance))
+    if (depth == max_depth
+	or (depth != 0 and (method == Method::grow and dist(rg.engine) < chance)))
       {
 	function = get_function(leaves);
 	arity = 0; // leaves are always zero
@@ -88,8 +88,8 @@ namespace individual
 	arity = get_arity(function);
 	// Recursively create subtrees.
 	children.reserve(arity);
-	auto make_node = [method, depth]
-	  { return Node{method, depth - 1}; };
+	auto make_node = [method, max_depth, depth]
+	  { return Node{method, max_depth, depth + 1}; };
 	std::generate_n(std::back_inserter(children), arity, make_node);
       }
     assert(function != Function::nil); // do not create null types
@@ -108,9 +108,9 @@ namespace individual
       ? Method::grow : Method::full;
 
     int_dist depth_dist{min_depth, max_depth};
-    unsigned int depth = depth_dist(rg.engine);
+    int depth = depth_dist(rg.engine);
 
-    return Node{method, depth};
+    return Node{method, depth, 0};
   }
 
   // Returns a string visually representing a particular node.

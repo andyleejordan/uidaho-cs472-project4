@@ -37,7 +37,7 @@ namespace individual
 
   public:
     Node();
-    Node(const Method, const unsigned int);
+    Node(const Method, const int, const int);
 
   protected:
     std::string print() const;

@@ -50,7 +50,7 @@ namespace algorithm
 
   /* Return best candidate from size number of contestants randomly
      drawn from population. */
-  Individual
+  const Individual&
   select(int size, int start, int stop, const vector<Individual>& pop)
   {
     int_dist dist{start, stop - 1}; // closed interval

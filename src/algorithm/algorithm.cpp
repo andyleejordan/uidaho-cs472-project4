@@ -63,6 +63,14 @@ namespace algorithm
     return pop[*min_element(begin(group), end(group))];
   }
 
+  void crossover(const Options& opts, vector<Individual>& offspring)
+  {
+    real_dist dist{0, 1};
+    for (auto iter = begin(offspring); iter != end(offspring); advance(iter, 2))
+      if (dist(rg.engine) < opts.crossover_chance)
+	crossover(opts.internals_chance, *iter, *next(iter));
+  }
+
   /* Return new offspring population.  The pop is not passed const as
      it must be sorted. */
   vector<Individual>
@@ -74,28 +82,24 @@ namespace algorithm
 
     sort(begin(pop), end(pop), compare_fitness());
 
+    /* Implements over-selection.  80% drawn from a fitter group of
+       320, the other 20% drawn from the weaker group (past the first
+       sorted 320). */
     unsigned int strong_size = opts.over_select_chance * opts.pop_size;
-    unsigned int weak_size = opts.pop_size - strong_size;
-
     generate_n(back_inserter(offspring), strong_size, [&opts, &pop]
 	       { return select(opts.tourney_size, 0, opts.fitter_size, pop); });
 
+    unsigned int weak_size = opts.pop_size - strong_size;
     generate_n(back_inserter(offspring), weak_size, [&opts, &pop]
 	       { return select(opts.tourney_size, opts.fitter_size, pop.size(), pop); });
+    // Binary crossover if enabled.
+    if (opts.crossover_size == 2) crossover(opts, offspring);
 
-    // Binary crossover with probability.
-    if (opts.crossover_size == 2)
-      {
-	real_dist dist{0, 1};
-	for (unsigned int i = 0; i < offspring.size(); i += 2)
-	  if (dist(rg.engine) < opts.crossover_chance)
-	    crossover(opts.internals_chance, offspring[i], offspring[i + 1]);
-      }
     // Mutate and evaluate children.
-    for (Individual& child : offspring)
+    real_dist dist{0, 1};
+    for (auto& child : offspring)
       {
 	// Mutate children conditionally.
-	real_dist dist{0, 1};
 	if (dist(rg.engine) < opts.mutate_chance)
 	  child.mutate(opts.min_depth, opts.max_depth, opts.grow_chance);
 	// Evaluate all children

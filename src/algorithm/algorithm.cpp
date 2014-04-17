@@ -51,29 +51,42 @@ namespace algorithm
   /* Return best candidate from size number of contestants randomly
      drawn from population. */
   Individual
-  selection(unsigned int size, const vector<Individual>& population)
+  select(int size, int begin, int end, const vector<Individual>& pop)
   {
-    int_dist dist{0, static_cast<int>(population.size()) - 1}; // closed interval
-    vector<Individual> group;
+    int_dist dist{begin, end - 1}; // closed interval
+    vector<unsigned int> group;
     group.reserve(size);
 
-    auto pick = [&dist, &population]() mutable { return population[dist(rg.engine)]; };
+    auto pick = [&dist, &pop]() mutable { return dist(rg.engine); };
     std::generate_n(std::back_inserter(group), size, pick);
-
-    return *std::min_element(group.begin(), group.end(), compare_fitness());
+    // Population is sorted, so choose lowest index of random three
+    return pop[*std::min_element(group.begin(), group.end())];
   }
 
-  /* Return new offspring population. */
+  /* Return new offspring population.  The pop is not passed const as
+     it must be sorted. */
   vector<Individual>
-  new_offspring(const vector<Individual>& population, const Options& options)
+  new_offspring(vector<Individual>& pop, const Options& opts)
   {
+    using std::generate_n;
+    using std::back_inserter;
+
     // Select parents for children.
     vector<Individual> offspring;
-    offspring.reserve(population.size());
+    offspring.reserve(pop.size());
 
-    auto select = [&options, &population]
-      { return selection(options.tournament_size, population); };
-    std::generate_n(std::back_inserter(offspring), population.size(), select);
+    std::sort(pop.begin(), pop.end(), compare_fitness());
+
+    unsigned int strong_size = opts.over_select_chance * opts.pop_size;
+    unsigned int weak_size = opts.pop_size - strong_size;
+
+    auto select_strong = [&opts, &pop]
+      { return select(opts.tourney_size, 0, opts.fitter_size, pop); };
+    generate_n(back_inserter(offspring), strong_size, select_strong);
+
+    auto select_weak = [&opts, &pop]
+      { return select(opts.tourney_size, opts.fitter_size, pop.size(), pop); };
+    generate_n(back_inserter(offspring), weak_size, select_weak);
 
     // Binary crossover with probability.
     if (opts.crossover_size == 2)

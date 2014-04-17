@@ -63,10 +63,12 @@ namespace options
     unsigned int max_depth;
     unsigned int depth_limit;
     unsigned int tourney_size;
+    unsigned int fitter_size;
     unsigned int crossover_size;
     unsigned int elitism_size;
     float penalty;
     float grow_chance;
+    float over_select_chance;
     float mutate_chance;
     float crossover_chance;
     float internals_chance;

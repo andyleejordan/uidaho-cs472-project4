@@ -193,10 +193,12 @@ namespace options
     assert(generations > 0);
     assert(pop_size > 0);
     assert(tourney_size > 0 and tourney_size <= pop_size);
+    assert(fitter_size > 0 and fitter_size <= pop_size);
     assert(crossover_size == 2 or crossover_size == 0);
     assert(elitism_size <= pop_size);
     assert(penalty >= 0 and penalty <= 1);
     assert(grow_chance >= 0 and grow_chance <= 1);
+    assert(over_select_chance >= 0 and over_select_chance <= 1);
     assert(mutate_chance >= 0 and mutate_chance <= 1);
     assert(crossover_chance >= 0 and crossover_chance <= 1);
     assert(internals_chance >= 0 and internals_chance <= 1);
@@ -262,13 +264,18 @@ namespace options
        default_value(3),
        "set the tournment size to adjust selection pressure")
 
+      ("fitter-size,F",
+       value<unsigned int>(&options.fitter_size)->
+       default_value(320),
+       "set the population size of fitter group")
+
       ("crossover-size",
        value<unsigned int>(&options.crossover_size)->
        default_value(2),
        "set the crossover size(binary in current implementation)")
 
       ("elitism-size,E", value<unsigned int>(&options.elitism_size)->
-       default_value(2),
+       default_value(3),
        "set the number of elitism replacements to make each iteration")
 
       ("ticks", value<unsigned int>(&ticks)->
@@ -282,6 +289,10 @@ namespace options
       ("grow-chance", value<float>(&options.grow_chance)->
        default_value(0.5),
        "set the probability that an initial tree will be made by the grow method")
+
+      ("over-select-chance,O", value<float>(&options.over_select_chance)->
+       default_value(0.8),
+       "set the probability that a selection is made from the fitter group")
 
       ("mutate-chance,M", value<float>(&options.mutate_chance)->
        default_value(0.05),

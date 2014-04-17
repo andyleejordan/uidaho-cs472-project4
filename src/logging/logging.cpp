@@ -44,15 +44,21 @@ namespace logging
     using std::setw;
     log << "# running a Genetic Program @ "
 	<< std::ctime(&time)
-	<< "# initial depth: " << options.max_depth
-	<< ", generations: " << options.generations
-	<< ", population size: " << options.population_size
-	<< ", tournament size: " << options.tournament_size
+	<< "# generations: " << options.generations
+	<< ", population size: " << options.pop_size
+      	<< ", min depth: " << options.min_depth
+	<< ", max depth: " << options.max_depth
+      	<< ", depth limit: " << options.depth_limit
+	<< ", tournament size: " << options.tourney_size
+      	<< ", fitter size: " << options.fitter_size
+	<< ", crossover size: " << options.crossover_size
 	<< ", elitism size: " << options.elitism_size
 	<< ", fitness penalty: " << options.penalty << " * total size"
-	<< ", crossover chance: " << options.crossover_chance
-	<< ", mutate chance: " << options.mutate_chance
 	<< ", grow chance: " << options.grow_chance
+	<< ", over select chance: " << options.over_select_chance
+	<< ", mutate chance: " << options.mutate_chance
+	<< ", crossover chance: " << options.crossover_chance
+      	<< ", internals chance: " << options.internals_chance
 	<< std::left
 	<< setw(width) << "\n# gen"
 	<< setw(width) << "score"

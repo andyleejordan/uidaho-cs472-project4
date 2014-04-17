@@ -248,7 +248,7 @@ namespace options
        "set the size of each population")
 
       ("min-depth", value<unsigned int>(&options.min_depth)->
-       default_value(1),
+       default_value(2),
        "set the minimum depth for initial populations")
 
       ("max-depth,d", value<unsigned int>(&options.max_depth)->

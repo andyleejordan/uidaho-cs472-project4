@@ -29,10 +29,10 @@ namespace trials
     std::vector<std::future<const Individual>> results;
     results.reserve(trials);
 
-    auto async = [&time, &trial, &options]() mutable
-      { return std::async(std::launch::async,
-			  algorithm::genetic, time, ++trial, options); };
-    std::generate_n(std::back_inserter(results), trials, async);
+    auto task = [&time, &trial, &options]() mutable
+      { return async(std::launch::async,
+		     algorithm::genetic, time, ++trial, options); };
+    generate_n(back_inserter(results), trials, task);
     // Gather future results.
     for (std::future<const Individual>& result : results)
       candidates.emplace_back(result.get());
@@ -58,12 +58,10 @@ namespace trials
     // Retrieve best element.
     auto compare = [](const Individual& a, const Individual&b)
       { return a.get_score() > b.get_score(); };
-    std::vector<Individual>::iterator best
-      = std::min_element(begin(candidates), end(candidates), compare);
+    auto best = min_element(begin(candidates), end(candidates), compare);
 
     /* Get which trial was best.  Filenames are not zero-indexed so
        increase by one. */
-    int distance = std::distance(begin(candidates), best) + 1;
-    return std::make_tuple(distance, *best);
+    return std::make_tuple(distance(begin(candidates), best) + 1, *best);
   }
 }

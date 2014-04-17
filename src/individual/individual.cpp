@@ -48,7 +48,7 @@ namespace individual
   template<typename I, typename S> bool
   contains(const I& item, const S& set)
   {
-    return std::find(begin(set), end(set), item) != end(set);
+    return find(begin(set), end(set), item) != end(set);
   }
 
   // Returns the appropriate arity for a given function.
@@ -88,9 +88,8 @@ namespace individual
 	arity = get_arity(function);
 	// Recursively create subtrees.
 	children.reserve(arity);
-	auto make_node = [method, max_depth, depth]
-	  { return Node{method, max_depth, depth + 1}; };
-	std::generate_n(std::back_inserter(children), arity, make_node);
+	generate_n(back_inserter(children), arity, [method, max_depth, depth]
+		   { return Node{method, max_depth, depth + 1}; });
       }
     assert(function != Function::nil); // do not create null types
     assert(children.size() == arity); // ensure arity
@@ -212,7 +211,7 @@ namespace individual
 	    size.leaves += temp.leaves;
 	    depths.emplace_back(temp.depth);
 	  }
-	size.depth = 1 + *std::max_element(begin(depths), end(depths));
+	size.depth = 1 + *max_element(begin(depths), end(depths));
 	++size.internals;
       }
     return size;

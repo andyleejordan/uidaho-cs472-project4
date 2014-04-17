@@ -43,7 +43,7 @@ namespace algorithm
     pop.reserve(options.pop_size);
 
     auto create = [&options]() { return Individual{options}; };
-    std::generate_n(std::back_inserter(pop), options.pop_size, create);
+    generate_n(back_inserter(pop), options.pop_size, create);
 
     return pop;
   }
@@ -57,10 +57,10 @@ namespace algorithm
     vector<unsigned int> group;
     group.reserve(size);
 
-    auto pick = [&dist, &pop]() mutable { return dist(rg.engine); };
-    std::generate_n(back_inserter(group), size, pick);
+    generate_n(back_inserter(group), size, [&dist, &pop]() mutable
+	       { return dist(rg.engine); } );
     // Population is sorted, so choose lowest index of random three
-    return pop[*std::min_element(begin(group), end(group))];
+    return pop[*min_element(begin(group), end(group))];
   }
 
   /* Return new offspring population.  The pop is not passed const as
@@ -72,18 +72,16 @@ namespace algorithm
     vector<Individual> offspring;
     offspring.reserve(pop.size());
 
-    std::sort(begin(pop), end(pop), compare_fitness());
+    sort(begin(pop), end(pop), compare_fitness());
 
     unsigned int strong_size = opts.over_select_chance * opts.pop_size;
     unsigned int weak_size = opts.pop_size - strong_size;
 
-    auto select_strong = [&opts, &pop]
-      { return select(opts.tourney_size, 0, opts.fitter_size, pop); };
-    generate_n(back_inserter(offspring), strong_size, select_strong);
+    generate_n(back_inserter(offspring), strong_size, [&opts, &pop]
+	       { return select(opts.tourney_size, 0, opts.fitter_size, pop); });
 
-    auto select_weak = [&opts, &pop]
-      { return select(opts.tourney_size, opts.fitter_size, pop.size(), pop); };
-    generate_n(back_inserter(offspring), weak_size, select_weak);
+    generate_n(back_inserter(offspring), weak_size, [&opts, &pop]
+	       { return select(opts.tourney_size, opts.fitter_size, pop.size(), pop); });
 
     // Binary crossover with probability.
     if (opts.crossover_size == 2)
@@ -130,13 +128,12 @@ namespace algorithm
     for (unsigned int g(0); g < options.generations; ++g)
       {
 	// Find best Individual of current population.
-	best = *std::min_element(begin(pop), end(pop),
-				 compare_fitness());
+	best = *min_element(begin(pop), end(pop), compare_fitness());
 
 	// Launch background logging thread.
-	auto log_thread = std::async(std::launch::async, logging::log_info,
-				     options.verbosity, options.logs_dir, time,
-				     trial, g, best, pop);
+	auto log_thread = async(std::launch::async, logging::log_info,
+				options.verbosity, options.logs_dir, time,
+				trial, g, best, pop);
 
 	// Create replacement population.
 	vector<Individual> offspring = new_offspring(pop, options);
@@ -147,22 +144,22 @@ namespace algorithm
 	  offspring[dist(rg.engine)] = best;
 
 	// Replace current population with offspring.
-	pop = std::move(offspring);
+	pop = move(offspring);
 
 	// Sync with background logging thread.
 	log_thread.wait();
       }
     // End timing algorithm.
     auto stop = std::chrono::system_clock::now();
-    std::chrono::duration<double> elapsed_seconds = stop - start;
-    std::time_t stop_time = std::chrono::system_clock::to_time_t(stop);
+    auto elapsed_seconds = stop - start;
+    auto stop_time = std::chrono::system_clock::to_time_t(stop);
 
     // Log time information.
     if (options.verbosity > 0)
       {
 	logging::open_log(log, time, trial, options.logs_dir);
 	log << best.print() << best.print_formula()
-	    << "# Finished computation @ " << std::ctime(&stop_time)
+	    << "# Finished computation @ " << ctime(&stop_time)
 	    << "# Elapsed time: " << elapsed_seconds.count() << "s\n";
 	log.close();
       }

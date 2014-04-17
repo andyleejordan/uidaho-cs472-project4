@@ -59,11 +59,11 @@ namespace trials
     auto compare = [](const Individual& a, const Individual&b)
       { return a.get_score() > b.get_score(); };
     std::vector<Individual>::iterator best
-      = std::min_element(candidates.begin(), candidates.end(), compare);
+      = std::min_element(begin(candidates), end(candidates), compare);
 
     /* Get which trial was best.  Filenames are not zero-indexed so
        increase by one. */
-    int distance = std::distance(candidates.begin(), best) + 1;
+    int distance = std::distance(begin(candidates), best) + 1;
     return std::make_tuple(distance, *best);
   }
 }

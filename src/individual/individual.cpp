@@ -48,7 +48,7 @@ namespace individual
   template<typename I, typename S> bool
   contains(const I& item, const S& set)
   {
-    return std::find(set.begin(), set.end(), item) != set.end();
+    return std::find(begin(set), end(set), item) != end(set);
   }
 
   // Returns the appropriate arity for a given function.
@@ -212,7 +212,7 @@ namespace individual
 	    size.leaves += temp.leaves;
 	    depths.emplace_back(temp.depth);
 	  }
-	size.depth = 1 + *std::max_element(depths.begin(), depths.end());
+	size.depth = 1 + *std::max_element(begin(depths), end(depths));
 	++size.internals;
       }
     return size;

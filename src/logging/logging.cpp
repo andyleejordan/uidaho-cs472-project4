@@ -78,24 +78,24 @@ namespace logging
   log_info(const unsigned int verbosity, const std::string& logs_dir,
 	   const std::time_t& time, const unsigned int trial,
 	   const unsigned int generation, const Individual& best,
-	   const std::vector<Individual>& population)
+	   const std::vector<Individual>& pop)
   {
     // Don't log if verbosity is zero, but still allow calls to this function.
     if (verbosity == 0)
       return;
 
     float total_fitness =
-      std::accumulate(population.begin(), population.end(), 0.,
+      std::accumulate(begin(pop), end(pop), 0.,
 		      [](const float a, const Individual& b)
 		      { return a + b.get_adjusted(); });
 
     unsigned int total_size =
-      std::accumulate(population.begin(), population.end(), 0,
+      std::accumulate(begin(pop), end(pop), 0,
 		      [](const unsigned int a, const Individual& b)
 		      { return a + b.get_total(); });
 
     unsigned int total_depth =
-      std::accumulate(population.begin(), population.end(), 0,
+      std::accumulate(begin(pop), end(pop), 0,
 		      [](const unsigned int a, const Individual& b)
 		      { return a + b.get_depth(); });
 
@@ -106,11 +106,11 @@ namespace logging
 	<< setw(width) << generation
 	<< setw(width) << best.get_score()
 	<< setw(width) << best.get_adjusted()
-	<< setw(width) << total_fitness / population.size()
+	<< setw(width) << total_fitness / pop.size()
 	<< setw(width) << best.get_total()
-	<< setw(width) << static_cast<float>(total_size) / population.size()
+	<< setw(width) << static_cast<float>(total_size) / pop.size()
 	<< setw(width) << best.get_depth()
-	<< setw(width) << static_cast<float>(total_depth) / population.size()
+	<< setw(width) << static_cast<float>(total_depth) / pop.size()
 	<< std::endl;
     log.close();
   }

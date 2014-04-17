@@ -51,16 +51,16 @@ namespace algorithm
   /* Return best candidate from size number of contestants randomly
      drawn from population. */
   Individual
-  select(int size, int begin, int end, const vector<Individual>& pop)
+  select(int size, int start, int stop, const vector<Individual>& pop)
   {
-    int_dist dist{begin, end - 1}; // closed interval
+    int_dist dist{start, stop - 1}; // closed interval
     vector<unsigned int> group;
     group.reserve(size);
 
     auto pick = [&dist, &pop]() mutable { return dist(rg.engine); };
-    std::generate_n(std::back_inserter(group), size, pick);
+    std::generate_n(back_inserter(group), size, pick);
     // Population is sorted, so choose lowest index of random three
-    return pop[*std::min_element(group.begin(), group.end())];
+    return pop[*std::min_element(begin(group), end(group))];
   }
 
   /* Return new offspring population.  The pop is not passed const as
@@ -68,14 +68,11 @@ namespace algorithm
   vector<Individual>
   new_offspring(vector<Individual>& pop, const Options& opts)
   {
-    using std::generate_n;
-    using std::back_inserter;
-
     // Select parents for children.
     vector<Individual> offspring;
     offspring.reserve(pop.size());
 
-    std::sort(pop.begin(), pop.end(), compare_fitness());
+    std::sort(begin(pop), end(pop), compare_fitness());
 
     unsigned int strong_size = opts.over_select_chance * opts.pop_size;
     unsigned int weak_size = opts.pop_size - strong_size;
@@ -123,8 +120,7 @@ namespace algorithm
 	logging::start_log(log, time, options);
       }
     // Begin timing algorithm.
-    std::chrono::time_point<std::chrono::system_clock> start, end;
-    start = std::chrono::system_clock::now();
+    auto start = std::chrono::system_clock::now();
 
     // Create initial population.
     vector<Individual> pop = new_population(options);
@@ -134,7 +130,7 @@ namespace algorithm
     for (unsigned int g(0); g < options.generations; ++g)
       {
 	// Find best Individual of current population.
-	best = *std::min_element(pop.begin(), pop.end(),
+	best = *std::min_element(begin(pop), end(pop),
 				 compare_fitness());
 
 	// Launch background logging thread.
@@ -157,16 +153,16 @@ namespace algorithm
 	log_thread.wait();
       }
     // End timing algorithm.
-    end = std::chrono::system_clock::now();
-    std::chrono::duration<double> elapsed_seconds = end - start;
-    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+    auto stop = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_seconds = stop - start;
+    std::time_t stop_time = std::chrono::system_clock::to_time_t(stop);
 
     // Log time information.
     if (options.verbosity > 0)
       {
 	logging::open_log(log, time, trial, options.logs_dir);
 	log << best.print() << best.print_formula()
-	    << "# Finished computation @ " << std::ctime(&end_time)
+	    << "# Finished computation @ " << std::ctime(&stop_time)
 	    << "# Elapsed time: " << elapsed_seconds.count() << "s\n";
 	log.close();
       }

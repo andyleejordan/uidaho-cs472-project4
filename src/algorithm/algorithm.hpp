@@ -23,7 +23,7 @@ namespace algorithm
   };
 
   const individual::Individual
-  genetic(unsigned int, const std::time_t&, const options::Options& options);
+  genetic(const std::time_t&, const unsigned int, const options::Options&);
 }
 
 #endif /* _ALGORITHM_H_ */

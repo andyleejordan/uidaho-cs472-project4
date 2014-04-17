@@ -17,7 +17,7 @@ namespace options { struct Options; }
 namespace trials
 {
   const std::tuple<int, individual::Individual>
-  run(const options::Options&, const std::time_t&);
+  run(const std::time_t&, const options::Options&);
 }
 
 #endif /* _TRIALS_H_ */

@@ -29,7 +29,7 @@ main(int argc, char* argv[])
 
   // Run trials and save best Individual.
   const std::tuple<int, individual::Individual> best =
-    trials::run(options, time);
+    trials::run(time, options);
 
   // End timing trials.
   end = std::chrono::system_clock::now();

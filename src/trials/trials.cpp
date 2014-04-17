@@ -21,9 +21,9 @@ namespace trials
 
   // Push results
   void
-  push_results(const options::Options& options, const std::time_t& time,
-	       unsigned int& trial, const unsigned int trials,
-	       std::vector<Individual>& candidates)
+  push_results(const std::time_t& time, unsigned int& trial,
+	       const unsigned int trials, std::vector<Individual>& candidates,
+	       const options::Options& options)
   {
     // Spawn blocks number of async threads.
     std::vector<std::future<const Individual>> results;
@@ -40,7 +40,7 @@ namespace trials
 
   // Spawn trials number of threads in blocks.
   const std::tuple<int, individual::Individual>
-  run(const options::Options& options, const std::time_t& time)
+  run(const std::time_t& time, const options::Options& options)
   {
     const unsigned long hardware_threads = std::thread::hardware_concurrency();
     const unsigned long blocks = (hardware_threads != 0) ? hardware_threads : 2;
@@ -50,10 +50,10 @@ namespace trials
 
     // Spawn trials in chunks of size blocks.
     for (unsigned long t = 0; t < options.trials / blocks; ++t)
-      push_results(options, time, trial, blocks, candidates);
+      push_results(time, trial, blocks, candidates, options);
 
     // Spawn remaining trials.
-    push_results(options, time, trial, options.trials % blocks, candidates);
+    push_results(time, trial, options.trials % blocks, candidates, options);
 
     // Retrieve best element.
     auto compare = [](const Individual& a, const Individual&b)

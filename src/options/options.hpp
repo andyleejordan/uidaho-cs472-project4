@@ -58,11 +58,11 @@ namespace options
     Map map;
     unsigned int trials;
     unsigned int generations;
-    unsigned int population_size;
+    unsigned int pop_size;
     unsigned int min_depth;
     unsigned int max_depth;
     unsigned int depth_limit;
-    unsigned int tournament_size;
+    unsigned int tourney_size;
     unsigned int crossover_size;
     unsigned int elitism_size;
     float penalty;

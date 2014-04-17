@@ -191,10 +191,10 @@ namespace options
   {
     assert(trials > 0);
     assert(generations > 0);
-    assert(population_size > 0);
-    assert(tournament_size > 0 and tournament_size <= population_size);
+    assert(pop_size > 0);
+    assert(tourney_size > 0 and tourney_size <= pop_size);
     assert(crossover_size == 2 or crossover_size == 0);
-    assert(elitism_size <= population_size);
+    assert(elitism_size <= pop_size);
     assert(penalty >= 0 and penalty <= 1);
     assert(grow_chance >= 0 and grow_chance <= 1);
     assert(mutate_chance >= 0 and mutate_chance <= 1);
@@ -241,8 +241,8 @@ namespace options
        "set the number of iterations for which to run each trial")
 
       ("population,p",
-       value<unsigned int>(&options.population_size)->
-       default_value(128),
+       value<unsigned int>(&options.pop_size)->
+       default_value(1024),
        "set the size of each population")
 
       ("min-depth", value<unsigned int>(&options.min_depth)->
@@ -250,7 +250,7 @@ namespace options
        "set the minimum depth for initial populations")
 
       ("max-depth,d", value<unsigned int>(&options.max_depth)->
-       default_value(4),
+       default_value(6),
        "set the maximum depth for initial populations")
 
       ("depth-limit,l", value<unsigned int>(&options.depth_limit)->
@@ -258,7 +258,7 @@ namespace options
        "set the depth limit for individuals")
 
       ("tournament-size,T",
-       value<unsigned int>(&options.tournament_size)->
+       value<unsigned int>(&options.tourney_size)->
        default_value(3),
        "set the tournment size to adjust selection pressure")
 
@@ -291,7 +291,7 @@ namespace options
        default_value(0.8),
        "set the probability that crossover will be performed")
 
-      ("internals", value<float>(&options.internals_chance)->
+      ("internals-chance", value<float>(&options.internals_chance)->
        default_value(0.9),
        "set the probability that a crossover target node will be an internal node")
 

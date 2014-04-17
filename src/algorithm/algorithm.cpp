@@ -25,7 +25,7 @@ namespace algorithm
   using options::Options;
   using namespace random_generator;
 
-  // Returns true if "a" is closer to 0 than "b" and is also normal.
+  // Returns true if "a" is ordered before "b", i.e. more fit
   bool
   compare_fitness::operator()(const Individual& a, const Individual& b)
   {
@@ -39,13 +39,13 @@ namespace algorithm
   vector<Individual>
   new_population(const Options& options)
   {
-    vector<Individual> population;
-    population.reserve(options.population_size);
+    vector<Individual> pop;
+    pop.reserve(options.pop_size);
 
     auto create = [&options]() { return Individual{options}; };
-    std::generate_n(std::back_inserter(population), options.population_size, create);
+    std::generate_n(std::back_inserter(pop), options.pop_size, create);
 
-    return population;
+    return pop;
   }
 
   /* Return best candidate from size number of contestants randomly
@@ -76,22 +76,22 @@ namespace algorithm
     std::generate_n(std::back_inserter(offspring), population.size(), select);
 
     // Binary crossover with probability.
-    if (options.crossover_size == 2)
+    if (opts.crossover_size == 2)
       {
 	real_dist dist{0, 1};
 	for (unsigned int i = 0; i < offspring.size(); i += 2)
-	  if (dist(rg.engine) < options.crossover_chance)
-	    crossover(options.internals_chance, offspring[i], offspring[i + 1]);
+	  if (dist(rg.engine) < opts.crossover_chance)
+	    crossover(opts.internals_chance, offspring[i], offspring[i + 1]);
       }
     // Mutate and evaluate children.
     for (Individual& child : offspring)
       {
 	// Mutate children conditionally.
 	real_dist dist{0, 1};
-	if (dist(rg.engine) < options.mutate_chance)
-	  child.mutate(options.min_depth, options.max_depth, options.grow_chance);
+	if (dist(rg.engine) < opts.mutate_chance)
+	  child.mutate(opts.min_depth, opts.max_depth, opts.grow_chance);
 	// Evaluate all children
-	child.evaluate(options.map, options.penalty); // Evaluate children
+	child.evaluate(opts.map, opts.penalty); // Evaluate children
       }
     return offspring;
   }
@@ -114,31 +114,31 @@ namespace algorithm
     start = std::chrono::system_clock::now();
 
     // Create initial population.
-    vector<Individual> population = new_population(options);
+    vector<Individual> pop = new_population(options);
     Individual best;
 
     // Run algorithm to termination.
     for (unsigned int g(0); g < options.generations; ++g)
       {
 	// Find best Individual of current population.
-	best = *std::min_element(population.begin(), population.end(),
+	best = *std::min_element(pop.begin(), pop.end(),
 				 compare_fitness());
 
 	// Launch background logging thread.
 	auto log_thread = std::async(std::launch::async, logging::log_info,
 				     options.verbosity, options.logs_dir, time,
-				     trial, g, best, population);
+				     trial, g, best, pop);
 
 	// Create replacement population.
-	vector<Individual> offspring = new_offspring(population, options);
+	vector<Individual> offspring = new_offspring(pop, options);
 
 	// Perform elitism replacement of random individuals.
-	int_dist dist{0, static_cast<int>(options.population_size) - 1};
+	int_dist dist{0, static_cast<int>(options.pop_size) - 1};
 	for (unsigned int e(0); e < options.elitism_size; ++e)
 	  offspring[dist(rg.engine)] = best;
 
 	// Replace current population with offspring.
-	population = std::move(offspring);
+	pop = std::move(offspring);
 
 	// Sync with background logging thread.
 	log_thread.wait();

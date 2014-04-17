@@ -170,13 +170,11 @@ namespace options
 	for (const Cell& cell : row)
 	  {
 	    // Add blank, food, and marked locations
-	    if (cell == Cell::blank) out << '.';
-	    else if (cell == Cell::food) out << 'x';
-	    else if (cell == Cell::marked) out << 'o';
-	    else
+	    switch (cell)
 	      {
-		std::cerr << "Map is malformed!\n";
-		std::exit(EXIT_FAILURE);
+	      case Cell::blank: out << '.'; break;
+	      case Cell::food: out << 'x'; break;
+	      case Cell::marked: out << 'o'; break;
 	      }
 	  }
 	// Add newline after each row

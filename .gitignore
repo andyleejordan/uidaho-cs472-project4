@@ -13,8 +13,11 @@
 /configure.scan
 /depcomp
 /install-sh
+/logs/
 /missing
+/plots/
 /search
+/search.cfg
 /src/.deps/
 /src/.dirstamp
 /src/algorithm/.deps/

@@ -199,10 +199,12 @@ namespace individual
     Size size;
 
     if (children.empty())
-      ++size.leaves;
+      {
+	++size.leaves;
+      }
     else
       {
-	vector<unsigned int> depths;
+	vector<int> depths;
 	depths.reserve(arity);
 	for (const Node& child : children)
 	  {

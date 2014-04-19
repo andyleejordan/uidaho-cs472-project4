@@ -28,8 +28,9 @@ main(int argc, char* argv[])
   start = std::chrono::system_clock::now();
 
   // Run trials and save best Individual.
-  const std::tuple<int, individual::Individual> best =
-    trials::run(time, options);
+  int best_index;
+  individual::Individual best;
+  std::tie(best_index, best) = trials::run(time, options);
 
   // End timing trials.
   end = std::chrono::system_clock::now();
@@ -39,8 +40,8 @@ main(int argc, char* argv[])
   std::cout << "Total elapsed time: " << elapsed_seconds.count() << "s\n"
 	    << "Average time: " << elapsed_seconds.count() / options.trials
 	    << "s\nBest trial: " << time << "_"
-	    << std::get<0>(best) << "\n"
-	    << std::get<1>(best).print();
+	    << best_index << "\n"
+	    << best.print();
 
   return EXIT_SUCCESS;
 }

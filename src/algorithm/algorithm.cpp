@@ -134,40 +134,40 @@ namespace algorithm
   /* The actual genetic algorithm applied which (hopefully) produces a
      well-fit expression for a given dataset. */
   const individual::Individual
-  genetic(const std::time_t& time, const unsigned int trial,
-	  const Options& options)
+  genetic(const std::time_t& time, int trial, const Options& opts)
   {
     // Start logging
     std::ofstream log;
-    if (options.verbosity > 0)
+    if (opts.verbosity > 0)
       {
-	logging::open_log(log, time, trial, options.logs_dir);
-	logging::start_log(log, time, options);
+	logging::open_log(log, time, trial, opts.logs_dir);
+	logging::start_log(log, time, opts);
       }
+
     // Begin timing algorithm.
     auto start = std::chrono::system_clock::now();
 
     // Create initial population.
-    vector<Individual> pop = new_population(options);
+    vector<Individual> pop = new_population(opts);
     Individual best;
 
     // Run algorithm to termination.
-    for (unsigned int g(0); g < options.generations; ++g)
+    for (unsigned int g(0); g < opts.generations; ++g)
       {
 	// Find best Individual of current population.
 	best = *min_element(begin(pop), end(pop), compare_fitness());
 
 	// Launch background logging thread.
-	auto log_thread = async(std::launch::async, logging::log_info,
-				options.verbosity, options.logs_dir, time,
-				trial, g, best, pop);
+	auto log_thread =
+	  async(std::launch::async, logging::log_info,
+		opts.verbosity, opts.logs_dir, time, trial, g, best, pop);
 
 	// Create replacement population.
 	vector<Individual> offspring = new_offspring(pop, options);
 
 	// Perform elitism replacement of random individuals.
-	int_dist dist{0, static_cast<int>(options.pop_size) - 1};
-	for (unsigned int e(0); e < options.elitism_size; ++e)
+	int_dist dist{0, static_cast<int>(opts.pop_size) - 1};
+	for (unsigned int e(0); e < opts.elitism_size; ++e)
 	  offspring[dist(rg.engine)] = best;
 
 	// Replace current population with offspring.
@@ -176,24 +176,26 @@ namespace algorithm
 	// Sync with background logging thread.
 	log_thread.wait();
       }
+
     // End timing algorithm.
     auto stop = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = stop - start;
     auto stop_time = std::chrono::system_clock::to_time_t(stop);
 
     // Log time information.
-    if (options.verbosity > 0)
+    if (opts.verbosity > 0)
       {
-	logging::open_log(log, time, trial, options.logs_dir);
+	logging::open_log(log, time, trial, opts.logs_dir);
 	log << best.print() << best.print_formula()
 	    << "# Finished computation @ " << ctime(&stop_time)
 	    << "# Elapsed time: " << elapsed_seconds.count() << "s\n";
 	log.close();
       }
+
     // Log evaluation plot data of best individual.
     std::ofstream plot;
-    logging::open_log(plot, time, trial, options.plots_dir);
-    plot << best.evaluate(options.map, options.penalty, true);
+    logging::open_log(plot, time, trial, opts.plots_dir);
+    plot << best.evaluate(opts.map, opts.penalty, true);
     plot.close();
 
     return best;

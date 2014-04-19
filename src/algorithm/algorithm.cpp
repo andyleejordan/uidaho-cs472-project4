@@ -116,13 +116,16 @@ namespace algorithm
     sort(begin(brood), end(brood), compare_fitness());
     if (begin(brood) != end(brood))
       {
+	// Assign the first pup to the first parent
 	assert(brood.size() >= 1);
 	*parent = std::move(*begin(brood));
-      }
-    if (next(begin(brood)) != end(brood))
-      {
-	assert(brood.size() >= 2);
-	*next(parent) = std::move(*next(begin(brood)));
+
+	if (next(begin(brood)) != end(brood))
+	  {
+	    // Assign the second pup to the second parent
+	    assert(brood.size() >= 2);
+	    *next(parent) = std::move(*next(begin(brood)));
+	  }
       }
   }
 

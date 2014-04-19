@@ -65,9 +65,13 @@ namespace individual
   // Default constructor for "empty" node
   Node::Node(): function{Function::nil}, arity{0} {}
 
+  // Delegate that unpacks a tuple as args to actual constructor
+  Node::Node(std::tuple<Method, int, int> args):
+    Node{std::get<0>(args), std::get<1>(args), std::get<2>(args)} {}
+
   /* Recursively constructs a parse tree using the given method
-     (either GROW or FULL). */
-  Node::Node(const Method method, const int max_depth, const int depth)
+     (either 'grow' or 'full'). */
+  Node::Node(Method method, int max_depth, int depth): Node{}
   {
     // Create leaf node if at the max depth or randomly (if growing).
     real_dist dist{0, 1};
@@ -75,12 +79,8 @@ namespace individual
       static_cast<float>(leaves.size()) / (leaves.size() + internals.size());
     if (depth == max_depth
 	or (depth != 0 and (method == Method::grow and dist(rg.engine) < chance)))
-      {
-	function = get_function(leaves);
-	arity = 0; // leaves are always zero
-      }
-    // Otherwise choose an internal node.
-    else
+      { function = get_function(leaves); }
+    else // Otherwise choose an internal node.
       {
 	function = get_function(internals);
 	arity = get_arity(function);
@@ -97,17 +97,17 @@ namespace individual
      range.  The min_depth and max_depth are casted to int in the
      arguments to eliminate need for static_cast<int> in the
      depth_dist. */
-  Node create(const int min_depth = 0, const int max_depth = 0,
-	      const float chance = 0.5)
+  std::tuple<Method, int, int>
+  get_node_args(int min = 0, int max = 0, float chance = 0.5)
   {
     real_dist method_dist{0, 1};
     Method method = (method_dist(rg.engine) < chance)
       ? Method::grow : Method::full;
 
-    int_dist depth_dist{min_depth, max_depth};
+    int_dist depth_dist{min, max};
     int depth = depth_dist(rg.engine);
 
-    return Node{method, depth, 0};
+    return std::make_tuple(method, depth, 0); // 0 is starting depth
   }
 
   // Returns a string visually representing a particular node.
@@ -274,7 +274,7 @@ namespace individual
       { children.pop_back(); }
 
     while (children.size() < arity)
-      children.emplace_back(create(min, max, chance));
+      { children.emplace_back(get_node_args(min, max, chance)); }
 
     assert(arity == children.size());
     assert(function != Function::nil);
@@ -284,16 +284,12 @@ namespace individual
   Individual::Individual() {}
 
   /* Create an Individual tree by having a root node (to which the
-     actual construction is delegated). The depth is passed by value
-     as its creation elsewhere is temporary. */
+     actual construction is delegated).  Calling evaluate updates the
+     size, fitness, adjusted fitness, and score. */
   Individual::Individual(const options::Options& options)
-    : root(create(options.min_depth, options.max_depth, options.grow_chance)),
-      score(0), fitness(0), adjusted(0)
-  {
-    /* The evaluate method updates the size, fitness, adjusted
-       fitness, and score. */
-    evaluate(options.map);
-  }
+    : root{get_node_args(options.min_depth, options.max_depth, options.grow_chance)},
+      score{0}, fitness{0}, adjusted{0}
+  { evaluate(options.map); }
 
   // Return string representation of a tree's size and fitness.
   string
@@ -355,7 +351,7 @@ namespace individual
     int_dist op_dist{0, static_cast<int>(operators.size()) - 1}; // closed interval
     const Operator op = operators[op_dist(rg.engine)];
 
-    Size p = get_node(Type::internal);
+    Size p = get_node_location(Type::internal);
     if (at(p).children.empty()) return; // p may have been root
 
     int_dist c_dist{0, static_cast<int>(at(p).children.size()) - 1}; // closed interval
@@ -366,7 +362,7 @@ namespace individual
       {
       case O::shrink:
 	// Replace c with a leaf node
-	at(p).children[c] = std::move(create(0, 0)); break;
+	at(p).children[c] = std::move(Node{get_node_args(0, 0)}); break;
 
       case O::hoist:
 	// Make c the new root
@@ -374,7 +370,7 @@ namespace individual
 
       case O::subtree:
 	// Replace c with new subtree to depth 6
-	at(p).children[c] = std::move(create(min, max, chance)); break;
+	at(p).children[c] = std::move(Node{get_node_args(min, max, chance)}); break;
 
       case O::replacement:
 	// Replace c with node of same type (internal/leaf)

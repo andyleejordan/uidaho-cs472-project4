@@ -37,7 +37,8 @@ namespace individual
 
   public:
     Node();
-    Node(const Method, const int, const int);
+    Node(Method, int, int);
+    Node(std::tuple<Method, int, int>);
 
   protected:
     std::string print() const;

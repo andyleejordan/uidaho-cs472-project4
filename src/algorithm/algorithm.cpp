@@ -88,7 +88,7 @@ namespace algorithm
     brood.reserve(opts.brood_count * opts.crossover_size);
 
     // Create N copies of the pair
-    for (unsigned int i(0); i < opts.brood_count; ++i)
+    for (int i(0); i < opts.brood_count; ++i)
       {
 	brood.push_back(*parent);
 	brood.push_back(*next(parent));
@@ -111,7 +111,7 @@ namespace algorithm
 
     // Kill pups with too great a depth.
     auto remove = [&opts, &brood](const Individual& a)
-      { return (static_cast<unsigned int>(a.get_depth()) > opts.depth_limit); };
+      { return (a.get_depth() > opts.depth_limit); };
     brood.erase(remove_if(begin(brood), end(brood), remove), end(brood));
 
     // Replace parents with best pair of brood if available.
@@ -199,7 +199,7 @@ namespace algorithm
     Individual best;
 
     // Run algorithm to termination.
-    for (unsigned int g(0); g < opts.generations; ++g)
+    for (int g(0); g < opts.generations; ++g)
       {
 	// Find best Individual of current population.
 	best = *min_element(begin(pop), end(pop), compare_fitness());
@@ -214,7 +214,7 @@ namespace algorithm
 
 	// Perform elitism replacement of random individuals.
 	int_dist dist{0, static_cast<int>(opts.pop_size) - 1};
-	for (unsigned int e(0); e < opts.elitism_size; ++e)
+	for (int e(0); e < opts.elitism_size; ++e)
 	  { offspring[dist(rg.engine)] = best; }
 
 	// Replace current population with offspring.

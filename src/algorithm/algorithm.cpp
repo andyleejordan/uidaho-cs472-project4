@@ -178,7 +178,7 @@ namespace algorithm
       }
     // End timing algorithm.
     auto stop = std::chrono::system_clock::now();
-    auto elapsed_seconds = stop - start;
+    std::chrono::duration<double> elapsed_seconds = stop - start;
     auto stop_time = std::chrono::system_clock::to_time_t(stop);
 
     // Log time information.

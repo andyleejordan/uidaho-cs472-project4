@@ -14,14 +14,14 @@
 
 namespace options
 {
-  enum class Cell {blank, food, marked};
+  enum class Cell { blank, food, marked };
 
-  enum class Direction {north, south, east, west};
+  enum class Direction { north, south, east, west };
 
   struct Position
   {
-    unsigned int x;
-    unsigned int y;
+    int x;
+    int y;
     Direction direction;
     Position();
   };
@@ -31,25 +31,25 @@ namespace options
   {
   public:
     Map();
-    Map(std::string, unsigned int);
+    Map(const std::string&, int);
     bool active() const;
     bool look() const;
     void forward();
     void left();
     void right();
-    unsigned int fitness() const;
-    unsigned int max() const;
+    int fitness() const;
+    int max() const;
     std::string print() const;
-    unsigned int max_ticks;
+    int max_ticks;
 
   private:
-    std::vector<std::vector<Cell>> rows;
-    unsigned int width;
-    unsigned int height;
-    unsigned int ticks;
-    unsigned int score;
-    unsigned int pieces;
+    int ticks;
+    std::size_t width;
+    std::size_t height;
+    int score;
+    int pieces;
     Position position;
+    std::vector<std::vector<Cell>> rows;
   };
 
   // "singleton" struct with configured options for the algorithm
@@ -57,17 +57,17 @@ namespace options
   struct Options
   {
     Map map;
-    unsigned int trials;
-    unsigned int generations;
-    unsigned int pop_size;
-    unsigned int min_depth;
-    unsigned int max_depth;
-    unsigned int depth_limit;
-    unsigned int tourney_size;
-    unsigned int fit_size;
-    unsigned int brood_count;
-    unsigned int crossover_size;
-    unsigned int elitism_size;
+    int trials;
+    int generations;
+    int pop_size;
+    int min_depth;
+    int max_depth;
+    int depth_limit;
+    int tourney_size;
+    int fit_size;
+    int brood_count;
+    int crossover_size;
+    int elitism_size;
     float penalty;
     float grow_chance;
     float over_select_chance;
@@ -76,7 +76,7 @@ namespace options
     float internals_chance;
     std::string logs_dir;
     std::string plots_dir;
-    unsigned int verbosity;
+    int verbosity;
     void validate() const;
   };
 

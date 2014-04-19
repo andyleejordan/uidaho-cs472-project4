@@ -31,11 +31,14 @@ autoreconf -vfi && ./configure && make
 #+end_src
 
 Boost must be built using the same compiler, so for OS X,
-=user-config.jam= needs the directive =using gcc : 4.8 : g++-4.8
-;=. Boost should then be bootstrapped like thus:
+=./tools/build/v2/user-config.jam= needs the directive =using darwin :
+4.8 : g++-4.8 ;=. This will force the darwin toolset to use =g++-4.8=
+(install via homebrew).
+
+Boost should then be bootstrapped like thus:
 
 #+begin_src sh
-./bootstrap.sh --with-libraries=program_options --with-toolset=gcc
+./bootstrap.sh --with-libraries=program_options --with-toolset=darwin
 #+end_src
 
 And then built with =./b2= and installed with =./b2 install=.

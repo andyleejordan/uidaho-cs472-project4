@@ -45,7 +45,7 @@ namespace individual
     void evaluate(options::Map&) const;
     const Size size() const;
     Node& visit(const Size&, Size&);
-    void mutate(const unsigned int, const unsigned int, const float);
+    void mutate(int, int, float);
     std::vector<Node> children;
     Function function;
     unsigned int arity;
@@ -63,30 +63,29 @@ namespace individual
     std::string print() const;
     std::string print_formula() const;
 
-    unsigned int get_internals() const;
-    unsigned int get_leaves() const;
-    unsigned int get_total() const;
-    unsigned int get_depth() const;
-    unsigned int get_score() const;
+    int get_internals() const;
+    int get_leaves() const;
+    int get_total() const;
+    int get_depth() const;
+    int get_score() const;
     float get_fitness() const;
     float get_adjusted() const;
 
     Node& operator[](const Size&);
     Node& at(const Size&);
-    void mutate(const unsigned int, const unsigned int, const float);
-    std::string evaluate(options::Map, const float penalty = 0,
-			 const bool print = false);
-    friend void crossover(const float, Individual&, Individual&);
+    void mutate(int, int, float);
+    std::string evaluate(options::Map, float penalty = 0, bool print = false);
+    friend void crossover(float, Individual&, Individual&);
 
   private:
     Node root;
     Size size;
-    unsigned int score;
+    int score;
     float fitness;
     float adjusted;
 
     enum class Type {leaf, internal};
-    Size get_node(const Type) const;
+    Size get_node_location(Type) const;
   };
 }
 

@@ -27,14 +27,14 @@ namespace individual
 
   using F = Function;
   // Vectors of same-arity function enums.
-  vector<F> nullaries {F::left, F::right, F::forward};
-  vector<F> binaries {F::prog2, F::iffoodahead};
-  vector<F> trinaries {F::prog3};
+  vector<F> nullaries { F::left, F::right, F::forward };
+  vector<F> binaries { F::prog2, F::iffoodahead };
+  vector<F> trinaries { F::prog3 };
 
   /* Vectors of available function enums.  Should be moved into
      Options struct. */
   vector<F> leaves = nullaries;
-  vector<F> internals {F::prog2, F::prog3, F::iffoodahead};
+  vector<F> internals { F::prog2, F::prog3, F::iffoodahead };
 
   // Returns a random function from a given set of functions.
   Function
@@ -47,20 +47,18 @@ namespace individual
   // Returns bool of whether or not the item is in the set.
   template<typename I, typename S> bool
   contains(const I& item, const S& set)
-  {
-    return find(begin(set), end(set), item) != end(set);
-  }
+  { return find(begin(set), end(set), item) != end(set); }
 
   // Returns the appropriate arity for a given function.
-  unsigned int
+  int
   get_arity(const Function function)
   {
     if (contains(function, nullaries))
-      return 0;
+      { return 0; }
     else if (contains(function, binaries))
-      return 2;
+      { return 2; }
     else if (contains(function, trinaries))
-      return 3;
+      { return 3; }
     assert(false);
   }
 
@@ -119,19 +117,25 @@ namespace individual
     switch (function)
       {
       case F::nil:
-	assert(false); // Never represent empty node.
+	{ assert(false); } // Never represent empty node.
+
       case F::prog2:
-	return "prog-2";
+	{ return "prog-2"; }
+
       case F::prog3:
-	return "prog-3";
+	{ return "prog-3"; }
+
       case F::iffoodahead:
-	return "if-food-ahead";
+	{ return "if-food-ahead"; }
+
       case F::left:
-	return "left";
+	{ return "left"; }
+
       case F::right:
-	return "right";
+	{ return "right"; }
+
       case F::forward:
-	return "forward";
+	{ return "forward"; }
       }
     assert(false); // Every node should have been matched.
   }
@@ -142,12 +146,12 @@ namespace individual
   Node::print() const
   {
     if (children.empty())
-      return represent();
+      { return represent(); }
 
     string formula = "(" + represent();
 
     for (const Node& child : children)
-      formula += " " + child.print();
+      { formula += " " + child.print(); }
 
     return formula + ")";
   }
@@ -162,31 +166,33 @@ namespace individual
     switch (function)
       {
       case F::left:
-	map.left(); break; // Terminal case
+	{ map.left(); break; } // Terminal case
 
       case F::right:
-	map.right(); break; // Terminal case
+	{ map.right(); break; } // Terminal case
 
       case F::forward:
-	map.forward(); break; // Terminal case
+	{ map.forward(); break; } // Terminal case
 
       case F::iffoodahead:
 	{
 	  if (map.look()) // Do left or right depending on if food ahead
-	    children[0].evaluate(map);
+	    { children[0].evaluate(map); }
 	  else
-	    children[1].evaluate(map);
+	    { children[1].evaluate(map); }
 	  break;
 	}
+
       case F::prog2: // Falls through
       case F::prog3:
 	{
 	  for (const Node& child : children)
-	    child.evaluate(map);
+	    { child.evaluate(map); }
 	  break;
 	}
+
       case F::nil:
-	assert(false); // Never evaluate empty node
+	{ assert(false); } // Never evaluate empty node
       }
   }
 
@@ -199,9 +205,7 @@ namespace individual
     Size size;
 
     if (children.empty())
-      {
-	++size.leaves;
-      }
+      { ++size.leaves; }
     else
       {
 	vector<int> depths;
@@ -231,24 +235,23 @@ namespace individual
       {
 	// Increase relevant count.
 	if (child.children.empty())
-	  ++visiting.leaves;
+	  { ++visiting.leaves; }
 	else
-	  ++visiting.internals;
+	  { ++visiting.internals; }
 
 	// Return node reference if found.
 	if (visiting.internals == i.internals or visiting.leaves == i.leaves)
-	  return child;
+	  { return child; }
 
 	Node& temp = child.visit(i, visiting); // Recursive search.
 	if (temp.function != Function::nil)
-	  return temp;
+	  { return temp; }
       }
     return empty;
   }
 
   void
-  Node::mutate(const unsigned int min, const unsigned int max,
-	       const float chance)
+  Node::mutate(int min, int max, float chance)
   {
     if (arity == 0)
       {
@@ -264,24 +267,15 @@ namespace individual
 	arity = get_arity(function);
       }
     else
-      {
-	std::cerr << "Arity shouldn't be: " << arity << std::endl;
-	assert(false);
-      }
+      { assert(false); }
 
     // Fix arity mismatches caused by mutation
     while (children.size() > arity)
-      children.pop_back();
+      { children.pop_back(); }
 
     while (children.size() < arity)
       children.emplace_back(create(min, max, chance));
 
-    if (arity != children.size())
-      {
-	std::cerr << "Arity was: " << arity
-		  << ", with children: " << children.size()
-		  << std::endl;
-      }
     assert(arity == children.size());
     assert(function != Function::nil);
   }
@@ -320,22 +314,20 @@ namespace individual
   // Return string represenation of tree's expression (delegated).
   string
   Individual::print_formula() const
-  {
-    return "# Formula: " + root.print() + "\n";
-  }
+  { return "# Formula: " + root.print() + "\n"; }
 
   /* Evaluate Individual for given values and calculate size.  Update
      Individual's size and fitness accordingly. Return non-empty
      string if printing. */
   string
-  Individual::evaluate(options::Map map, const float penalty, const bool print)
+  Individual::evaluate(options::Map map, float penalty, bool print)
   {
     // Update size on evaluation because it's incredibly convenient.
     size = root.size();
 
     // Run ant across map and retrieve fitness.
     while (map.active())
-      root.evaluate(map);
+      { root.evaluate(map); }
     score = map.fitness();
 
     // Adjusted fitness does not have size penalty.
@@ -345,7 +337,8 @@ namespace individual
     fitness = score - penalty * get_total();
 
     string evaluation;
-    if (print) evaluation = map.print();
+    if (print)
+      { evaluation = map.print(); }
 
     return evaluation;
   }
@@ -357,8 +350,7 @@ namespace individual
 
   // Mutate each node with given probability.
   void
-  Individual::mutate(const unsigned int min, const unsigned int max,
-		     const float chance)
+  Individual::mutate(int min, int max, float chance)
   {
     int_dist op_dist{0, static_cast<int>(operators.size()) - 1}; // closed interval
     const Operator op = operators[op_dist(rg.engine)];
@@ -394,8 +386,8 @@ namespace individual
   Node&
   Individual::operator[](const Size& i)
   {
-    assert(i.internals <= get_internals());
-    assert(i.leaves <= get_leaves());
+    assert(i.internals <= static_cast<unsigned int>(get_internals()));
+    assert(i.leaves <= static_cast<unsigned int>(get_leaves()));
 
     Size visiting;
     // Return root node if that's what we're seeking.
@@ -407,12 +399,10 @@ namespace individual
 
   Node&
   Individual::at(const Size& i)
-  {
-    return operator[](i);
-  }
+  { return operator[](i); }
 
   Size
-  Individual::get_node(const Type type) const
+  Individual::get_node_location(Type type) const
   {
     Size target;
     // Guaranteed to have at least 1 leaf, but may have 0 internals.
@@ -444,50 +434,36 @@ namespace individual
     Individual::Type type_b = (probability(rg.engine) < chance)
       ? Individual::Type::internal : Individual::Type::leaf;
 
-    std::swap(a[a.get_node(type_a)], b[b.get_node(type_b)]);
+    std::swap(a[a.get_node_location(type_a)], b[b.get_node_location(type_b)]);
   }
 
   // Read-only "getters" for private data
 
-  unsigned int
+  int
   Individual::get_internals() const
-  {
-    return size.internals;
-  }
+  { return size.internals; }
 
-  unsigned int
+  int
   Individual::get_leaves() const
-  {
-    return size.leaves;
-  }
+  { return size.leaves; }
 
-  unsigned int
+  int
   Individual::get_total() const
-  {
-    return size.internals + size.leaves;
-  }
+  { return size.internals + size.leaves; }
 
-  unsigned int
+  int
   Individual::get_depth() const
-  {
-    return size.depth;
-  }
+  { return size.depth; }
 
-  unsigned int
+  int
   Individual::get_score() const
-  {
-    return score;
-  }
+  { return score; }
 
   float
   Individual::get_fitness() const
-  {
-    return fitness;
-  }
+  { return fitness; }
 
   float
   Individual::get_adjusted() const
-  {
-    return adjusted;
-  }
+  { return adjusted; }
 }

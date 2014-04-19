@@ -72,10 +72,11 @@ namespace algorithm
     vector<unsigned int> group;
     group.reserve(size);
 
+    // Generate tournament size number of random indexes
     generate_n(back_inserter(group), size, [&pop, &dist]
 	       { return dist(rg.engine); } );
 
-    // Population is sorted, so choose lowest index of random three
+    // Population is sorted, so choose lowest index of those generated
     return pop[*min_element(begin(group), end(group))];
   }
 
@@ -95,7 +96,7 @@ namespace algorithm
 
     // Crossover each pair of pups
     for (auto pup = begin(brood); pup != end(brood); advance(pup, 2))
-      crossover(opts.internals_chance, *pup, *next(pup));
+      { crossover(opts.internals_chance, *pup, *next(pup)); }
 
     /* Evaluate pups with fewer ticks: minimum plus [0, 1] * 600
        where 0 is the first generation and 1 is the final
@@ -105,19 +106,20 @@ namespace algorithm
     float scale = static_cast<float>(gen) / opts.generations;;
     int min = 0.1 * map.max_ticks;
     map.max_ticks = min + scale * (map.max_ticks - min);
-    for (auto& pup : brood) pup.evaluate(map, opts.penalty);
+    for (auto& pup : brood)
+      { pup.evaluate(map, opts.penalty); }
 
     // Kill pups with too great a depth.
     auto remove = [&opts, &brood](const Individual& a)
-      { return (a.get_depth() > opts.depth_limit); };
+      { return (static_cast<unsigned int>(a.get_depth()) > opts.depth_limit); };
     brood.erase(remove_if(begin(brood), end(brood), remove), end(brood));
 
     // Replace parents with best pair of brood if available.
     sort(begin(brood), end(brood), compare_fitness());
     if (brood.size() >= 1) // Assign the first pup to the first parent
-      *parent = std::move(*begin(brood));
+      { *parent = std::move(*begin(brood)); }
     if (brood.size() >= 2) // Assign the second pup to the second parent
-      *next(parent) = std::move(*next(begin(brood)));
+      { *next(parent) = std::move(*next(begin(brood))); }
   }
 
   void
@@ -129,9 +131,9 @@ namespace algorithm
 	if (dist(rg.engine) < opts.crossover_chance)
 	  {
 	    if (opts.brood_count == 0)
-	      crossover(opts.internals_chance, *iter, *next(iter));
+	      { crossover(opts.internals_chance, *iter, *next(iter)); }
 	    else
-	      breed_pups(iter, gen, opts);
+	      { breed_pups(iter, gen, opts); }
 	  }
       }
   }
@@ -154,24 +156,24 @@ namespace algorithm
     auto over_select = [&opts, &pop, &dist]
       {
 	if (dist(rg.engine) < opts.over_select_chance)
-	  return select(opts.tourney_size, 0, opts.fit_size, pop);
+	  { return select(opts.tourney_size, 0, opts.fit_size, pop); }
 	else
-	  return select(opts.tourney_size, opts.fit_size, opts.pop_size, pop);
+	  { return select(opts.tourney_size, opts.fit_size, opts.pop_size, pop); }
       };
 
     generate_n(back_inserter(offspring), opts.pop_size, over_select);
 
     // Binary crossover if enabled.
-    if (opts.crossover_size == 2) recombination(offspring, gen, opts);
+    if (opts.crossover_size == 2)
+      { recombination(offspring, gen, opts); }
 
     // Mutate and evaluate children.
     for (auto& child : offspring)
       {
 	if (dist(rg.engine) < opts.mutate_chance)
-	  {
-	    child.mutate(opts.min_depth, opts.max_depth, opts.grow_chance);
-	  }
-	child.evaluate(opts.map, opts.penalty);
+	  { child.mutate(opts.min_depth, opts.max_depth, opts.grow_chance); }
+
+	child.evaluate(opts.map, opts.penalty); // Evaluate all children
       }
     return offspring;
   }
@@ -213,7 +215,7 @@ namespace algorithm
 	// Perform elitism replacement of random individuals.
 	int_dist dist{0, static_cast<int>(opts.pop_size) - 1};
 	for (unsigned int e(0); e < opts.elitism_size; ++e)
-	  offspring[dist(rg.engine)] = best;
+	  { offspring[dist(rg.engine)] = best; }
 
 	// Replace current population with offspring.
 	pop = move(offspring);

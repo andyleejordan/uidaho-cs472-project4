@@ -47,12 +47,12 @@ namespace trials
 
     // Run the genetic algorithm (program).
     if (opts.trials == 1) // Spawn single non-threaded trial.
-      candidates.push_back(algorithm::genetic(time, trial, opts));
+      { candidates.push_back(algorithm::genetic(time, trial, opts)); }
     else // Spawn trials in separate threads.
       {
 	// Spawn trials in chunks of size blocks.
 	for (unsigned long t = 0; t < opts.trials / blocks; ++t)
-	  push_results(time, trial, blocks, candidates, opts);
+	  { push_results(time, trial, blocks, candidates, opts); }
 
 	// Spawn remaining trials.
 	push_results(time, trial, opts.trials % blocks, candidates, opts);
@@ -79,9 +79,11 @@ namespace trials
     auto task = [&time, &trial, &opts]() mutable
       { return async(std::launch::async,
 		     algorithm::genetic, time, ++trial, opts); };
+
     generate_n(back_inserter(results), trials, task);
 
     // Gather future results.
-    for (auto& result : results) candidates.push_back(result.get());
+    for (auto& result : results)
+      { candidates.push_back(result.get()); }
   }
 }

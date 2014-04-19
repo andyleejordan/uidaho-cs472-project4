@@ -19,8 +19,7 @@ namespace logging
 {
   // Opens the appropriate log file for given time, trial, and folder.
   void
-  open_log(std::ofstream&, const std::time_t&, const unsigned int,
-	   const std::string&);
+  open_log(std::ofstream&, const std::time_t&, int, const std::string&);
 
   // Logs initial parameters from options object.
   void
@@ -28,8 +27,7 @@ namespace logging
 
   // Logs info about current population.
   void
-  log_info(const unsigned int, const std::string&,
-	   const std::time_t&, const unsigned int, const unsigned int,
+  log_info(int, const std::string&, const std::time_t&, int, int,
 	   const individual::Individual&,
 	   const std::vector<individual::Individual>&);
 }

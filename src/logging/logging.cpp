@@ -20,18 +20,19 @@ namespace logging
 {
   using individual::Individual;
 
-  const unsigned int width(10);
+  const int width(10);
 
   // Opens the appropriate log file for given time, trial, and folder.
   void
-  open_log(std::ofstream& log, const std::time_t& time,
-	   const unsigned int trial, const std::string& folder)
+  open_log(std::ofstream& log, const std::time_t& time, int trial,
+	   const std::string& folder)
   {
     std::string filename = folder + std::to_string(time) + "_"
       + std::to_string(trial) + ".dat";
 
     log.open(filename, std::ios_base::app);
-    if (not log.is_open())
+
+    if (not log) // TODO: throw exception instead
       {
 	std::cerr << "Log file " << filename << " could not be opened!\n";
 	std::exit(EXIT_FAILURE);
@@ -75,14 +76,13 @@ namespace logging
   /* Log a line of relevant algorithm information (best and average
      fitness and size plus adjusted best fitness). */
   void
-  log_info(const unsigned int verbosity, const std::string& logs_dir,
-	   const std::time_t& time, const unsigned int trial,
-	   const unsigned int generation, const Individual& best,
+  log_info(int verbosity, const std::string& logs_dir, const std::time_t& time,
+	   int trial, int generation, const Individual& best,
 	   const std::vector<Individual>& pop)
   {
-    // Don't log if verbosity is zero, but still allow calls to this function.
+    // Be a noop if verbosity is zero
     if (verbosity == 0)
-      return;
+      { return; }
 
     float total_fitness =
       std::accumulate(begin(pop), end(pop), 0.,

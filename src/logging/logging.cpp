@@ -50,7 +50,7 @@ namespace logging
 	<< ", max depth: " << options.max_depth
       	<< ", depth limit: " << options.depth_limit
 	<< ", tournament size: " << options.tourney_size
-      	<< ", fitter size: " << options.fitter_size
+      	<< ", fitter size: " << options.fit_size
 	<< ", crossover size: " << options.crossover_size
 	<< ", elitism size: " << options.elitism_size
 	<< ", fitness penalty: " << options.penalty << " * total size"

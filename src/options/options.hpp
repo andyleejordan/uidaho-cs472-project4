@@ -64,7 +64,7 @@ namespace options
     unsigned int max_depth;
     unsigned int depth_limit;
     unsigned int tourney_size;
-    unsigned int fitter_size;
+    unsigned int fit_size;
     unsigned int brood_count;
     unsigned int crossover_size;
     unsigned int elitism_size;

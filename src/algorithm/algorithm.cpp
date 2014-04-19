@@ -37,19 +37,19 @@ namespace algorithm
      full trees, half randomly grown trees, all to random depths
      between 0 and maximum depth). */
   vector<Individual>
-  new_population(const Options& options)
+  new_population(const Options& opts)
   {
     vector<Individual> pop;
-    pop.reserve(options.pop_size);
+    pop.reserve(opts.pop_size);
 
-    auto create = [&options]() { return Individual{options}; };
-    generate_n(back_inserter(pop), options.pop_size, create);
+    generate_n(back_inserter(pop), opts.pop_size, [&opts]
+	       { return Individual{opts}; });
 
     return pop;
   }
 
   /* Return best candidate from size number of contestants randomly
-     drawn from population. */
+     drawn from population.  Assume population is sorted. */
   const Individual&
   select(int size, int start, int stop, const vector<Individual>& pop)
   {

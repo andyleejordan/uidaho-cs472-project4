@@ -191,7 +191,7 @@ namespace options
     assert(generations > 0);
     assert(pop_size > 0);
     assert(tourney_size > 0 and tourney_size <= pop_size);
-    assert(fitter_size > 0 and fitter_size <= pop_size);
+    assert(fit_size > 0 and fit_size <= pop_size);
     assert(crossover_size == 2 or crossover_size == 0);
     assert(elitism_size <= pop_size);
     assert(penalty >= 0 and penalty <= 1);
@@ -263,7 +263,7 @@ namespace options
        "set the tournment size to adjust selection pressure")
 
       ("fitter-size,F",
-       value<unsigned int>(&options.fitter_size)->
+       value<unsigned int>(&options.fit_size)->
        default_value(320),
        "set the population size of fitter group")
 
@@ -333,7 +333,7 @@ namespace options
 
 	notify(variables_map);
       }
-    catch (std::exception& e)
+    catch (const std::exception& e)
       {
 	std::cerr << e.what() << std::endl;
 	std::exit(EXIT_FAILURE);

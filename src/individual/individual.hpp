@@ -50,6 +50,9 @@ namespace individual
     std::vector<Node> children;
     Function function;
     unsigned int arity;
+
+  private:
+    void size(Size&) const;
   };
 
   // Implemented genetic operators for Individuals

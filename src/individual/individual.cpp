@@ -196,31 +196,38 @@ namespace individual
       }
   }
 
-  /* Recursively count children and find maximum depth of tree via
-     post-order traversal.  Keep track of internals, leaves, and depth
-     via Size struct */
-  const Size
-  Node::size() const
+  /* Get size of node. */
+  const Size Node::size() const
   {
-    Size size;
+    Size s;
+    size(s);
+    return s;
+  }
 
+  /* Recursively count children and find maximum depth of tree via
+     depth-first traversal.  Keep track of internals, leaves, and depth
+     via Size struct sent by reference. */
+  void
+  Node::size(Size& s) const
+  {
     if (children.empty())
-      { ++size.leaves; }
+      {
+	++s.leaves; // Count as leaf node
+	s.depth = 0; // Reset the depth to zero
+      }
     else
       {
 	vector<int> depths;
 	depths.reserve(arity);
-	for (const Node& child : children)
+	for (const auto& child : children)
 	  {
-	    Size temp = child.size();
-	    size.internals += temp.internals;
-	    size.leaves += temp.leaves;
-	    depths.emplace_back(temp.depth);
+	    child.size(s); // Recursively call size()
+	    depths.push_back(s.depth); // Save depths
 	  }
-	size.depth = 1 + *max_element(begin(depths), end(depths));
-	++size.internals;
+
+	++s.internals; // Count as internal node
+	s.depth = 1 + *max_element(begin(depths), end(depths)); // Save max depth
       }
-    return size;
   }
 
   // Used to represent "not-found" (similar to a NULL pointer).

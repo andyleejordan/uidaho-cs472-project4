@@ -10,9 +10,10 @@
 
 namespace random_generator
 {
-  typedef std::uniform_real_distribution<float> real_dist;
-  typedef std::uniform_int_distribution<> int_dist;
-  typedef std::normal_distribution<> normal_dist;
+  typedef std::uniform_int_distribution<int> int_dist;
+  typedef std::uniform_int_distribution<std::size_t> size_dist;
+  typedef std::normal_distribution<float> normal_dist;
+  typedef std::bernoulli_distribution bool_dist;
 
   // "Singleton" class for an engine initialized with device
   class RandomGenerator

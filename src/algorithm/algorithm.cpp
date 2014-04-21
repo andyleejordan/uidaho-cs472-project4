@@ -125,10 +125,10 @@ namespace algorithm
   void
   recombination(vector<Individual>& offspring, int gen, const Options& opts)
   {
-    real_dist dist{0, 1};
+    bool_dist crossover_dist{opts.crossover_chance};
     for (auto iter = begin(offspring); iter != end(offspring); advance(iter, 2))
       {
-	if (dist(rg.engine) < opts.crossover_chance)
+	if (crossover_dist(rg.engine))
 	  {
 	    if (opts.brood_count == 0)
 	      { crossover(opts.internals_chance, *iter, *next(iter)); }
@@ -143,8 +143,6 @@ namespace algorithm
   vector<Individual>
   new_offspring(vector<Individual>& pop, int gen, const Options& opts)
   {
-    real_dist dist{0, 1}; // Used for probabilities
-
     // Select parents for children.
     vector<Individual> offspring;
     offspring.reserve(opts.pop_size);
@@ -153,9 +151,10 @@ namespace algorithm
        320, the other 20% drawn from the weaker group (past the first
        sorted 320).  See Eiben section 6.6. */
     sort(begin(pop), end(pop), compare_fitness());
-    auto over_select = [&opts, &pop, &dist]
+    bool_dist select_dist(opts.over_select_chance);
+    auto over_select = [&opts, &pop, &select_dist]
       {
-	if (dist(rg.engine) < opts.over_select_chance)
+	if (select_dist(rg.engine))
 	  { return select(opts.tourney_size, 0, opts.fit_size, pop); }
 	else
 	  { return select(opts.tourney_size, opts.fit_size, opts.pop_size, pop); }
@@ -168,9 +167,10 @@ namespace algorithm
       { recombination(offspring, gen, opts); }
 
     // Mutate and evaluate children.
+    bool_dist mutate_dist(opts.mutate_chance);
     for (auto& child : offspring)
       {
-	if (dist(rg.engine) < opts.mutate_chance)
+	if (mutate_dist(rg.engine))
 	  { child.mutate(opts.min_depth, opts.max_depth, opts.grow_chance); }
 
 	child.evaluate(opts.map, opts.penalty); // Evaluate all children
@@ -213,7 +213,7 @@ namespace algorithm
 	vector<Individual> offspring = new_offspring(pop, g, opts);
 
 	// Perform elitism replacement of random individuals.
-	int_dist dist{0, static_cast<int>(opts.pop_size) - 1};
+	int_dist dist{0, opts.pop_size - 1};
 	for (int e(0); e < opts.elitism_size; ++e)
 	  { offspring[dist(rg.engine)] = best; }
 

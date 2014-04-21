@@ -40,7 +40,7 @@ namespace individual
   Function
   get_function(const vector<Function>& functions)
   {
-    int_dist dist{0, static_cast<int>(functions.size()) - 1}; // closed interval
+    size_dist dist{0, functions.size() - 1}; // closed interval
     return functions[dist(rg.engine)];
   }
 
@@ -74,11 +74,11 @@ namespace individual
   Node::Node(Method method, int max_depth, int depth): Node{}
   {
     // Create leaf node if at the max depth or randomly (if growing).
-    real_dist dist{0, 1};
     float chance =
       static_cast<float>(leaves.size()) / (leaves.size() + internals.size());
+    bool_dist dist(chance);
     if (depth == max_depth
-	or (depth != 0 and (method == Method::grow and dist(rg.engine) < chance)))
+	or (depth != 0 and (method == Method::grow and dist(rg.engine))))
       { function = get_function(leaves); }
     else // Otherwise choose an internal node.
       {
@@ -100,12 +100,12 @@ namespace individual
   std::tuple<Method, int, int>
   get_node_args(int min = 0, int max = 0, float chance = 0.5)
   {
-    real_dist method_dist{0, 1};
-    Method method = (method_dist(rg.engine) < chance)
+    bool_dist method_dist{chance};
+    const Method method = (method_dist(rg.engine))
       ? Method::grow : Method::full;
 
     int_dist depth_dist{min, max};
-    int depth = depth_dist(rg.engine);
+    const int depth = depth_dist(rg.engine);
 
     return std::make_tuple(method, depth, 0); // 0 is starting depth
   }
@@ -177,16 +177,16 @@ namespace individual
       case F::iffoodahead:
 	{
 	  if (map.look()) // Do left or right depending on if food ahead
-	    { children[0].evaluate(map); }
+	    { begin(children)->evaluate(map); }
 	  else
-	    { children[1].evaluate(map); }
+	    { next(begin(children))->evaluate(map); }
 	  break;
 	}
 
       case F::prog2: // Falls through
       case F::prog3:
 	{
-	  for (const Node& child : children)
+	  for (const auto& child : children)
 	    { child.evaluate(map); }
 	  break;
 	}
@@ -238,7 +238,7 @@ namespace individual
   Node&
   Node::visit(const Size& i, Size& visiting)
   {
-    for (Node& child : children)
+    for (auto& child : children)
       {
 	// Increase relevant count.
 	if (child.children.empty())
@@ -355,13 +355,13 @@ namespace individual
   void
   Individual::mutate(int min, int max, float chance)
   {
-    int_dist op_dist{0, static_cast<int>(operators.size()) - 1}; // closed interval
+    size_dist op_dist{0, operators.size() - 1}; // closed interval
     const Operator op = operators[op_dist(rg.engine)];
 
     Size p = get_node_location(Type::internal);
     if (at(p).children.empty()) return; // p may have been root
 
-    int_dist c_dist{0, static_cast<int>(at(p).children.size()) - 1}; // closed interval
+    size_dist c_dist{0, at(p).children.size() - 1}; // closed interval
     const unsigned int c = c_dist(rg.engine);
     assert(c <= at(p).arity);
 
@@ -412,13 +412,13 @@ namespace individual
     if (type == Type::internal and get_internals() != 0)
       {
 	// Choose an internal node.
-	int_dist dist{0, static_cast<int>(get_internals()) - 1};
+	int_dist dist{0, get_internals() - 1};
 	target.internals = dist(rg.engine);
       }
     else
       {
 	// Otherwise choose a leaf node.
-	int_dist dist{0, static_cast<int>(get_leaves()) - 1};
+	int_dist dist{0, get_leaves() - 1};
 	target.leaves = dist(rg.engine);
       }
     return target;
@@ -429,12 +429,12 @@ namespace individual
   void
   crossover(const float chance, Individual& a, Individual& b)
   {
-    real_dist probability{0, 1};
+    bool_dist dist(chance);
 
-    Individual::Type type_a = (probability(rg.engine) < chance)
+    Individual::Type type_a = (dist(rg.engine))
       ? Individual::Type::internal : Individual::Type::leaf;
 
-    Individual::Type type_b = (probability(rg.engine) < chance)
+    Individual::Type type_b = (dist(rg.engine))
       ? Individual::Type::internal : Individual::Type::leaf;
 
     std::swap(a[a.get_node_location(type_a)], b[b.get_node_location(type_b)]);

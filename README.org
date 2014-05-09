@@ -15,8 +15,8 @@ For the University of Idaho's Evolutionary Computation (CS 472)
 Project #3 I implemented a Santa Fe Trail program in C++ to evolve a
 random decision tree for an "ant" to obtain as much food as possible.
 Algorithm details available in the table below.  This implementation
-achieves fitnesses (food eaten, out of 90) up to 78.  The code can be
-found at: =https://github.com/andschwa/uidaho-cs472-project3=
+has achieved a score of 87 out of 90 (pieces of food eaten).  The code
+can be found at: =https://github.com/andschwa/uidaho-cs472-project3=
 #+END_ABSTRACT
 
 * Build :noexport:
@@ -33,7 +33,7 @@ autoreconf -vfi && ./configure && make
 Boost must be built using the same compiler, so for OS X,
 =./tools/build/v2/user-config.jam= needs the directive =using darwin :
 4.8 : g++-4.8 ;=. This will force the darwin toolset to use =g++-4.8=
-(install via homebrew).
+(install via homebrew). See
 
 Boost should then be bootstrapped like thus:
 

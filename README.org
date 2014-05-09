@@ -1,7 +1,7 @@
-#+TITLE:     Project #3 Santa Fe Trail
+#+TITLE:     Project #4 Brood Selection
 #+AUTHOR:    Andrew Schwartzmeyer
 #+EMAIL:     schw2620@vandals.uidaho.edu
-#+DATE:      2014-04-08 Tue
+#+DATE:      2014-05-09 Fri
 #+LANGUAGE:  en
 #+OPTIONS:   H:3 num:nil toc:nil \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
 #+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
@@ -12,11 +12,11 @@
 
 #+BEGIN_ABSTRACT
 For the University of Idaho's Evolutionary Computation (CS 472)
-Project #3 I implemented a Santa Fe Trail program in C++ to evolve a
-random decision tree for an "ant" to obtain as much food as possible.
-Algorithm details available in the table below.  This implementation
-has achieved a score of 87 out of 90 (pieces of food eaten).  The code
-can be found at: =https://github.com/andschwa/uidaho-cs472-project3=
+Project #4 I studied the cost of brood selection for increasing
+performance on the Santa Fe Trail problem.
+
+The code can be found at:
+=https://github.com/andschwa/uidaho-cs472-project4=
 #+END_ABSTRACT
 
 * Build :noexport:
@@ -160,7 +160,75 @@ template) include at least one figure showing the path taken by the
 best evolved ant. This does not have to be fancy graphics, an ASCII
 figure will do.
 
-* Algorithm Information
+** TODO Project #4
+   DEADLINE: <2014-05-09 Fri>
+The goal of this project is to perform an experiment to test a
+hypothesis relating to evolutionary computation or to write an
+evolutionary algorithm for a specific (challenging) application. The
+exact hypothesis or application is up to you (but see subproject
+4a). If you plan to test a hypothesis make sure that it is clear, well
+defined, and reasonable to answer experimentally. Ideally you can
+claim "if my hypothesis is correct and if I perform this experiment
+then the result will be X and if the result is not X then my
+hypothesis is incorrect".
+
+The simpler and more specific your hypothesis is, the easier it will
+be to do this project, and you should understand the reasoning behind
+your hypothesis. For example, if your hypothesis is "using random
+trails in the artificial ant/Sante Fe trail problem will improve
+results" you're going to have a hard time - what does improve mean?
+Why should they improve?
+
+On the other hand if your hypothesis is "using random trails in the
+artificial ant/Santa Fe trail problem will on average produce
+individuals whose fitness is higher, although they may take longer to
+evolve, because the random trails will force GP to evolve a more
+general and hence more successful soluton" it's going to be much
+easier to complete the project.
+
+If you plan to tackle a specific application you should have a
+specific reason why the application is interesting and challenging.
+
+Project Requirements:
+
+- A clearly defined hypothesis or applcation.
+- A clearly defined experiment to test the hypothesis or a clearly
+  defined algorithm for the application.
+- The code to run the experiment. I strongly encourage you to figure
+  out a way to reuse code from previous experiments.
+
+Project Write-up: You must write a short paper describing the results
+of your project. The paper should be formatted using the [[http://www.acm.org/sigs/publications/proceedings-templates][ACM SIG
+Proceedings Templates]]. This is a standard format for many research
+conferences. Note that there is a Word and a Latex template, you may
+use either one.  The final paper should include the following
+sections:
+
+- Abstract - a short (~200 words) summary of what you did and what the
+  results were.
+- Introduction - including: the hypothesis or application, what
+  evidence you have for and against the hypothesis or previous work on
+  the applicaiton, include at least 3 published sources.
+- Experiment description - including:
+  - The test problem(s) used in the experiments.
+  - A description of the evolutionary algorithm used in the experiments.
+  - How fitness was measured.
+  - What parameters were used.
+  - If you are testing a hypothesis you should include a clear
+    explanation of how the results would support, or refute, the
+    hypothesis. You should be able to say, before running any
+    experiments, 'if I get these results it means the hypothesis is
+    confirmed (or at least supported) and if I get these results the
+    hypothesis is refuted'.
+- Results:
+  - There should be at least 5-10 trials per experiment.
+  - Include graphs and/or tables to make it easy to understand the results.
+  - Make sure that the graphs and tables are clearly labeled.
+  - Explain how the results support or refute your hypothesis or how
+    well you algorithm did on the application problem.
+- Conclusions
+- References
+* Algorithm Information :noexport:
 #+ATTR_LATEX: :align |l|p{4in}|
 |------------------+-----------------------------------------------------------|
 | Algorithm type   | Generational                                              |
@@ -237,176 +305,3 @@ fitness when used in comparisons.  The adjusted fitness (as presented
 graphically), is the score (that is, actual number of food pieces
 eaten, no penalties applied) divided by the total number of food
 pieces available (in our case, 90).
-
-* Results
-
-The graphs are to be found at the end of this report.
-
-** Result #1
-
-- Score: 75
-- Elapsed time: 11.55s
-- Size: 70
-- Iterations: 1024
-- Population size: 128
-- Initial depth: 6
-
-#+BEGIN_src
-# 'x' is food and 'o' is ant trail
-ooxo...o....o...o.....o...oooooo
-o..o...o....ooooooooooo...o.....
-o..o...o........o.....o..xox....
-oooooooo........o.....o.x.o..ooo
-o..o........o...o.....o.x.o..o..
-o..ooooooooxo...ooooooooooo..o..
-o..o......o.o.........o...o..o..
-o..o..o...o.o.........o...o..o..
-o..o..o...o.o.......x.o...o..o..
-o..o..o...o.o.......oooooooooo..
-o..o..o...o.o.......o.oooooooooo
-...o..o...o.o.......o.....o.o...
-...o..o...o.o.......o.....o.ox..
-...o..o...o.o.......o.....o.o...
-oooo..o...o.o.......o.....oooooo
-......o...ooooooooooo..x....o...
-......o.....o....x..........o...
-ooooooo.....o...o...........oooo
-......o.....o...o.......x.......
-......o.....o...o..........x....
-......o.....o...o...............
-......o.....o...o...............
-......o.....o...o.........o.....
-......o.....o...o.....ox..o.....
-.oooooooooooo...o.....o...o.....
-.o....o.....o...o.....o...o.....
-.o.o..o.....o...o.....o...o.....
-.o.o..ooooooooooo.....o...o.....
-.o.o...oooooooooo.....o...o.....
-.o.o...o....o...o.....o...o.....
-.oxoxx.o....o...o.....o...o.....
-.o.o...o....o...o.....o...o.....
-#+END_src
-
-** Result #2
-
-- Score: 74
-- Elapsed time: 84.7s
-- Size: 40
-- Iterations: 1024
-- Population size: 1024
-- Initial depth: 7
-
-#+BEGIN_SRC
-# 'x' is food and 'o' is ant trail
-ooxo...o....o...o.....o...oooooo
-o..o...o....ooooooooooo...o.....
-o..o...o........o.....o..xox....
-oooooooo........o.....o.x.o..ooo
-o..o........o...o.....o.x.o..o..
-o..ooooooooxo...ooooooooooo..o..
-o..o......o.o.........o...o..o..
-o..o..o...o.o.........o...o..o..
-o..o..o...o.o.......x.o...o..o..
-o..o..o...o.o.......oooooooooo..
-o..o..o...o.o.......o.oooooooooo
-...o..o...o.o.......o.....o.o...
-...o..o...o.o.......o.....o.ox..
-...o..o...o.o.......o.....o.o...
-oooo..o...o.o.......o.....oooooo
-......o...ooooooooooo..x....o...
-......o.....o....x..........o...
-ooooooo.....o...o...........oooo
-......o.....o...o.......x.......
-......o.....o...o..........x....
-......o.....o...o...............
-......o.....o...o...............
-......o.....o...o.........o.....
-......o.....o...o.....ox..o.....
-.oooooooooooo...o.....o...o.....
-.o....o.....o...o.....o...o.....
-.o.o..o.....o...o.....o...o.....
-.o.o..ooooooooooo.....o...o.....
-.o.o...oooooooooo.....o...o.....
-.o.o...o....o...o.....o...o.....
-.oxoxx.o....o...o.....o...o.....
-.o.o...o....o...o.....o...o.....
-#+END_SRC
-
-* Result #3
-
-- Score: 78
-- Elapsed time: 72.70s
-- Size: 54
-- Iterations: 1024
-- Population size: 1024
-- Initial depth: 8
-
-#+BEGIN_SRC
-# 'x' is food and 'o' is ant trail
-oooo...o..............o.o....o..
-oooo...o..............o.o....o..
-.ooo...o................oxxx.o..
-.ooo...o................o....o..
-.oooooooooooo...........o....o..
-..ooooooooooooooooooooooo....o..
-oooo...o....o.o..........ooooooo
-..o....o....o.o..........o...o..
-..o....o....o.o.....x....o...o..
-..o.........o.o.....x....o...o..
-..o.........o.o.....oooooooooo..
-..o.......ooooooooooo....o......
-..o.......o.o.o.....o....o...x..
-..o.......o.ooooooooooo..o......
-..o.......o.o.o.....o.o..oxxx...
-o.........o.o.o.....o.oooooooooo
-o.........o.o...oooooooooo......
-o.........o.o...o...o.o..o......
-o.........o.o...o...o.o.xo......
-o.........o.o...o...o.o..o.x....
-o.........o.o...o...o.o..o......
-o.........o.o...o...o.o..o......
-o...........o...o.....o..ox.....
-o...........o...o.....oooooooooo
-o..oooooooooo...o.....o..o......
-oooo............o.....o.oooooooo
-oooo............o.....o.oo......
-oooo...oooooooooo.....o.o.......
-oooo...o..............o.o.......
-oooo...o..............o.o.......
-oooooooo..............o.o....ooo
-oooo...o..............o.o....o..
-#+END_SRC
-
-
-* Conclusion
-
-I found that although I could get good fitnesses, I was not able to
-find parameters that would yield a full solution (fitness of 90).  I
-am in the process of implementing more genetic operators, with the
-hope that the extra diversity they will provide will help to increase
-the average fitness.  As is clear from the graphs, the average fitness
-plateaus relatively quickly (although for results two and three, this
-is because of the excessive number of iterations; the best plateaued
-as well).  Additionally, after inspecting sizes and depths (not
-represented here due to time constraints), I found that the cause of
-the lack of diversity was due to small tree sizes, and interestingly
-low depths.  I was onto this when generating the presented results, as
-I kept increasing the maximum depth for ramped half-and-half.  I
-believe I would get better results by bumping that up further, and
-adding more genetic matierial to the population.  In this way, the
-individuals may not stagnate, and thus should produce closer to
-perfect solutions.
-
-In summary: ants are hard.
-
-#+CAPTION: Best and average fitness for result #1
-#+NAME: fig:fitness-1
-[[./results/1.png]]
-
-#+CAPTION: Best and average fitness for result #2
-#+NAME: fig:fitness-2
-[[./results/2.png]]
-
-#+CAPTION: Best and average fitness for result #3
-#+NAME: fig:fitness-3
-[[./results/3.png]]

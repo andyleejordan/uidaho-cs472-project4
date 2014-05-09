@@ -312,4 +312,25 @@ of a genetic program solving the Santa Fe Trail problem, where
 'computationally effective' means that the extra computation cost
 incurred by the brood selection process is compensated for by its
 improvement to the crossover process. The 'effectiveness' is measured
-by the CPU time required to achieve a set fitness.
+by the final fitness divided by CPU time after a set number of
+generations.
+
+** Experiment details
+
+| Property              | Value | Description                                                                |
+|-----------------------+-------+----------------------------------------------------------------------------|
+| Algorithm type        |       | Generational                                                               |
+| Generations           |   512 | Number of generations per run                                              |
+| Population size       |  1024 | Number of individuals per generation                                       |
+| Evaluation ticks      |   600 | Number of ticks individual (ant) may use for evaluation                    |
+| Grow chance           |   0.5 | Ramped half-and-half initial tree / subtree mutation generation            |
+| Minimum depth         |     2 | Minimum initial tree / subtree mutation generation depth                   |
+| Maximum depth         |     6 | Maximum initial tree / subtree mutation generation depth                   |
+| Depth limit           |    14 | Maximum depth of tree before being selected out                            |
+| Tournament size       |     3 | Number of individuals drawn per tournament selection                       |
+| Elitism size          |     2 | Number of individuals replaced by best individual per generation           |
+| Fitter size           |   320 | Size of fitter population for over-selection                               |
+| Over-selection chance |   0.8 | Chance that selection will be done from the fitter population              |
+| Crossover chance      |   0.9 | Chance per pair of individuals to undergo crossover / brood selection      |
+| Internals chance      |   0.9 | During subtree crossover, chance that selected nodes will be non-terminals |
+| Mutate chance         |  0.05 | Chance per individual that it will undergo mutation                        |

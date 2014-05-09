@@ -88,7 +88,7 @@ namespace algorithm
     brood.reserve(opts.brood_count * opts.crossover_size);
 
     // Create N copies of the pair
-    for (int i(0); i < opts.brood_count; ++i)
+    for (int i{0}; i < opts.brood_count; ++i)
       {
 	brood.push_back(*parent);
 	brood.push_back(*next(parent));

@@ -320,6 +320,8 @@ generations.
 | Property              | Value | Description                                                                |
 |-----------------------+-------+----------------------------------------------------------------------------|
 | Algorithm type        |       | Generational                                                               |
+| Non-terminal set      |       | prog-2, prog-3, if-food-ahead                                              |
+| Terminal set          |       | turn left, turn right, move forward                                        |
 | Generations           |   512 | Number of generations per run                                              |
 | Population size       |  1024 | Number of individuals per generation                                       |
 | Evaluation ticks      |   600 | Number of ticks individual (ant) may use for evaluation                    |
@@ -334,3 +336,4 @@ generations.
 | Crossover chance      |   0.9 | Chance per pair of individuals to undergo crossover / brood selection      |
 | Internals chance      |   0.9 | During subtree crossover, chance that selected nodes will be non-terminals |
 | Mutate chance         |  0.05 | Chance per individual that it will undergo mutation                        |
+| Brood selection       |  2-12 | Variable size of brood, where two is 'no' brood (normal crossover size)    |

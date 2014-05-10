@@ -1,4 +1,4 @@
-#+TITLE:     Project #4 Brood Selection
+#+TITLE:     Project #4 Brood Recombination
 #+AUTHOR:    Andrew Schwartzmeyer
 #+EMAIL:     schw2620@vandals.uidaho.edu
 #+DATE:      2014-05-09 Fri
@@ -12,7 +12,7 @@
 
 #+BEGIN_ABSTRACT
 For the University of Idaho's Evolutionary Computation (CS 472)
-Project #4 I studied the cost of brood selection for increasing
+Project #4 I studied the cost of brood recombination for increasing
 performance on the Santa Fe Trail problem.
 
 The code can be found at:
@@ -307,33 +307,114 @@ eaten, no penalties applied) divided by the total number of food
 pieces available (in our case, 90).
 * Requirements
 ** Hypothesis
-Brood selection is computationally effective at improving the results
-of a genetic program solving the Santa Fe Trail problem, where
+Brood recombination is computationally effective at improving the
+results of a genetic program solving the Santa Fe Trail problem, where
 'computationally effective' means that the extra computation cost
-incurred by the brood selection process is compensated for by its
+incurred by the brood recombination process is compensated for by its
 improvement to the crossover process. The 'effectiveness' is measured
 by the final fitness divided by CPU time after a set number of
 generations.
 
 ** Experiment details
 
-| Property              | Value | Description                                                                |
-|-----------------------+-------+----------------------------------------------------------------------------|
-| Algorithm type        |       | Generational                                                               |
-| Non-terminal set      |       | prog-2, prog-3, if-food-ahead                                              |
-| Terminal set          |       | turn left, turn right, move forward                                        |
-| Generations           |   512 | Number of generations per run                                              |
-| Population size       |  1024 | Number of individuals per generation                                       |
-| Evaluation ticks      |   600 | Number of ticks individual (ant) may use for evaluation                    |
-| Grow chance           |   0.5 | Ramped half-and-half initial tree / subtree mutation generation            |
-| Minimum depth         |     2 | Minimum initial tree / subtree mutation generation depth                   |
-| Maximum depth         |     6 | Maximum initial tree / subtree mutation generation depth                   |
-| Depth limit           |    14 | Maximum depth of tree before being selected out                            |
-| Tournament size       |     3 | Number of individuals drawn per tournament selection                       |
-| Elitism size          |     2 | Number of individuals replaced by best individual per generation           |
-| Fitter size           |   320 | Size of fitter population for over-selection                               |
-| Over-selection chance |   0.8 | Chance that selection will be done from the fitter population              |
-| Crossover chance      |   0.9 | Chance per pair of individuals to undergo crossover / brood selection      |
-| Internals chance      |   0.9 | During subtree crossover, chance that selected nodes will be non-terminals |
-| Mutate chance         |  0.05 | Chance per individual that it will undergo mutation                        |
-| Brood selection       |  2-12 | Variable size of brood, where two is 'no' brood (normal crossover size)    |
+| Property           | Value | Description                                                                             |
+|--------------------+-------+-----------------------------------------------------------------------------------------|
+| Algorithm type     |       | Generational                                                                            |
+| Non-terminal set   |     3 | Prog2, Prog3, IfFoodAhead                                                               |
+| Terminal set       |     3 | Left, Right, Forward                                                                    |
+| Generations        |   512 | Number of generations per run                                                           |
+| Population size    |  1024 | Number of individuals per generation                                                    |
+| Evaluation ticks   |   600 | Number of ticks individual (ant) may use for evaluation                                 |
+| Grow chance        |   0.5 | Ramped half-and-half initial tree / subtree mutation generation                         |
+| Minimum depth      |     2 | Minimum initial tree / subtree mutation generation depth                                |
+| Maximum depth      |     6 | Maximum initial tree / subtree mutation generation depth                                |
+| Depth limit        |    14 | Maximum depth of tree before being selected out                                         |
+| Tournament size    |     3 | Number of individuals drawn per tournament selection                                    |
+| Elitism size       |     2 | Number of individuals replaced by best individual per generation                        |
+| Fitter size        |   320 | Size of fitter population for over-selection                                            |
+| Over-select chance |   0.8 | Chance that selection will be done from the fitter population                           |
+| Crossover chance   |   0.9 | Chance per pair of individuals to undergo crossover / brood selection                   |
+| Internals chance   |   0.9 | During subtree crossover, chance that selected nodes will be non-terminals              |
+| Mutate chance      |  0.05 | Chance per individual that it will undergo mutation                                     |
+| Brood size N       |   1-6 | Variable size of brood, where N pairs of individuals are created from a pair of parents |
+
+*** Test problem
+Although many problems are suitable to genetic programming, this study
+specifically uses the Santa Fe trail problem as a search
+space. According to Langdon and Poli in "Why Ants are Hard", this
+search space has "multiple plateaus split by deep valleys and many
+local and global optima," and as such, it has been found that genetic
+programming (among other search techniques) barely out-perform random
+search on the Ant problem. This makes it an ideal control problem for
+studying the effectiveness of brood recombination. According to
+/Genetic Programming - An Introduction/, it has been found that
+genetic programs with brood recombination outperform those without
+it. Brood recombination's ability to increase the fitness of solutions
+found via genetic programming is not in question [Banzhaf 160]. The
+question this study attempts to address is if this known ability fully
+compensates for the computational cost of its implementation. Because
+the Santa Fe trail problem has an exceptionally expensive evaluation
+stage, if brood recombination compensates for itself on this problem,
+it is reasonable to assume the same for less difficult problems.
+
+**** Santa Fe Trail Implementation
+This implementation of the Santa Fe trail closely resembles that of
+Langdon and Poli's described in "Why Ants are Hard". This problem is
+an agent-based simulation, where an artificial ant (the agent) must
+evolve a program to find and eat as much food on the Santa Fe trail as
+possible. The program is represented as a parse tree with the
+non-terminal nodes "Prog2", "Prog3", and "IfFoodAhead" and the terminal
+nodes "Left", "Right", and "Forward".
+
+The "Prog2" and "Prog3" nodes follow the =progn= semantics of Lisp:
+they are, respectively, a set of two or three instructions to execute
+linearly. "IfFoodAhead" is a conditional whose predicate is the
+existence of food in the cell directly in front of the ant, with two
+control paths to take in the cases true or false for the predicate.
+
+The "Left" and "Right" nodes respectively change the direction the ant
+is facing; they do not change the ant's position. The "Forward" node
+moves the ant one cell forward (in the direction it is facing).
+
+The fitness of a particular individual is the number of food pieces
+eaten after 600 time steps (ticks) on the Santa Fe trail, where one
+tick is consumed by each terminal node executed (that is, "Left",
+"Right", or "Forward"); non-terminal nodes do not consume ticks. This
+is calculated by starting the ant in the Northeast corner of the Santa
+Fe trail, which is a 32 by 32 toroidial grid of cells (where toroidal
+essentially means the edges wrap-around, think Pac-Man), with the food
+laid out according the Santa Fe trail. The ant's parse tree
+(representing a potential solution) is then repeatedly evaluated in
+full (by pre-order traversal), with each visited terminal node
+consuming a tick and affecting the ant as previously defined.
+
+*** Brood Recombination
+The "Brood Recombination Operator" was originally introduced in
+Tackett's paper "Recombination, Selection, and the Genetic
+Construction of Computer Programs" [85]. It is founded in the idea
+that parents in the animal kingdom usually produce a large number of
+offspring, with the expectation that only the few most fit will
+survive natural selection. The computational analogue to this is to
+choose a brood size =N=, then for each pair of parents in the
+population, =N= crossover operations are performed, producing =2*N=
+children candidates. The most fit two of the brood are then chosen for
+the output the recombination process.
+
+**** Culling Function
+Because evaluating every single "pup" of the brood is expensive,
+Tackett suggests performing only a partial evalutation. Tackett refers
+to this as a "culling function", capable of getting an "in the
+ballpark" fitness of an individual, which is good enough for
+distinguishing among a brood of children generated from the same
+parents [85]. For the ant problem, I apply this principle in
+combination with ideas from simulated annealing by scaling the number
+of ticks the for which the evaluation is performed with the number of
+generations for which the algorithm has been run. Specifically, I
+start with a minimum evaluation of 10 percent (60 ticks), which
+increases linearly to 100 percent (600 ticks) with the final
+generation. In earlier generations, this achieves Tackett's "ballpark"
+estimate, and in later generations is capable of distinguishing the
+ants' fitnesses across the entire map. This last part is necessary
+specifically on the ant problem with the Santa Fe trail as the very
+end of the evaluation is also the most difficult for which to find a
+solution.

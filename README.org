@@ -386,3 +386,48 @@ fit portion of the population (Eiben 109). With large populations,
 this helps to keep the search from stagnating at a local optima by
 primarily looking at good solutions, while still maintaining enough
 diversity in the population.
+
+*** Crossover Operator
+The crossover operator in this implementation is the well-known and
+simble subtree crossover. When two trees are to undergo crossover, a
+target node must be selected from each tree. There is a 90 percent
+chance this will be an non-terminal node, and therefore a 10 percent
+chance this will be a terminal node. Said nodes are the root of the
+subtrees (in the case of terminals, the subtree being of depth zero),
+which are then literally swapped between the two individuals.
+
+*** Mutation Operators
+This implementation uses several mutation operators to introduce
+diversity into the population, and in some ways help reduce code bloat
+in the solutions. After the selection and crossover processes have
+been performed, there is a five percent chance per individual that it
+will under a mutation, a low level of mutation being recommneded by
+the literature (Poli 42). There are four mutation operators, each with
+an equal chance of being chosen.
+
+The simplest mutation is the "replacement" operator. If an individual
+is chosen for mutation, a random internal node is chosen as the parent
+of the mutation, with a random child of that node chosen as the target
+of the mutation (this is true for all following operators). For
+replacement, the chosen node is simply replace with another, different
+node of the same type (terminal with a different terminal, and
+likewise for non-terminal).
+
+The "subtree" mutation operator replaces a particular node with a
+subtree grown in the same way as the initial population. With ramped
+half-and-half initialization, this mutation operator works
+surprisingly well at helping produce very random, asymmetrical trees.
+
+The "hoist" operator helps control code growth, while also producing a
+very new solution. It simply causes the chosen random node to become
+the root of the entire tree, discarding the rest.
+
+Finally, the "shrink" operator takes a chosen node and always replaces
+it with a terminal node, discarding any subtree from that
+point. Again, this helps cut code growth a bit.
+
+I found in prior experiements that these four operators with a five
+percent mutation chance stopped the population diversity from
+stagnating. They change up the code just enough, that coupled with the
+"macromutation" provided by crossover, the average fitness of the
+population rarely stagnates.

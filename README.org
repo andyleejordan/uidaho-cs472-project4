@@ -355,7 +355,20 @@ using either the "grow method" or the "full method." Every tree branch
 in the full method is grown to the maximum chosen depth (always
 choosing random non-terminals until the maximum depth is reached, and
 subsequently only choosing terminals) (Eiben 110). In this
-implementation, the maximum depth is six.
+implementation, the maximum depth is six. The algorithm for the "grow
+method" of producing an initial tree is based on /A Field Guide to
+Genetic Programming/, if at the maximum depth or if at any depth but
+the root and a true value is drawn from a boolean distribution with
+the chance calculated as size of terminal set divided by the sum of
+the the sizes of the terminal set and the function set (so in our
+case, =3/6=, or =1/2=), then a function is drawn from the terminal
+set, otherwise it is drawn from the non-terminal set (Poli 14). Some
+research has shown that ramped half-and-half is not particularly good
+at generating potential solutions to the Santa Fe trail problem; a
+better algorithm would perhaps Langdon's "ramped uniform
+initialization" (Poli 40). However, in prior projects, I have found
+that ramped half-and-half works well enough, and was unable to find
+the details needed to implement ramped uniform initialization.
 
 *** Selection Process
 The selection mechanism used in this algorithm is composed of

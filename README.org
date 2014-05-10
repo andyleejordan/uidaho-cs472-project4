@@ -242,7 +242,6 @@ by the final fitness divided by CPU time after a set number of
 generations.
 
 ** Experiment details
-#+ATTR_LATEX: :align |l|p{4in}|
 | Property           | Value | Description                                                                             |
 |--------------------+-------+-----------------------------------------------------------------------------------------|
 | Algorithm type     |       | Generational                                                                            |

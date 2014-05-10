@@ -375,10 +375,14 @@ The selection mechanism used in this algorithm is composed of
 tournament selection (of size three) with over-selection. Tournament
 selection is simple: for each selection, three potential parents are
 randomly drawn from the population, the best of which is selected to
-be the parent. With over-selection, implemented as in /Introduction to
+be the parent, which is akin to natural selection in the animal
+kingdom. With over-selection, implemented as in /Introduction to
 Evolutionary Computation/, the population is first sorted by fitness,
 with the top 320 (of 1024) individuals designated as the "fitter"
 population. When drawing members for the tournament, 80 percent of the
 time the entire set (of three) are chosen from the fitter population,
 the other 20 percent of the time the members are drawn from the less
-fit portion of the population (Eiben 109).
+fit portion of the population (Eiben 109). With large populations,
+this helps to keep the search from stagnating at a local optima by
+primarily looking at good solutions, while still maintaining enough
+diversity in the population.

@@ -308,10 +308,10 @@ tick is consumed by each terminal node executed (that is, "Left",
 "Right", or "Forward"); non-terminal nodes do not consume ticks. This
 is calculated by starting the ant in the Northeast corner of the Santa
 Fe trail, which is a 32 by 32 toroidial grid of cells (where toroidal
-essentially means the edges wrap-around, think Pac-Man), with the food
-laid out according the Santa Fe trail. The ant's parse tree
-(representing a potential solution) is then repeatedly evaluated in
-full (by pre-order traversal), with each visited terminal node
+essentially means the edges wrap-around, think Pac-Man), with the 89
+pieces of food laid out according the Santa Fe trail. The ant's parse
+tree (representing a potential solution) is then repeatedly evaluated
+in full (by pre-order traversal), with each visited terminal node
 consuming a tick and affecting the ant as previously defined.
 
 *** Brood Recombination

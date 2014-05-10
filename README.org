@@ -390,6 +390,27 @@ this helps to keep the search from stagnating at a local optima by
 primarily looking at good solutions, while still maintaining enough
 diversity in the population.
 
+**** Size Control
+Because of the well-known phenomenon of code growth with genetic
+programming, size control of some sort usually must be implemented so
+that the computation time does not get out of hand (Soule 1). This is
+especially important in an experiment with computation time as a
+dependent variable; the size control must be fair across all
+trials. The size control in this implementation simply prunes any
+individuals in the brood whose depth is greater than the maximum depth
+(in this case, 14). This allows crossover and subtree mutation to work
+freely, while gently maintaining a maximum depth by a "natural
+selection" like process. If any brood does not have enough individuals
+after pruning, simple reproduction takes place; that is, the original
+parents are copied without crossover if all attempted crossover
+operations resulted in children that were too large. This process is a
+generalized version of the limit and discard size control often seen
+in genetic programs without brood recombination. It is up to the
+reader to decide if this process is "fair" with respect to varying
+brood sizes, but I would argue that it is because larger, more
+expensive broods have a better chance of being successful at producing
+small enough offspring, while smaller, less expensive broods have to
+deal with greater likelihood of being unsuccessful.
 *** Crossover Operator
 The crossover operator in this implementation is the well-known and
 simble subtree crossover. When two trees are to undergo crossover, a

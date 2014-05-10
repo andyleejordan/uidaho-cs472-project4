@@ -271,17 +271,18 @@ space. According to Langdon and Poli in "Why Ants are Hard", this
 search space has "multiple plateaus split by deep valleys and many
 local and global optima," and as such, it has been found that genetic
 programming (among other search techniques) barely out-perform random
-search on the Ant problem. This makes it an ideal control problem for
-studying the effectiveness of brood recombination. According to
-/Genetic Programming - An Introduction/, it has been found that
-genetic programs with brood recombination outperform those without
-it. Brood recombination's ability to increase the fitness of solutions
-found via genetic programming is not in question [Banzhaf 160]. The
-question this study attempts to address is if this known ability fully
-compensates for the computational cost of its implementation. Because
-the Santa Fe trail problem has an exceptionally expensive evaluation
-stage, if brood recombination compensates for itself on this problem,
-it is reasonable to assume the same for less difficult problems.
+search on the Ant problem (Langdon 1). This makes it an ideal control
+problem for studying the effectiveness of brood
+recombination. According to /Genetic Programming - An Introduction/,
+it has been found that genetic programs with brood recombination
+outperform those without it (Banzhaf 160). Brood recombination's
+ability to increase the fitness of solutions found via genetic
+programming is not in question (Banzhaf 160). The question this study
+attempts to address is if this known ability fully compensates for the
+computational cost of its implementation. Because the Santa Fe trail
+problem has an exceptionally expensive evaluation stage, if brood
+recombination compensates for itself on this problem, it is reasonable
+to assume the same for less difficult problems.
 
 **** Santa Fe Trail Implementation
 This implementation of the Santa Fe trail closely resembles that of
@@ -290,7 +291,7 @@ an agent-based simulation, where an artificial ant (the agent) must
 evolve a program to find and eat as much food on the Santa Fe trail as
 possible. The program is represented as a parse tree with the
 non-terminal nodes "Prog2", "Prog3", and "IfFoodAhead" and the terminal
-nodes "Left", "Right", and "Forward".
+nodes "Left", "Right", and "Forward."
 
 The "Prog2" and "Prog3" nodes follow the =progn= semantics of Lisp:
 they are, respectively, a set of two or three instructions to execute
@@ -317,9 +318,9 @@ consuming a tick and affecting the ant as previously defined.
 *** Brood Recombination
 The "Brood Recombination Operator" was originally introduced in
 Tackett's paper "Recombination, Selection, and the Genetic
-Construction of Computer Programs" [85]. It is founded in the idea
-that parents in the animal kingdom usually produce a large number of
-offspring, with the expectation that only the few most fit will
+Construction of Computer Programs" (Tackett 85). It is founded in the
+idea that parents in the animal kingdom usually produce a large number
+of offspring, with the expectation that only the few most fit will
 survive natural selection. The computational analogue to this is to
 choose a brood size =N=, then for each pair of parents in the
 population, =N= crossover operations are performed, producing =2*N=
@@ -332,7 +333,7 @@ Tackett suggests performing only a partial evalutation. Tackett refers
 to this as a "culling function", capable of getting an "in the
 ballpark" fitness of an individual, which is good enough for
 distinguishing among a brood of children generated from the same
-parents [85]. For the ant problem, I apply this principle in
+parents (Tackett 85). For the ant problem, I apply this principle in
 combination with ideas from simulated annealing by scaling the number
 of ticks the for which the evaluation is performed with the number of
 generations for which the algorithm has been run. Specifically, I
@@ -344,3 +345,27 @@ ants' fitnesses across the entire map. This last part is necessary
 specifically on the ant problem with the Santa Fe trail as the very
 end of the evaluation is also the most difficult for which to find a
 solution.
+
+*** Initial Population
+The initial population is generated using the "ramped half-and-half"
+method detailed by Eibein in /Introduction to Evolutionary
+Computation/. Using the "grow chance" of 0.5, there is an equal chance
+for each member of the initial population that it will be generated
+using either the "grow method" or the "full method." Every tree branch
+in the full method is grown to the maximum chosen depth (always
+choosing random non-terminals until the maximum depth is reached, and
+subsequently only choosing terminals) (Eiben 110). In this
+implementation, the maximum depth is six.
+
+*** Selection Process
+The selection mechanism used in this algorithm is composed of
+tournament selection (of size three) with over-selection. Tournament
+selection is simple: for each selection, three potential parents are
+randomly drawn from the population, the best of which is selected to
+be the parent. With over-selection, implemented as in /Introduction to
+Evolutionary Computation/, the population is first sorted by fitness,
+with the top 320 (of 1024) individuals designated as the "fitter"
+population. When drawing members for the tournament, 80 percent of the
+time the entire set (of three) are chosen from the fitter population,
+the other 20 percent of the time the members are drawn from the less
+fit portion of the population (Eiben 109).

@@ -20,7 +20,7 @@ namespace logging
 {
   using individual::Individual;
 
-  const int width(10);
+  const int width{10};
 
   // Opens the appropriate log file for given time, trial, and folder.
   void

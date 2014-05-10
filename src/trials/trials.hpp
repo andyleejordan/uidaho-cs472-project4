@@ -8,15 +8,15 @@
 #define _TRIALS_H_
 
 #include <ctime>
-#include <tuple>
+
+#include "../algorithm/algorithm.hpp"
 
 // Forward declaration
-namespace individual { class Individual; }
 namespace options { struct Options; }
 
 namespace trials
 {
-  const std::tuple<int, individual::Individual>
+  const std::tuple<int, algorithm::result_t>
   run(const std::time_t&, const options::Options&);
 }
 

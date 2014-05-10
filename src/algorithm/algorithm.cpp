@@ -180,7 +180,7 @@ namespace algorithm
 
   /* The actual genetic algorithm applied which (hopefully) produces a
      well-fit expression for a given dataset. */
-  const individual::Individual
+  const result_t
   genetic(const std::time_t& time, int trial, const Options& opts)
   {
     // Start logging
@@ -199,7 +199,7 @@ namespace algorithm
     Individual best;
 
     // Run algorithm to termination.
-    for (int g(0); g < opts.generations; ++g)
+    for (int g{0}; g < opts.generations; ++g)
       {
 	// Find best Individual of current population.
 	best = *min_element(begin(pop), end(pop), compare_fitness());
@@ -214,7 +214,7 @@ namespace algorithm
 
 	// Perform elitism replacement of random individuals.
 	int_dist dist{0, opts.pop_size - 1};
-	for (int e(0); e < opts.elitism_size; ++e)
+	for (int e{0}; e < opts.elitism_size; ++e)
 	  { offspring[dist(rg.engine)] = best; }
 
 	// Replace current population with offspring.
@@ -245,6 +245,6 @@ namespace algorithm
     plot << best.evaluate(opts.map, opts.penalty, true);
     plot.close();
 
-    return best;
+    return std::make_tuple(best, elapsed_seconds);
   }
 }

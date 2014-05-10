@@ -29,7 +29,7 @@ main(int argc, char* argv[])
 
   // Run trials and save best Individual.
   int best_index;
-  individual::Individual best;
+  algorithm::result_t best;
   std::tie(best_index, best) = trials::run(time, options);
 
   // End timing trials.
@@ -41,7 +41,7 @@ main(int argc, char* argv[])
 	    << "Average time: " << elapsed_seconds.count() / options.trials
 	    << "s\nBest trial: " << time << "_"
 	    << best_index << "\n"
-	    << best.print();
+	    << std::get<0>(best).print();
 
   return EXIT_SUCCESS;
 }

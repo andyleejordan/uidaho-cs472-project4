@@ -231,6 +231,12 @@ sections:
 - Conclusions
 - References
 
+* Run :noexport:
+#+BEGIN_SRC sh
+for i in $(seq 1 6)
+do { nice -10 ./search -B $i --logs "brood-$i/" } & wait
+done &
+#+END_SRC
 * Requirements
 ** Hypothesis
 Brood recombination is computationally effective at improving the

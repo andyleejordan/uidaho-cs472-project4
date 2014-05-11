@@ -257,7 +257,12 @@ improvement to the crossover process. The 'effectiveness' is measured
 by the final fitness divided by CPU time after a set number of
 generations.
 
-** Experiment details
+*** Support
+If the CPU time to fitness ratio increases as brood size =N= increases,
+then my hypothesis is supported. Similarly, if the ratio decreases as
+=N=, then my hypothesis is refuted.
+
+** Experiment Details
 | Property           | Value | Description                                                                             |
 |--------------------+-------+-----------------------------------------------------------------------------------------|
 | Algorithm type     |       | Generational                                                                            |
@@ -280,7 +285,7 @@ generations.
 | Mutate chance      |  0.05 | Chance per individual that it will undergo mutation                                     |
 | Brood size N       |   1-6 | Variable size of brood, where N pairs of individuals are created from a pair of parents |
 
-*** Test problem
+*** Test Problem
 Although many problems are suitable to genetic programming, this study
 specifically uses the Santa Fe trail problem as a search
 space. According to Langdon and Poli in "Why Ants are Hard", this
@@ -343,6 +348,14 @@ choose a brood size =N=, then for each pair of parents in the
 population, =N= crossover operations are performed, producing =2*N=
 children candidates. The most fit two of the brood are then chosen for
 the output the recombination process.
+
+I will be conducting tests with all parameters held constant except
+for the brood size =N=, which will vary from one to six (that is, two
+to twelve pups per crossover). A brood size of zero would disable
+crossover and therefore be meaningless to test. Direct crossover,
+where the parents undergo crossover exactly once without being copied,
+would disable the implemented size control, and be an unfair
+comparison to brood recombination.
 
 **** Culling Function
 Because evaluating every single "pup" of the brood is expensive,
@@ -487,3 +500,41 @@ percent mutation chance stopped the population diversity from
 stagnating. They change up the code just enough, that coupled with the
 "macromutation" provided by crossover, the average fitness of the
 population rarely stagnates.
+*** Setup
+To test my hypothesis, I conducted 64 trials per brood size =N=
+ranging from one to six. The CPU used was an AMD Athlon II X4 645
+Propus, quad-core processor clocked at 3.1 GHz. All unnecessary
+background services were disabled, and the search process was
+conducted with a nice level of -10, helping to ensure maximum devotion
+to the search. The trials were spawned in individual threads, with no
+more than exactly four running at a time (to match the number of
+processors available). Each thread was responsible for precisely one
+trial; this ensured that the trials did not "step on each others'
+toes" computationally speaking. The experiment was carefully monitored
+such that no thrashing took place. Proper coding practices were
+followed for efficient memory access. Timing of the individual trials
+was implemented internally in C++ using the C++11 chrono library for
+high accuracy. Also used was the C++11 random library, which made
+random number generation an insignificant portion of CPU time.  Before
+conducting the experiment, the code was analyzed for memory leaks
+(none) and profiled for performance; the bottleneck is truly the
+evaluation stage.
+
+** Results
+Figure 1 clearly shows that the average fitness increased from an =N=
+of one to five, with a slight decrease with an =N= of six as compared
+to five, but still higher than =N= of one or two. However, it also
+shows that the average computation time grew linearly with the brood
+size. The ratios of fitness to CPU time in Figure 2 demonstrate the
+effects of this growth: the computational effectiveness of brood
+recombination clearly decreased as brood size =N= increased. From
+this, I must conclude my hypothesis as disproven: brood recombination
+does not compensate for itself on the Santa Fe trail problem.
+
+#+CAPTION: Average Score and Average Time
+#+NAME: fig:Figure 1
+[[./results.png]]
+
+#+CAPTION: Ratio of Score / Time
+#+NAME: fig:Figure 2
+[[./results-ratios.png]]

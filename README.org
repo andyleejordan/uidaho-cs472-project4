@@ -237,6 +237,16 @@ for i in $(seq 1 6)
 do { nice -10 ./search -B $i --logs "brood-$i/" } & wait
 done &
 #+END_SRC
+* Data :noexport:
+#+BEGIN_SRC
+# Trial    Score  Time (s)  Score / Time
+1          61     13.4748   0.0710964
+2          63     18.6499   0.053096
+3          65     22.5381   0.0451709
+4          65     24.6633   0.0417735
+5          65     28.495    0.0361306
+6          64     31.8878   0.0315284
+#+END_SRC
 * Requirements
 ** Hypothesis
 Brood recombination is computationally effective at improving the

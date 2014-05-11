@@ -1,0 +1,23 @@
+#!/bin/sh
+gnuplot << EOF
+unset label
+# png output
+set terminal pngcairo size 800,600 enhanced
+set output "results-ratios.png"
+set autoscale
+# better lines
+set boxwidth 0.5
+set style fill solid
+# set style line 1 lc rgb '#8b1a0e' pt 1 ps 1 lt 1 lw 2 # --- red
+# better axes
+set xlabel "Brood Size N"
+set ylabel "Score / Time Ratio"
+set style line 11 lc rgb '#808080' lt 1
+set border 3 back ls 11
+set tics nomirror
+# add grid
+set style line 12 lc rgb '#808080' lt 0 lw 1
+set grid back ls 12
+# plot function
+plot "results.txt" using 1:4 with boxes title "Ratio"
+EOF
